@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html ng-app="app">
+	<head>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https:////maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="style.css">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<script src="lib/angular.min.js" type="text/javascript"></script>
+		<script src="lib/angular-filereader.min.js" type="text/javascript"></script>
+		<script src="app.js" type="text/javascript"></script>
+		<title>AidData CSV Reader</title>
+	</head>
+	<body ng-controller="ADMainCtrl">
+		<input type="file" ng-show="addFile" file-select="onFileSelect(this)" />
+		
+		<h1 ng-click="addFile=!addFile">{{ header }}</h1>
+		
+		<aside ng-controller="ADListCtrl" ng-if="list">
+			<table>
+				<tr>
+					<th><a href="" ng-click="reverse=!reverse;order('year',reverse)">Year</a></th>
+					<th><a href="" ng-click="reverse=!reverse;order('donor',reverse)">Donor</a></th>
+					<th><a href="" ng-click="reverse=!reverse;order('recipient',reverse)">Recipient</a></th>
+				</tr>
+				<tr ng-repeat="row in displayed_items track by $index" ng-click="show(row)" ng-class="{selected: row === selected}">
+					<td>{{ row.year }}</td>
+					<td>{{ row.donor }}</td>
+					<td>{{ row.recipient }}</td>
+				</tr>
+			</table>
+			<a href="" class="prev-page" ng-if="prev_page > 0" ng-click="showPage(prev_page)">Page {{ prev_page }}</a>
+			<a href="" class="next-page" ng-if="next_page <= pages" ng-click="showPage(next_page)">Page {{ next_page }}</a>
+		</aside>
+		
+		<section>
+			<article ng-if="item">
+				<div class="donor">
+					<p class="desc">Donor</p>
+					<b class="name">{{item.donor}}</b>
+				</div>
+				<div class="recipient">
+					<p class="desc">Recipient</p>
+					<b class="name">{{item.recipient}}</b>
+				</div>
+				<table>
+					<tr>
+						<th>AidData Id</th>
+						<th>Year</th>
+						<th>Commitment Amount (USD)</th>
+						<th>Purpose Id</th>
+						<th>Purpose</th>
+					</tr>
+					<tr>
+						<td>{{ item.aiddata_id}}</td>
+						<td>{{ item.year }}</td>
+						<td>{{ item.commitment_amount_usd_constant | currency}}</td>
+						<td>{{ item.coalesced_purpose_code }}</td>
+						<td>{{ item.coalesced_purpose_name }}</td>
+					</tr>
+				</table>
+			</article>
+			
+		</section>
+
+	</body>
+</html>

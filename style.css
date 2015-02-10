@@ -1,0 +1,94 @@
+h1 {
+	border-bottom: 1px solid #084F38;
+	color: #084F38;
+	cursor: pointer;
+	margin-bottom: 0;
+}
+
+input {
+	margin: 1rem;
+	float: right;
+}
+
+p.desc, article th {
+	color: #444;
+	font-size: 1.2rem;
+	margin: 0;
+}
+
+/************* Aside styles **************/
+
+aside {
+	background-color: #ECECEC;
+	color: #B9975B;
+	float: left;
+	height: 60rem;
+	width: 40rem;
+}
+
+aside th, aside td {
+	border-top: 1px solid #DDDDDD;
+	border-bottom: 1px solid #DDDDDD;
+	padding: 0.2rem 1rem;
+	cursor: pointer;
+}
+
+aside th {
+	color: #000;
+}
+
+aside td {
+	font-size: 16px;
+}
+
+aside tr:hover td {
+	text-decoration: underline;
+}
+
+aside .prev-page {
+	position: absolute;
+	top:  64rem;
+	left: 1rem;
+}
+
+aside .next-page {
+	position: absolute;
+	top:  64rem;
+	left: 33rem;
+}
+
+aside .selected {
+	background-color: #DDDDDD;
+}
+
+article {
+	float: right;
+	font-size: 16px;
+	margin: 0 2rem;
+	width: calc(100% - 44rem);
+}
+
+article th, article td {
+	padding: 0.2rem 1rem;
+}
+
+article th {
+	background-color: #EEE;
+}
+
+article td {
+	border: 1px solid #DDD;
+}
+
+div.donor, div.recipient {
+	display: inline-block;
+	margin: 1rem;
+	vertical-align: top;
+	width: 20rem;
+}
+
+div.donor .name, div.recipient .name {
+	font-size: 2rem;
+	margin: 0;
+}
+
