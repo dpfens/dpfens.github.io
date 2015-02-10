@@ -129,7 +129,7 @@
 	         $scope.progress = progress.loaded / progress.total;
 	     });
 	     
-	     $http.get('https://raw.githubusercontent.com/dpfens/ITPIR-Application/master/aiddata2-1_thin.csv', function(result) {
+	     $http.get('http://dpfens.github.io/aiddata2-1_thin.csv', function(result) {
 	    	 console.log(result);
 	     });
 	  
