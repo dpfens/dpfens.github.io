@@ -131,7 +131,7 @@
 	     
 	     $http.get('http://dpfens.github.io/aiddata2-1_thin.csv').success(function(result) {
 	    	 console.log(result);
-	    	 $scope.list = CSVtoList(',' result);
+	    	 $scope.list = CSVtoList(',', result);
 	     });
 	  
 	 }]);
