@@ -141,6 +141,11 @@
 	     $scope.$on("fileProgress", function(e, progress) {
 	         $scope.progress = progress.loaded / progress.total;
 	     });
+	     
+	     $http.get('http://dpfens.github.io/aiddata2-1_thin.csv').success(function(data){
+	    	 $scope.list = csvToList(',',data);
+	    	 $scope.addFile = false;
+	     });
 	  
 	 }]);
 	
