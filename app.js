@@ -1,14 +1,15 @@
-"use strict";
-
 (function() {
-	var app = angular.module("app",['ADControllers', 'filereader']),
+	"use strict";
+	var app = angular.module("app",['ad_controllers']),
 	
-	ADControllers = angular.module('ADControllers', []);
+	// ad_controllers for "AidData Controllers"
+	ad_controllers = angular.module('ad_controllers', []);
 	
+	// Modified File Reader Module
 	(function (module) {
 	    
-	    var fileReader = function ($q, $log) {
-	 
+	    var fileReader = function ($q) {
+	    	
 	        var onLoad = function(reader, deferred, scope) {
 	            return function () {
 	                scope.$apply(function () {
@@ -42,7 +43,8 @@
 	            reader.onprogress = onProgress(reader, scope);
 	            return reader;
 	        };
-	 
+	        
+	        // read file content as binary data (images, etc)
 	        var readAsDataURL = function (file, scope) {
 	            var deferred = $q.defer();
 	             
@@ -52,6 +54,7 @@
 	            return deferred.promise;
 	        };
 	        
+	        // read file content as text
 	        var readAsText = function (file, scope) {
 	            var deferred = $q.defer();
 	             
@@ -70,8 +73,9 @@
 	    module.factory("fileReader",
 	                   ["$q", "$log", fileReader]);
 	 
-	}(angular.module("ADControllers")));
+	}(angular.module("ad_controllers")));
 	
+	// when element changes, get uploaded file and set as $scope variable
 	app.directive("fileSelect",function(){
 		return {
 			link: function($scope,el){
@@ -84,64 +88,68 @@
 		};
 	});
 	
-	ADControllers.controller('ADMainCtrl', ['$scope', '$http', 'fileReader', function($scope, $http, fileReader) {
+	ad_controllers.controller('ADMainCtrl', ['$scope', '$http', 'fileReader', function($scope, $http, fileReader) {
 		
+		// Set initial header for page
 		$scope.header = "AidData CSV Reader";
+		// initially show input section
 		$scope.addFile = true;
 		
-		function CSVtoList(delimiter, str) {
-			var allTextLines = str.split(/\r\n|\n/g);
-		    var headers = allTextLines[0].split(delimiter);
-		    var lines = [];
+		// Create array of objects based of delimiter character from str
+		function csvToList(delimiter, str) {
+			var all_text_lines = str.split(/\r\n|\n/g),
+		    headers = all_text_lines[0].split(delimiter),
+		    lines = [],
+		    data, obj;
 
-		    for (var i=1; i<allTextLines.length; i++) {
-		        var data = allTextLines[i].split(delimiter),
-		        item = {};
+		    for (var i=1; i<all_text_lines.length; i++) {
+		        data = all_text_lines[i].split(delimiter);
+		        obj = {};
 		        if (data.length == headers.length) {
 		            for (var j=0; j<headers.length; j++) {
-		            	item[headers[j]] = data[j];
+		            	obj[headers[j]] = data[j];
 		            }
-		            lines.push(item);
+		            lines.push(obj);
 		        }
 		    }
+		    
 		    return lines;
 		}
 		
+		// show selected row when clicked on
 		$scope.show = function(row) {
 			$scope.item = row;
 			$scope.selected = row;
 		};
 		
+		// process chosen CSV file for reading
 	    $scope.getFile = function () {
-	    	console.log()
 	        $scope.progress = 0;
+	        
 	        if($scope.file && $scope.file.type === 'text/csv') {
 	        	$scope.header = document.title = $scope.file.name;
 	        	
 	        	fileReader.readAsText($scope.file, $scope).then(function(result) {
-                    $scope.list = CSVtoList(',',result);
+	        		// set new array as data list
+                    $scope.list = csvToList(',',result);
                 });
 	        	$scope.addFile = false;
 	        }
 	     };
-	  
+	     
+	     // update progress indicator when uploading file
 	     $scope.$on("fileProgress", function(e, progress) {
 	         $scope.progress = progress.loaded / progress.total;
-	     });
-	     
-	     $http.get('http://dpfens.github.io/aiddata2-1_thin.csv').success(function(result) {
-	    	 $scope.list = CSVtoList(',', result);
-	    	 $scope.addFile = false;
 	     });
 	  
 	 }]);
 	
-	ADControllers.controller('ADListCtrl', ['$scope', '$filter', function($scope, $filter) {
+	ad_controllers.controller('ADListCtrl', ['$scope', '$filter', function($scope, $filter) {
 		
 		var orderBy = $filter('orderBy');
 		
 		var items_per_page = 20;
-		
+		// total number of pages based on row_count and items per page
 		$scope.pages = Math.ceil($scope.list.length / items_per_page);
 		$scope.prev_page = 0;
 		$scope.current_page = 1;
@@ -149,15 +157,17 @@
 		
 		$scope.displayed_items = $scope.list.slice(0, items_per_page);
 		
+		// chane shown page of content
 		$scope.showPage  = function(page_number) {
 			var start = (page_number-1)*items_per_page,
-			end = start +items_per_page;
+			end = start + items_per_page;
 			$scope.current_page = page_number;
 			$scope.prev_page = page_number-1;
 			$scope.next_page = page_number +1;
 			$scope.displayed_items = $scope.list.slice(start, end);
 		};
 		
+		// sort data array based on chosen field
 		$scope.order = function(predicate, reverse) {
 			$scope.list = orderBy($scope.list, predicate, reverse);
 			$scope.showPage($scope.current_page);
@@ -165,7 +175,7 @@
 		
 	}]);
 	
-	ADControllers.controller('ADItemCtrl', ['$scope', function($scope) {
+	ad_controllers.controller('ADItemCtrl', ['$scope', function($scope) {
 		  
 	}]);
 	
