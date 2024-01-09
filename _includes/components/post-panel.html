@@ -1,0 +1,22 @@
+<a href="{{ include.post.url }}" class="text-decoration-none drop-shadow-hover text-black tile px-3 py-3 border border-1 border-black rounded-2{% if include.className %} {{ include.className }}{% else %} g-col-12 g-col-md-6 g-col-xl-4{% endif %}{% if include.extraClassName %} {{ include.extraClassName }}{% endif %}">
+    {% if post.categories != null and include.postcategory %}
+        <div>
+            {% for category in post.categories %}
+                {% assign categoryFormatted = (category | capitalize) %}
+                {% include components/pill.html content=categoryFormatted extraClassName="bg-white" %}
+            {% endfor %}
+        </div>
+    {% endif %}
+    <{{ include.titleTag | default: 'h4' }} class="mt-3 mb-2">{{ include.post.title }}</{{ include.titleTag | default: 'h4' }}>
+    <p>{{ post.description }}</p>
+    {% if post.tags != null and post.tags.size > 0 %}
+        <p class="fs-small fw-medium mb-2">Tags</p>
+        <div>
+            {% assign sortedTags = post.tags | sort %}
+            {% for tag in sortedTags %}
+                {% assign tagFormatted = (tag | capitalize) %}
+                {% include components/pill.html content=tagFormatted extraClassName="bg-white" %}
+            {% endfor %}
+        </div>
+    {% endif %}
+</a>

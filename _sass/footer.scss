@@ -1,0 +1,19 @@
+footer.main-footer {
+
+    nav {
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+
+            a {
+                display: block;
+                padding: 1em 1em;
+                text-decoration: none;
+            }
+        }
+    }
+}

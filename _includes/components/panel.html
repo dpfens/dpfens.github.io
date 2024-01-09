@@ -1,0 +1,4 @@
+<div class="tile drop-shadow px-3 py-3 border border-1 border-black rounded-2{% if include.className %} {{ include.className }}{% else %} g-col-12 g-col-md-6 g-col-lg-4{% endif %}{% if include.extraClassName %} {{ include.extraClassName }}{% endif %}">
+    <p class="{{ include.tag | default: 'h4' }} my-3">{{ include.title }}</p>
+    {{ include.content | raw }}
+</div>

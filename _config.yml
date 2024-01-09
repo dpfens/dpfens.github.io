@@ -1,1 +1,55 @@
-theme: jekyll-theme-hacker
+name: "Doug Fenstermacher"
+author: "Doug Fenstermacher <douglas.fenstermacher@gmail.com>"
+title: Doug Fenstermacher
+description: "Doug Fenstermacher's personal website"
+
+url: "https://dougfenstermacher.com"
+baseurl: ""
+environment: development
+CONTACT: mailto:douglas.fenstermacher@gmail.com
+
+source: ./site
+
+exclude:
+  - CNAME
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - docker-compose.yml
+  - vendor
+  - .gitignore
+
+sass:
+    sass_dir: _sass
+
+plugins:
+  - jekyll-github-metadata
+  - jekyll-seo-tag
+  - jekyll-feed
+  - jekyll-sitemap
+
+permalink: /:categories/:title
+
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  auto_ids: true
+  input: GFM
+  syntax_highlighter_opts:
+    default_lang: html
+    css_class: 'highlight'
+
+defaults:
+  -
+    scope:
+      path: "" # an empty string here means all files in the project
+      type: "posts" # previously `post` in Jekyll 2.2.
+    values:
+      layout: "default"
+      author: "Doug Fenstermacher"
+  -
+    scope:
+      path: "projects"
+      type: "pages" # previously `page` in Jekyll 2.2.
+    values:
+      layout: "project" # overrides previous default layout

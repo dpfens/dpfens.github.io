@@ -1,0 +1,10 @@
+services:
+  jekyll:
+    container_name: website
+    image: jekyll/jekyll
+    volumes:
+      - .:/srv/jekyll
+      - ./vendor/bundle/:/usr/local/bundle
+    ports:
+      - "4000:4000"
+    command: sh -c "bundle install && bundle exec jekyll clean && bundle exec jekyll serve --force_polling --drafts --trace -H 0.0.0.0 -P 4000"

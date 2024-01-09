@@ -1,0 +1,33 @@
+{% if site.environment == 'production' %}
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-5FHSBP');</script>
+    <!-- End Google Tag Manager -->
+{% else %}
+<meta name="robots" content="noindex">
+{% endif %}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="shortcut icon" href="/assets/images/icon.png">
+<link rel="icon" href="/assets/images/logomark.svg" />
+
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@DougFenstermach" />
+<meta name="twitter:title" content="Doug Fenstermacher" />
+<meta name="twitter:description" content="Personal website for Doug Fenstermacher" />
+<meta name="twitter:image" content="" aria-label="Doug Fenstermacher Logo" />
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="google-site-verification" content="4WVl8qjPxKM5vs8Y2AmcN-4Nh8zc8zqHo7QlC_mSJYw" />
+<link rel="canonical" href="https://dpfens.github.io"/>
+
+<link href="/assets/fonts/black-tie/css/black-tie.min.css" rel="stylesheet" media="all" />
+<link href="/assets/css/bootstrap.css" rel="stylesheet" media="all" />
+<link href="/assets/css/navbar.css" rel="stylesheet" media="all" />
+<link href="/assets/css/main.css" rel="stylesheet" media="all" />
+
+{% seo %}

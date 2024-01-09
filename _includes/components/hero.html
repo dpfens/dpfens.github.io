@@ -1,0 +1,13 @@
+<div class="hero d-flex align-items-center{% if include.className %} {{ include.className }}{% endif %}" {% if include.style %}style="{{ include.style }}"{% endif %}>
+    {% if include.left %}
+    <div class="hero-content" {% if include.leftStyle %}style="{{ include.leftStyle }}"{% endif %}>
+        {{ include.left | raw }}
+    </div>
+    {% endif %}
+
+    {% if include.right %}
+    <div class="hero-content" {% if include.rightStyle %}style="{{ include.rightStyle }}"{% endif %}>
+        {{ include.right | raw }}
+    </div>
+    {% endif %}
+</div>

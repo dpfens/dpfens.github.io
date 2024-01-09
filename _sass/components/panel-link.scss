@@ -1,0 +1,10 @@
+.drop-shadow-hover {
+    box-shadow: black 0 0 0 0;
+    will-change: box-shadow;
+    transition: box-shadow 0.2s;
+}
+
+.drop-shadow,
+.drop-shadow-hover:hover {
+    box-shadow: black 0.5rem 0.5rem 0 0;
+}

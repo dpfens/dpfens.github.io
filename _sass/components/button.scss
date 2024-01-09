@@ -1,0 +1,16 @@
+.btn {
+    border: 2px solid black;
+    border-radius: 0.25em;
+    color: black;
+    display: inline-block;
+    position: relative;
+    text-decoration: none;
+    text-transform: uppercase;
+    padding: 1rem;
+    box-shadow: black 6px 7px 0 0;
+    transition: box-shadow 0.2s;
+}
+
+.btn.btn-chip {
+    border-radius: 3em;
+}

@@ -1,0 +1,30 @@
+<header class="d-none d-md-flex main-header">
+        <nav class="me-auto">
+                <ul>
+                    <li>
+                        <a class="ff-mono" href="/">Doug Fenstermacher</a>
+                    </li>
+                    
+                </ul>
+        </nav>
+        <nav class="ms-auto">
+                <ul>
+                        {% include main-navigation.html %}
+                </ul>
+        </nav>
+</header>
+
+<!-- mobile potrait menu -->
+<nav class="d-md-none navbar navbar-expand-lg bg-light border-3 border-bottom border-black">
+        <div class="container-fluid">
+                <a class="navbar-brand ff-mono" href="/">Doug Fenstermacher</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                {% include main-navigation.html %}
+                        </ul>
+                </div>
+        </div>
+</nav>

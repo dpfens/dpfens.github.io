@@ -1,0 +1,15 @@
+.linked-heading {
+
+
+    a {
+        display: none;
+    }
+
+    &:hover a {
+        display: inline;
+        font-size: 1.1rem;
+        margin-left: 0.5em;
+        text-decoration: none;
+        vertical-align: middle;
+    }
+}

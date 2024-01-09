@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% include head.html %}
+    <body class="bg-blue-1">
+        {% if site.environment == 'production' %}
+            <!-- Google Tag Manager (noscript) -->
+            <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5FHSBP" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+            <!-- End Google Tag Manager (noscript) -->
+        {% endif %}
+        <div class="orientation-layout">
+            {% include header.html %}
+            <div class="content-container bg-white">
+                <main>
+                    <article>
+
+                        <div class="row vh-75">
+                            <div class="col-12 offset-md-2 col-md-8 py-5">
+                                {% if page.tags != null and page.tags.size > 0 %}
+                                    <div class="text-center mb-3">
+                                        {% assign sortedTags = page.tags | sort %}
+                                        {% for tag in sortedTags %}
+                                            {% assign tagFormatted = tag | capitalize %}
+                                            {% include components/pill.html content=tagFormatted %}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <h1 class="headline text-center">{{ page.title }}</h1>
+                                <p class="sub-headline fw-light">{{ page.description }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="max-long-form-width mx-auto container-fluid">
+                            <div class="col-12">
+                            {% include components/breadcrumb.html %}
+                            {{ content }}
+                            </div>
+                        </div>
+                    </article>
+                </main>
+                {% include footer.html %}
+            </div>
+        </div>
+    </body>
+    {% include scripts.html %}
+</html>

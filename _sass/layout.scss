@@ -1,0 +1,35 @@
+body {
+    overflow-y: hidden;
+    margin: 0;
+
+    .orientation-layout {
+    
+        @media (orientation: portrait) {
+            flex-direction: column;
+        }
+    
+        @media (orientation: landscape) {
+            display: flex;
+            max-width: 100%;
+            flex-direction: row;
+        }
+    
+        .content-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            height: 100vh;
+
+            @media (orientation: landscape) {
+                width: 0;
+            }
+        }
+    }
+}
+
+.row {
+    margin: 0 !important;
+}
+
+.max-long-form-width {
+    max-width: 70em;
+}

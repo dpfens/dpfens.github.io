@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% include head.html %}
+    <body class="bg-blue-1">
+        {% if site.environment == 'production' %}
+            <!-- Google Tag Manager (noscript) -->
+            <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5FHSBP" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+            <!-- End Google Tag Manager (noscript) -->
+        {% endif %}
+        <div class="orientation-layout">
+            {% include header.html %}
+            <div class="content-container">
+                <main>
+                    <article>
+                        {{ content }}
+                    </article>
+                </main>
+                {% include footer.html %}
+            </div>
+        </div>
+    </body>
+    {% include scripts.html %}
+</html>
