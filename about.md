@@ -4,7 +4,7 @@ layout: default
 ---
 
 <div class="hero bg-orange-3 border-3 border-bottom border-black">
-    <div class="hero-left hero-content hero-top d-flex flex-column justify-content-center border-lg-3 border-end-lg border-lg-black py-4 px-5 min-vh-50">
+    <div class="hero-left hero-content hero-top d-flex flex-column justify-content-center border-lg-3 border-end-lg border-lg-black py-4 min-vh-50">
         <h1 class="headline">Escapist reader turned digital architect</h1>
         <p class="tagline">I'm Doug Fenstermacher, a web developer by day, bookworm by night, and a proud native of Gloucester, Virginia. Growing up in a small town on dial-up internet surrounded by the salty breeze, I developed a knack for computers and for DIY. These days, I channel that coastal curiosity into crafting elegant applications and diving into the depths of modern technology.</p>
         <p class="tagline">From being a funeral home assistant to health studies, my path to software development has not been a straight line. But the detours along that path taught me relentless determination, empathy, and the importance of balance—all skills that now shape my approach to building digital experiences.</p>
