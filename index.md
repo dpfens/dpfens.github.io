@@ -10,7 +10,7 @@ layout: default
             <p>My name is</p>
             <h1 class="headline"><span>Doug</span><br/><span>Fenstermacher</span></h1>
             <p class="sub-headline" style="margin-left: 0.25em;">A pragmatic software developer for audacious projects.</p>
-            <a class="btzn bg-blue-3" href="/project">My Projects</a>
+            <a class="btn bg-blue-3" href="/project">My Projects</a>
         </div>
     </div>
     <div class="hero-right hero-content hero-bottom">
