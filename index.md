@@ -21,7 +21,7 @@ layout: default
 <div class="hero border-3 border-top border-black bg-green-2">
     <div class="hero-left hero-top hero-content border-lg-3 border-end-lg border-lg-black min-vh-50" style="background: url('/assets/img/07068cc6-af89-4854-8c62-6790b5cc67da.png') center center no-repeat; background-size: cover;">
     </div>
-    <div class="hero-right hero-bottom hero-content d-flex align-items-center min-vh-50">
+    <div class="hero-right hero-bottom hero-content d-flex align-items-center pb-5 min-vh-50">
         <div>
             <h2 class="headline">From long runs to code sprints</h2>
             <p>As a former runner, I relentlessly pursue my goals. My finish line isn't a medal, it's a solution. My experiments aren't for headlines, but a better tomorrow.  I want to fill the cracks in the world rather than widen them.</p>
