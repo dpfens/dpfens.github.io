@@ -5,7 +5,7 @@ description: "Doug Fenstermacher's personal website"
 
 url: "https://dougfenstermacher.com"
 baseurl: ""
-environment: development
+environment: production
 CONTACT: mailto:douglas.fenstermacher@gmail.com
 
 source: ./site
