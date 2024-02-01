@@ -306,15 +306,19 @@ We could go about creating our own custom metrics for distance running, which wo
     <dt>Margin of defeat</dt>
     <dd>The time/distance of the competitor to the first place finisher.  The margin of defeat for the victor would be 0.</dd>
 
+    <dt>Normalized Split Ratio (NSR)</dt>
+    <dd>NSR compares the effort expended in each mini-race relative to your overall effort. Divide each split time by your average split time, then subtract 1. Positive values indicate harder efforts, negative values signify easier ones. This lets you see an athlete's pacing strategy (even splits, negative splits, etc.) and identify potential fatigue points.</dd>
+
+    <dt>Pace Variability Index (PVI)</dt>
+    <dd>Quantifies how smoothly you navigate the race. Calculate the standard deviation of your split times relative to your average pace. A low PVI means consistent running, while a high PVI indicates significant fluctuations in effort. Think of it as a measure of an athlete's "cruise control" ability.</dd>
+
     <dt>Correlation between Splits</dt>
     <dd>Do strong performances in one segment tend to predict good times in others? This can reveal pacing patterns and identify key sections for success.  This can be applied to individual athletes level or to thousands of runners to identify trends.</dd>
-</dd>
 </dl>
 
 The metrics quantify a specific aspect of a competitor's performance, and describe their behavior throughout the race in terms of time and position.  For example, If a competitor has an opening position of 1, and a net position change of 0, and a total position change of 0, then the competitor was the leader of the entire race.  If the competitor had a high (worse) opening position and an above-zero early/middle/closing position improvement then the competitor had a bad start but made up for it throughout the race.  Competitors can be evaluated in terms of tactical behavior using these metrics, and further quantify the nature of racing.
 
 #### Race
-Next we have metrics that can be used 
 
 <dl>
     <dt>Negative split ratio</dt>
