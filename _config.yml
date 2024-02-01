@@ -8,7 +8,7 @@ baseurl: ""
 environment: production
 CONTACT: mailto:douglas.fenstermacher@gmail.com
 
-source: ./site
+source: .
 
 exclude:
   - CNAME
