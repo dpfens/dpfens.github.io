@@ -257,7 +257,7 @@ This `Race` class encapsulates functionality to determine where a competitor was
 
 We could go about creating our own custom metrics for distance running, which would no doubt be valuable.  But I think we need to start with metrics that are universal to all races, and NASCAR and Formula One have plenty of them:
 
-<h4>Competitor</h4>
+#### Competitor
 
 
 <dl>
@@ -305,26 +305,42 @@ We could go about creating our own custom metrics for distance running, which wo
 
     <dt>Margin of defeat</dt>
     <dd>The time/distance of the competitor to the first place finisher.  The margin of defeat for the victor would be 0.</dd>
+
+    <dt>Correlation between Splits</dt>
+    <dd>Do strong performances in one segment tend to predict good times in others? This can reveal pacing patterns and identify key sections for success.  This can be applied to individual athletes level or to thousands of runners to identify trends.</dd>
+</dd>
 </dl>
 
 The metrics quantify a specific aspect of a competitor's performance, and describe their behavior throughout the race in terms of time and position.  For example, If a competitor has an opening position of 1, and a net position change of 0, and a total position change of 0, then the competitor was the leader of the entire race.  If the competitor had a high (worse) opening position and an above-zero early/middle/closing position improvement then the competitor had a bad start but made up for it throughout the race.  Competitors can be evaluated in terms of tactical behavior using these metrics, and further quantify the nature of racing.
 
-<h4>Clusters/Packs</h4>
+#### Race
+Next we have metrics that can be used 
+
+<dl>
+    <dt>Negative split ratio</dt>
+    <dd>The percentage of race participants who ran negative splits (finishing faster in the second half). This metric indicates the prevalence of strong finishes and race strategies.  This can also be calculated for an individual across multiple races.</dd>
+    <dt>Slowest race segment</dt>
+    <dd>Cross country and road races have different terrain in different segments.  By identifying which segments/splits are consistently fastest or slowest, we can estimate a difficulty of the segments.  The splits for these segments cna also be compared to the splits of participants from other races to further refine the validity of the measure.</dd>
+    <dt>Mean/Median race time/split</dt>
+    <dd>Compare the mean and median race/split times to identify if the race/segment skewed faster or slower, in a simple measure for anyone to understand.</dd>
+</dl>
+
+#### Clusters/Packs
 <b>EDIT</b>: I originally wrote extensively on how to pack detection based on density.  I decided to split that into its <a href="https://dougfenstermacher.com/blog/pack-behavior-classifications-competition">own post</a>.  In short, pack membership can and should be tracked over time in races as well as the role competitors have in each pack.  Pack membership can be performed on a computer very cheaply and quickly, to the point that it can be done in real-time.  Below is a alluvial representing the creation and disbanding of packs over time, as well as the changes in membership.
 
 <div class="flourish-embed" data-src="visualisation/559694"></div><script src="https://public.flourish.studio/resources/embed.js"></script>
 
 By tracking packs, competitions can have another layer of analysis beyond the individual athlete or team.  Coaches and athletes could  look at trends of how their runners behave relative to their surrounding competitors over multiple competitions. They can ask questions such as "how does this runner tend to perform when they are the front/middle/back of a pack?", or "When in a competition does this runner tend to transition between packs?".
 
-<h4>Rabbits</h4>
+#### Rabbits
 These metrics above cover all competitors within a distance running competition.  But there is one type of runner which these metrics do not apply to at all: rabbits.  Rabbits are an emergent product of distance running.  Unlike competitors, rabbits do not have the outcome-based goal of winning the race, but the behavioral objective ensuring the race progresses at a predefined pace up until a certain distance in a race.  These fundamental differences in the nature of their objectives, reflects that most metrics applied to competitors are not applicable to rabbits.  For example, if a rabbit hits the predefined pace in the race but other competitors do not follow, did the rabbit result in increasing the pace of the race?  By the conventional metrics used for evaluating rabbits (splits), the rabbit did their job perfectly, however, their performance did not have the behavioral outcome on the race that was intended by their running the predefined pace.  The competitors did not run faster due to the rabbit's efforts.  So, was the rabbit successful? I would argue that while they met their technical expectations of hitting the pace, they did not meet their strategic expectation of increasing the pace of the race.   Different metrics need to be used to mathematically determine the success/failure of a rabbit in a competition based on the actual need that caused the emergence of the role of rabbit in the first place:  did they make the race faster?
 
-<h5>Difference between actual pace and predefined pace</h5>
+##### Difference between actual pace and predefined pace
 This technical metric is simple:  the difference between the predefined pace and the rabbit's actual pace.
 
 $$  \varDelta{p} = p_{predefined} - p_{actual} $$
 
-<h5>Predefined pacing strategy vs. actual pacing strategy</h5>
+##### Predefined pacing strategy vs. actual pacing strategy
 This metric is a measure of how closely the rabbit's actual pacing strategy matches the predefined pacing strategy and is a more specific version of the above metric.  Typically predefined paces 
  are expected to be even, but in some cases a rabbit may be expected to run specific negative splits or positive splits.  This metric is useful for determining whether or not the rabbit is going hit the predefined splits when they are not even.
 
@@ -335,19 +351,19 @@ $$
 
 where  $$ p_i $$ is the predetermined split and $$ a_i $$ is the actual split by the rabbit and $$ | S | $$ is the total number of splits.
 
-<h5>Ability to hit predefined pace for given distance</h5>
+##### Ability to hit predefined pace for given distance
 This metric is an indicator of the capability of an athlete to meet the pace required for required distance.  This metric can be defined as how many times in a given time frame the athlete has exceeded the predefined pace, and by how much was the pace missed or exceeded.  For example, a slower runner is less likely to be able to to sustain a faster pace, and therefore may not be a reliable rabbit for races where the rabbit is expected to maintain a faster pace.
 
 $$ \text{successful attempts}  \over \text{total attempts} $$
 
-<h5>Distance to race leader/lead pack</h5>
+##### Distance to race leader/lead pack
 This outcome-based metric tells us how far away the lead competitors are from the rabbit, and in what direction.  The rabbit is only effective if the lead competitors maintain or close the distance between themselves and the rabbit, indicating that the rabbit is influencing the pace.  If the distance is increasing, the rabbit is not influencing the pace.  This strategic metric can be used in combination with the technical metric of the distance of the rabbit's pace from the predefined pace to determine whether the success/failure of the rabbit to influence the pace of the race lies with the rabbit for not hitting the predefined pace, or if fault lies with the competitors for ignoring the rabbit altogether.
 
 $$ \varDelta{d}_\text{rabbit\ leader} = d_\text{rabbit} - d_\text{leader} $$
 
 This last metric raises a new question:  If the competitors are not responding to the rabbit when they are hitting the predefined pace, would the rabbit be right to deviate from the predefined place in effort to influence the competitors' pace?  If the rabbit continues at the predefined pace (their technical metric), they will likely continue to have no influence on the competitor's pace (their strategic metric).  If the rabbit changes their pace to deviate from their expected metric and allow the competitors to close the distance between them, they may have a chance at influencing the pace of the race.
 
-<h5>Average position</h5>
+##### Average position
 This metric is used to assess whether the rabbit is generally successful in leading the pack during their required interval, and if not, how close to being the leader they were.  If the rabbit is being successful, their average position during their assigned pacing laps should approach (or be) 1.  This value can be calculated by summing the rabbit's position of each lap/segment of the race, divided by the total number of laps/segments in the race. 
  In the case where each lap is of the same length, the following formula can be used
 
@@ -359,7 +375,7 @@ $$ p_{avg} = { \displaystyle\sum_{i=1}^\text{segments} {p_is_i \over |\text{segm
 
 where $$ s_i $$ is the length of the segment.  This formula can be used in any race for any competitor as a method for assessing what position the competitor spent the majority of the race in relative to the other competitors.  This ensures that position changes that occur at the end of a race have minimal influence over the output position.  If a competitor's average position is lower than another, it indicates that the competitor spent the majority of the race behind the other.  If the difference between two average positions is small, then the two competitors were relatively near to each other position-wise for the majority of the race, if large, they were relatively far from each other position-wise.
 
-<h4>Identifying important events</h4>
+#### Identifying important events
 There are many important events in a race, such when a serious contender trips, or when competitors change position.  Ideally, these events would be recorded by spectators, officials or a timing system but that is not always possible.  Instead we can estimate when a competitor was passed by another using their splits immediately before and after they were passed.
 
 {% highlight python %}{% raw %}def intersect_time(speed1, speed2, gap):
@@ -423,45 +439,45 @@ Sprints and distance events share many of the same qualities.  Sprints have a fe
 
 Based on these qualities, we will be focusing more on technical metrics than strategic metrics for sprinting/hurdles.
 
-<h5>Distance and Hurdle-based Splits</h5>
+##### Distance and Hurdle-based Splits
 Sprinters can benefit from splits.  Even in 100m races, splits can be beneficial for sprinters learning where they are slow, and where they are fast.  The more splits that are measured, the more fluctuations that can be identified throughout a race.
 
 The most significant splits for hurdle events would be hurdle-based splits.   A hurdle-based split would be where a split is measured at every hurdle.  Hurdle-based splits would break hurdle events into the segments of the race between hurdles.  The slpits could let hurdlers and hurdle coaches evaluate 
 
-<h5>Reaction Time</h5>
+##### Reaction Time
 The reaction time has started to be measured by the IAAF.  The reaction time is the time it takes for a sprinter to exit their blocks.  The reaction is considered a major factor indicator regarding the relative and absolute performance of sprinters.
 
-<h5>Distance from inside of the lane</h5>
+##### Distance from inside of the lane
 Running lanes in track & field have a width that the runner can use.  Runners can use any part of the lane without disqualification.  Runners have a strong incentive to run in the inside of the lane when going around turns as running the inside of the lane allows the runner to run a shorter distance, thus gaining an advantage in the race.  By measuring how far from the inside of the lane an athlete is running, runners, coaches can determine how much less/more distance an athlete is running based on their position in their lane. 
  While this metric could be significant in all running events, sprinters have the most to gain from it due to the proportion of the small time differences between first and second place finishers.  There are scenarios where if a competitor had ran 6 inches closer to the inside of their lane, they would have beat their opponent, because they traveled less distance than than their adversary.
 
 
-<h5>Time spent traversing each hurdle</h5>
+##### Time spent traversing each hurdle
 For every moment that is not spent pushing off the ground, hurdlers are losing speed.  Therefore, hurdlers want to be in the air as little as possible, and running on the ground as much as possible.  By recording the time spent traversing each hurdle, hurdlers and hurdle coaches could accurately attribute bigger decreases in speed to the increased time traversing of the hurdle.  This will also help hurdlers and coaches to prioritize speed vs hurdle techniques in training.
 
-<h5>If each hurdle was cleared/impacted</h5>
+##### If each hurdle was cleared/impacted
 Recording whether a hurdler came in contact with a hurdle or not allows hurdlers and coaches to determine the role (or lack thereof) impacting a hurdle had their performance  Many hurdlers, both in grade school and elite, come into contact with hurdles regularly.  Running into a hurdle can take away momentum from the hurdler, requiring them to exert more energy to speed up (if they have enough energy left to do so), directly impacting the outcome of their race.
 
-<h5>Hurdle technique used</h5>
+##### Hurdle technique used
 Over the course of modern athletics, many techniques for traversing hurdles have existed.  While some have been determined to be superior to others, others have simply gone out of style. For example, <a href="https://en.wikipedia.org/wiki/Rod_Milburn">Rod Milburn</a> used the double-arm lead technique to go over hurdles to reduce his time in the air. 
  This technique was prominent and (to my knowledge), was never proven to inferior to modern techniques.  The technique lost popularity and fell into obscurity.  I learned of this because the sprinting coach at Virginia Tech while I was running there was <a href="https://en.wikipedia.org/wiki/Charles_Foster_(hurdler)">Charles Foster</a> raced against Milburn as an athlete, and went on to use the technique himself during his career.  Like the double-arm lead, it is very possible that some techniques that are not popularity may have merit as an effective technique.  Recording the technique used will allow the track & field community to evaluate old and new techniques more methodically, so, hopefully, superior techniques are chosen over the popular ones.  Such records of a hurdle technique can inform the decision of other coaches/athletes regarding whether or not to adopt the hurdling technique, or, in the case of the athlete who executed the performance, whether or not to continue with it.
 
  ## Jumps
 
- <h4>Technical metrics</h4>
+ #### Technical metrics
 
-<h5>Lefts/Rights/Strides count</h5>
+##### Lefts/Rights/Strides count
 The total number of strides leading up to take-off, commonly referred to lefts/rights in pole vault, and determine how far a jumper has to accelerate before take-off.  Jumpers/vaulters are capable of different performances when using different numbers of strides.  Recording the number used for a jump allows all coaches/athletes to determine whether the strides contributed to the quality (or lack thereof) of a given jump.  Katie Nageotte excellently describes how the terms "lefts"/"rights" came about in her <a href="https://knageotte.wixsite.com/polevault/post/pole-vault-101">Pole Vault 101</a> post under the <strong>In the Jump/Technique</strong> section.
 
-<h5>Speed at take-off</h5>
+##### Speed at take-off
 The speed at take-off directly correlates with the distance/height of the jump.  The number of lefts/rights/strides a jumper uses in a given jump serves as a limit on the distance the jumper has to accelerate before take-off.  But some athletes are able to accelerate faster than others, resulting in them running faster at take-off, making the number of lefts/rights/strides a tertiary predictor of the quality of a jump.
 
-<h5>Individual distances of the hop, skip, and jump (triple jump)</h5>
+##### Individual distances of the hop, skip, and jump (triple jump)
 The triple jump is normally measured as the cumulative distance of the hop, skip, and jump.  I would propose also measuring these individual components as a breakdown of how each component contributes towards the total distance of the triple jump.
 
  $$  d_{TJ} = d_\text{hop} + d_\text{skip} + d_\text{jump} $$
 
-<h5>Take-off distance from measuring point</h5>
+##### Take-off distance from measuring point
 In the long jump and the triple jump there is a board in the lane that the athlete must jump before, which also serves as the point at which the start of the jump is measured.  The  further the athlete takes-off before that barrier, the more distance the athlete lose on their jump because their jump includes a larger distance that isn't measured.  Therefore, the shorter the distance between the take-off and measuring point, the better.  This metric tells us how much distance was lost on their recorded jump due to a premature take-off, and tells us how far the actual distance jumped was.
 
 $$ d_\text{measured} = d_\text{actual} - d_\text{measuring\ point} $$
@@ -518,7 +534,7 @@ table.results-table td[rowspan] {
 
 table.results-table td[rowspan] span {
     position: sticky;
-    top: 4em;
+    top: 0;
 }
 </style>
 
