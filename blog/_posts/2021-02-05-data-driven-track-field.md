@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Data-driven Track & Field/Cross Country"
-description: Tired of plateaus? This article reveals powerful data-driven metrics derived from splits, pace & consistency to hack your training and dominate the competition. Learn how data analysis can revolutionize track & field performance!
+description: Metrics for more mathematical approach to evaluating and quantifying track & field performances, the competition, and areas for improvement.
 keywords: data,measurement,metric,speed,pace,rabbit,efficiency,track,field,jump,run,throw
 tags: data math clustering python
 ---
