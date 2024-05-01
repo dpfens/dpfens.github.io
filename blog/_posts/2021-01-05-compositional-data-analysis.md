@@ -47,12 +47,10 @@ Which makes the values from the subcomposition incomparable to those of the orig
 
 The ratio clearly respects the subcomposition coherence.  Ratios are strictly positive values, but can range widely based on the parts they are constructed from which can result in statistical distributions where two standard deviations from the mean are well below zero.  The common approach to solving this problem is converting the ratios to logratios using a log transformation to the ratios, which addresses this issue and provides a few other benefits as well:
 
-<ul>
 *  Converts the strictly positive values  into real number than can be positive or negative, which addresses the issue of standard deviations.
 *  Makes the statistical distribution symmetric
 *  Reduces the effect of outliers
 *  Converts the ratios into interval scale, which is key statistical computations such as means, variances, and regression models.
-</ul>
 
 {% include components/heading.html heading='Code & Usage' level=2 %}
 
@@ -361,6 +359,71 @@ compositional_asparagus = Composition(asparagus)
 del compositional_asparagus['protein']{% endraw %}{% endhighlight %}
 
 Any changes made using `__setitem__`, `pop`, or `__delitem__` will automatically be reflected in the ratios and logratios.
+
+{% include components/heading.html heading='Update: Aitchison Distance & ILR Transformation' level=2 %}
+
+There are other transformations which can be useful such as the Aitchison distance, which is a distance metric specifically designed for compositional data.   It takes into account the relative nature of compositions and is invariant to perturbation and powering operations.
+
+*  **Scale invariance**: Multiplying a composition by a positive constant does not change the distance between compositions. This property is important because compositional data is often subject to a constant sum constraint, and the absolute values of the components may not be as meaningful as their relative proportions.
+*  **Perturbation invariance**: Adding or subtracting a constant value to each component of a composition does not affect the distance. This property is useful because compositional data is often analyzed in terms of ratios or log-ratios of components.
+*  **Subcompositional coherence**: The distance between two compositions is not affected by the presence or absence of other components in the composition. This property is important because compositional data often involves subcompositions, where some components are analyzed separately from others.
+*  **Geometric interpretation**: The Aitchison distance has a geometric interpretation in the simplex space, which is the natural space for compositional data. The simplex is a subset of the real space where all components are non-negative and sum up to a constant. The Aitchison distance can be visualized as the Euclidean distance between the centered log-ratio (clr) transformations of the compositions in the simplex space.
+
+{% highlight python %}def aitchison_distance(x, y):
+    """
+    Calculates the Aitchison distance between two compositions x and y.
+    """
+    if len(x) != len(y):
+        raise ValueError("Input compositions must have the same length.")
+    
+    geo_mean_x = math.prod(x) ** (1 / len(x))
+    geo_mean_y = math.prod(y) ** (1 / len(y))
+    
+    log_ratio_x = [math.log(xi / geo_mean_x) for xi in x]
+    log_ratio_y = [math.log(yi / geo_mean_y) for yi in y]
+    
+    squared_diff = [(lx - ly) ** 2 for lx, ly in zip(log_ratio_x, log_ratio_y)]
+    distance = math.sqrt(sum(squared_diff))
+    
+    return distance
+{% endhighlight %}
+
+The Aitchison distance can be used to compare compositions based on the relative proportions of it's components rather than absolute values, and can be used in clustering algorithms such as DBSCAN or KMeans.
+
+The Isometric Log-Ratio (<abbr>ilr</abbr>) transformation is a technique used to transform compositional data from the simplex space to the real space while preserving the Aitchison geometry.  The ilr transformation allows us to use the Euclidean distance to compare transformed compositions on the original relative proportions of components.  Here is a breakdown of the 
+
+* **Simplex to real space**: Compositional data lies in a simplex space, which is a subset of the real space where all components are non-negative and sum up to a constant (usually 1 or 100). The ilr transformation maps the compositions from the simplex space to the real space, allowing the use of standard statistical techniques that assume Euclidean geometry.
+* **Isometry**: The ilr transformation is an isometry, which means that it preserves the Aitchison geometry of the simplex. The Aitchison distance between compositions in the simplex space is equal to the Euclidean distance between their ilr-transformed counterparts in the real space. This property ensures that the relative distances and relationships between compositions are maintained after the transformation.
+* **Orthonormal basis**: The ilr transformation relies on the construction of an orthonormal basis for the simplex space. An orthonormal basis is a set of vectors that are orthogonal (perpendicular) to each other and have unit length. The choice of the orthonormal basis is not unique, and different bases can be used depending on the specific problem or interpretation desired.
+
+{% highlight python %}def ilr_transformation(X):
+    """
+    Applies the Isometric Log-Ratio (ilr) transformation to a compositional data matrix X.
+    """
+    D = len(X[0])
+    
+    if any(xi <= 0 for row in X for xi in row):
+        raise ValueError("Input compositions must have positive components.")
+    
+    # Create the orthonormal basis for the simplex
+    psi = [[0] * (D - 1) for _ in range(D)]
+    for i in range(D - 1):
+        a = math.sqrt((D - i - 1) / (D - i))
+        for j in range(i + 1, D):
+            psi[j][i] = a
+        psi[i][i] = -math.sqrt((D - i - 1) / (D - i)) * (i + 1)
+    
+    # Apply the ilr transformation
+    X_ilr = []
+    for row in X:
+        log_row = [math.log(xi) for xi in row]
+        ilr_row = [sum(a * b for a, b in zip(log_row, psi_row)) for psi_row in zip(*psi)]
+        X_ilr.append(ilr_row)
+    
+    return X_ilr
+{% endhighlight %}
+
+The choice of the orthonormal basis for the ilr transformation can impact the interpretation of the results. Different bases may highlight different balances or contrasts between components, so the selection of the basis should be guided by the specific research question or domain knowledge.  
 
 {% include components/heading.html heading='Conclusion and Further Reading' level=2 %}
 
