@@ -6,6 +6,8 @@ keywords: K-Means clustering, X-Means clustering, dominant color extraction, ima
 tags: data math javascript
 ---
 
+{% include posts/dominant-color-extraction-app.html %}
+
 In the world of image processing and computer vision, extracting dominant colors from an image has become an increasingly important task. Whether you're a data-driven designer looking to create visually appealing color palettes or a machine learning enthusiast exploring the intricacies of unsupervised learning, understanding how to accurately identify and quantify the most prominent colors in an image is a valuable skill. In this blog post, we'll dive into the fascinating realm of dominant color extraction using the powerful combination of X-Means clustering and the CIE2000 color distance metric.
 
 The X-Means clustering algorithm, an extension of the well-known K-Means algorithm, has gained significant attention in recent years due to its ability to automatically determine the optimal number of clusters in a dataset. By leveraging the principles of unsupervised machine learning, X-Means allows us to group similar colors together without requiring prior knowledge of the number of dominant colors present in an image. This adaptability makes X-Means a valuable tool for color quantization and palette generation tasks.
@@ -1160,7 +1162,6 @@ The benefits of using X-Means clustering with CIE2000 are clear. This technique 
 To encourage further exploration and experimentation, I've provided code implementations for each key component of the dominant color extraction process. These implementations serve as a starting point for readers to dive deeper into the world of color clustering and image processing. We invite you to adapt, modify, and enhance these code snippets to suit your specific needs and explore the limitless potential of this technique.
 
 The significance of perceptually accurate color clustering becomes evident that this approach is not merely an academic exercise but a powerful tool with real-world implications. In a world increasingly driven by visual data, the ability to extract meaningful color information from images is crucial. By embracing techniques like X-Means clustering and CIE2000 color distance, we can create visually stunning designs based on human perception.
-
 
 {% include components/heading.html heading='References and Further Reading' level=2 %}
 
