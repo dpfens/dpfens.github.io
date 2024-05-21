@@ -20,15 +20,16 @@ layout: default
     </div>
     <div class="hero-right hero-top hero-content d-flex flex-column justify-content-center pt-3 min-vh-50">
         <h2 class="headline">From algorithms to altruism: How I code for a cause</h2>
-        <p class="tagline">My hometown, nestled in a world increasingly driven by technology, faces the risk of falling through the cracks. The digital divide widens, leaving some behind. But I refuse to accept a future where anyone is left behind.</p>
-        <p class="tagline">I believe tech can be a powerful force for good, and I want to be a part of that movement. I've seen how code can connect isolated communities, provide education to underserved areas, and empower those who've been marginalized. It's not always easy, but the moments when my work makes a real impact in someone's life make it all worthwhile.</p>
+        <p class="tagline">My hometown, a small, close-knit community nestled on the coast of Virginia, faces the risk of being left behind in a world increasingly driven by technology. As the digital divide widens, some residents struggle to keep pace with the rapid changes. I refuse to accept a future where anyone in my hometown, or anywhere else, is denied the opportunities that technology provides.</p>
+        <p class="tagline">I believe technology can be a powerful force for good, and I am committed to being a part of that movement. I've seen how technology can connect isolated communities, and provide education to underserved areas. It's not always easy, but the moments when my work makes a real impact makes the late nights worthwhile.</p>
     </div>
 </div>
 
 <div class="row pt-5">
     <div class="col-12 offset-md-2 col-md-8">
         <h2 class="headline text-center">The palette of my skills</h2>
-        <p class="tagline">My skills are a work in progress, a symphony with some beautiful movements and a few off-key notes. Web dev, systems, ML, and OR are a few of the instruments I've learned, but my performance is not over. Expect passion, curiosity, and a constant drive to improve. Take a peek below at the instruments I've mastered (and still learning to tune) and those I'm just picking up.</p>
+        <p class="tagline">My skills are like a thriving garden, with some areas blooming beautifully and others still budding with potential. Web development, systems engineering, machine learning, and operations research are just a few of the plants I've cultivated over time. Like any dedicated gardener, I tend to each skill with care, nurturing them with knowledge and experience to help them flourish.</p>
+        <p class="tagline">While some parts of my garden are lush and vibrant, showcasing the fruits of my labor, others are still seedlings, requiring patience, attention, and continuous care to reach their full potential. I approach my skills with a gardener's mindset, understanding that growth is a process and that even the most beautiful gardens require ongoing maintenance and improvement.</p>
     </div>
 </div>
 
