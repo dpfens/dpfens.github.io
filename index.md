@@ -36,14 +36,14 @@ layout: default
 <div class="bg-orange-1">
     <div class="row pt-5 pb-4 border-3 border-top border-black">
         <div class="col-12 offset-md-1 col-md-10 offset-lg-2 col-lg-8">
-            <p class="sub-headline">Messy problems are my playground. I thrive on crafting elegant, sustainable solutions tailored to specific challenges. My evolving skills help me unravel complexity, build for impact, and champion sustainable solutions.</p>
+            <p class="sub-headline">I like to craft sustainable solutions tailored to specific challenges. Explore my snippets and mini-projects that serve as components of sustainable solutions.</p>
         </div>
     </div>
 
     <div class="grid gx-3 gy-3 px-3 pb-5">
 
 {% capture panelContent %}
-I craft dynamic web experiences from the ground up, wielding Python, PHP, and Java to sculpt robust backends. ReactJS and AngularJS become my paintbrushes, shaping interactive canvases that work even when the wifi doesn't. Forget cookie-cutter solutions, let's build something authentic (and maybe offline-ready, just in case).
+I craft dynamic web experiences from the ground up using Python, PHP, and Java to sculpt robust backends.  I use ReactJS and AngularJS to build apps that work even when the wifi doesn't.
 {% endcapture %}
     {% assign panelContent = panelContent | markdownify %}
     {% include components/panel.html title="Web/App Development" content=panelContent extraClassName="bg-red-3" %}
@@ -84,7 +84,7 @@ I architect resilient, scalable systems using Docker orchestration, microservice
 <div class="bg-blue-1">
     <div class="row pt-5 pb-4 border-3 border-top border-black">
         <div class="col-12 offset-md-1 col-md-10 offset-lg-2 col-lg-8">
-            <p class="sub-headline">My blog offers a glimpse into my mind, it's a sandbox for exploring messy, real-world problems problems and their solutions. I delve into sustainable solutions, impact-driven design, and practical approaches that go beyond the next shiny trend.</p>
+            <p class="sub-headline">My blog offers a glimpse into my mind, where I explore messy, real-world problems problems and their solutions. I look into sustainable solutions, impact-driven design, and practical approaches that go beyond the next shiny trend.</p>
         </div>
     </div>
     <div class="grid gx-3 gy-3 px-3 pb-5">
