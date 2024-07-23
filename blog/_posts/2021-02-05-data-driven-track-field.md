@@ -499,6 +499,8 @@ The triple jump is normally measured as the cumulative distance of the hop, skip
 
  $$  d_{TJ} = d_\text{hop} + d_\text{skip} + d_\text{jump} $$
 
+By considering each component of the jump as a percentage of the total attempt, we can use metrics such as the [Hellinger distance](https://en.wikipedia.org/wiki/Hellinger_distance) to measure how similar/different the component breakdown is between an athlete's attempts over the course of a competition, telling coaches & athletes how their sequential performances tend to change through the competition to inform where to focus their training regimen.
+
 ##### Take-off distance from measuring point
 In the long jump and the triple jump there is a board in the lane that the athlete must jump before, which also serves as the point at which the start of the jump is measured.  The  further the athlete takes-off before that barrier, the more distance the athlete lose on their jump because their jump includes a larger distance that isn't measured.  Therefore, the shorter the distance between the take-off and measuring point, the better.  This metric tells us how much distance was lost on their recorded jump due to a premature take-off, and tells us how far the actual distance jumped was.
 
