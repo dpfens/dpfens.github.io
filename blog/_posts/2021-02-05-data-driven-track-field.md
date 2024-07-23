@@ -320,13 +320,29 @@ The metrics quantify a specific aspect of a competitor's performance, and descri
 
 #### Race
 
+For coaches, race-level metrics provide invaluable insights that can significantly enhance their training strategies and race preparations. These metrics offer a comprehensive view of how their athletes perform under various conditions and against different levels of competition. By analyzing data such as negative split ratios, pacing consistency, and performance variation across different course segments, coaches can identify areas for improvement in their athletes' race strategies and physical preparation. Moreover, metrics that account for course difficulty and weather conditions allow coaches to set more accurate performance goals and better evaluate their athletes' progress over time, leading to more effective and personalized training programs.
+
+Race officials and organizers benefit greatly from these metrics as they strive to create fair, challenging, and enjoyable events. Course difficulty ratings, DNF rates, PB rates, and weather impact factors can help organizers assess and improve course designs, ensuring they find the right balance between challenge and accessibility. Metrics related to race competitiveness, such as finishing time spreads and elite participation rates, can be used to market events and attract a diverse field of participants.
+
+For governing organizations like USATF, race-level metrics serve as crucial tools for maintaining the integrity and progression of the sport. These metrics enable fair comparisons between different events and venues, facilitating the creation of standardized qualifying times for championship events. Performance trends derived from these metrics can inform rule changes, such as adjusting age group categories or implementing new safety regulations. Moreover, comprehensive race data helps governing bodies track the sport's growth, identify emerging trends, and make informed decisions about resource allocation for athlete development programs. By analyzing metrics across multiple events and seasons, these organizations can also work towards reducing disparities in competition quality and ensuring a level playing field for athletes across different regions.
+
 <dl>
+    <dt>Elevation gain/loss</dt>
+    <dd>Total elevation gain and loss throughout the course, indicating overall terrain difficulty.</dd>
+    <dt>Depth of field index</dt>
+    <dd>Percentage of runners finishing within a certain time (e.g., 10%) of the winner.</dd>
+    <dt>Personal best (PB) percentage</dt>
+    <dd>The proportion of runners who achieved a personal best time in the race. This can indicate how favorable the course and conditions were for fast times.</dd>
     <dt>Negative split ratio</dt>
     <dd>The percentage of race participants who ran negative splits (finishing faster in the second half). This metric indicates the prevalence of strong finishes and race strategies.  This can also be calculated for an individual across multiple races.</dd>
     <dt>Slowest race segment</dt>
     <dd>Cross country and road races have different terrain in different segments.  By identifying which segments/splits are consistently fastest or slowest, we can estimate a difficulty of the segments.  The splits for these segments cna also be compared to the splits of participants from other races to further refine the validity of the measure.</dd>
     <dt>Mean/Median race time/split</dt>
     <dd>Compare the mean and median race/split times to identify if the race/segment skewed faster or slower, in a simple measure for anyone to understand.</dd>
+    <dt>Dropout rate<dt>
+    <dd>The percentage of registered participants who did not finish the race. This can indicate course difficulty, weather conditions, or other factors affecting race completion.</dd>
+    <dt>Pace variability</dt>
+    <dd>A measure of how consistent runners' paces were throughout the race. This can be calculated as the standard deviation of split times for each runner, then averaged across all participants.</dd>
 </dl>
 
 #### Clusters/Packs
@@ -437,16 +453,16 @@ Sprints and distance events share many of the same qualities.  Sprints have a fe
 
 <ul>
 *  Sprinters have more strategic value in the context of a team.  Sprinters tend to perform better when competing in multiple events, and thus tend to yield more points in team competitions.  This means that coaches correctly allocating sprinters to the optimal events can yield more benefits to the team.
-*  Sprint events are less strategic.  Most sprinting events do not have time for  many events to occur that require conscious decision-making, so in-race strategic metrics will not likely lead to significant changes in the race outcome.
+*  Sprint events are less strategic.  Most sprinting events do not have time for many mid-race events to occur that require conscious decision-making, so in-race strategic metrics will not likely lead to significant changes in the race outcome.
 *  The act of sprinting/hurdling is more technical than distance events.  The sprint events require more tactical expertise such as coming out of blocks, maintaining sprinting form throughout the race, proper hurdle form, and dipping at the finish line.  Based on the importance of these technical skills, sprinters and sprint coaches could benefit by having more technical metrics to evaluate their performances.
 </ul>
 
 Based on these qualities, we will be focusing more on technical metrics than strategic metrics for sprinting/hurdles.
 
 ##### Distance and Hurdle-based Splits
-Sprinters can benefit from splits.  Even in 100m races, splits can be beneficial for sprinters learning where they are slow, and where they are fast.  The more splits that are measured, the more fluctuations that can be identified throughout a race.
+Sprinters can benefit from splits too.  Even in 100m races, splits can be beneficial for sprinters learning where they are slow, and where they are fast.  The more splits that are measured, the more fluctuations that can be identified throughout a race.
 
-The most significant splits for hurdle events would be hurdle-based splits.   A hurdle-based split would be where a split is measured at every hurdle.  Hurdle-based splits would break hurdle events into the segments of the race between hurdles.  The slpits could let hurdlers and hurdle coaches evaluate 
+The most significant splits for hurdle events would be hurdle-based splits.   A hurdle-based split would be where a split is measured at every hurdle.  Hurdle-based splits would break hurdle events into the segments of the race between hurdles.  The slpits could let hurdlers and hurdle coaches evaluate when and how much hurdler's speed is effected by each hurdle in a given race.
 
 ##### Reaction Time
 The reaction time has started to be measured by the IAAF.  The reaction time is the time it takes for a sprinter to exit their blocks.  The reaction is considered a major factor indicator regarding the relative and absolute performance of sprinters.
@@ -461,6 +477,8 @@ For every moment that is not spent pushing off the ground, hurdlers are losing s
 
 ##### If each hurdle was cleared/impacted
 Recording whether a hurdler came in contact with a hurdle or not allows hurdlers and coaches to determine the role (or lack thereof) impacting a hurdle had their performance  Many hurdlers, both in grade school and elite, come into contact with hurdles regularly.  Running into a hurdle can take away momentum from the hurdler, requiring them to exert more energy to speed up (if they have enough energy left to do so), directly impacting the outcome of their race.
+
+The sequence of ordered boolean (true/false) values indicating if the corresponding hurdle was cleared/impacted can be used to compare smilarities of the competitors clears/impacts, and compare a racers clears/impacts over time to identify long-term and emerging trends.
 
 ##### Hurdle technique used
 Over the course of modern athletics, many techniques for traversing hurdles have existed.  While some have been determined to be superior to others, others have simply gone out of style. For example, <a href="https://en.wikipedia.org/wiki/Rod_Milburn">Rod Milburn</a> used the double-arm lead technique to go over hurdles to reduce his time in the air. 
