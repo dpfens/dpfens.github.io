@@ -360,14 +360,14 @@ del compositional_asparagus['protein']{% endraw %}{% endhighlight %}
 
 Any changes made using `__setitem__`, `pop`, or `__delitem__` will automatically be reflected in the ratios and logratios.
 
-{% include components/heading.html heading='Update: Aitchison Distance & ILR Transformation' level=2 %}
+{% include components/heading.html heading='Update: Aitchison Distance & Log-Ratio Transformation' level=2 %}
 
-There are other transformations which can be useful such as the Aitchison distance, which is a distance metric specifically designed for compositional data.   It takes into account the relative nature of compositions and is invariant to perturbation and powering operations.
+In real-life applications we may want to be able to integrate transformations into data science applications.  One of the key challenges in analyzing compositional data is the constant sum constraint: the components of a composition always sum to a constant (usually 1 or 100%). This constraint violates many assumptions of standard statistical methods.  John Aitchison developed several techniques to address this challenge.  The Aithison distance is a distance metric specifically designed for compositional data.  It takes into account the relative nature of compositions and is invariant to perturbation and powering operations.
 
 *  **Scale invariance**: Multiplying a composition by a positive constant does not change the distance between compositions. This property is important because compositional data is often subject to a constant sum constraint, and the absolute values of the components may not be as meaningful as their relative proportions.
 *  **Perturbation invariance**: Adding or subtracting a constant value to each component of a composition does not affect the distance. This property is useful because compositional data is often analyzed in terms of ratios or log-ratios of components.
 *  **Subcompositional coherence**: The distance between two compositions is not affected by the presence or absence of other components in the composition. This property is important because compositional data often involves subcompositions, where some components are analyzed separately from others.
-*  **Geometric interpretation**: The Aitchison distance has a geometric interpretation in the simplex space, which is the natural space for compositional data. The simplex is a subset of the real space where all components are non-negative and sum up to a constant. The Aitchison distance can be visualized as the Euclidean distance between the centered log-ratio (clr) transformations of the compositions in the simplex space.
+*  **Geometric interpretation**: The Aitchison distance has a geometric interpretation in the simplex space, which is the natural space for compositional data. The simplex is a subset of the real space where all components are non-negative and sum up to a constant. The Aitchison distance can be visualized as the Euclidean distance between the centered log-ratio (CLR) transformations of the compositions in the simplex space.
 
 {% highlight python %}def aitchison_distance(x, y):
     """
@@ -388,17 +388,19 @@ There are other transformations which can be useful such as the Aitchison distan
     return distance
 {% endhighlight %}
 
-The Aitchison distance can be used to compare compositions based on the relative proportions of it's components rather than absolute values, and can be used in clustering algorithms such as DBSCAN or KMeans.
+The Aitchison distance can be used to compare compositions based on the relative proportions of it's components rather than absolute values, and can be used in clustering algorithms such as DBSCAN or KMeans without pre-processing the compositional data.
 
-The Isometric Log-Ratio (<abbr>ilr</abbr>) transformation is a technique used to transform compositional data from the simplex space to the real space while preserving the Aitchison geometry.  The ilr transformation allows us to use the Euclidean distance to compare transformed compositions on the original relative proportions of components.  Here is a breakdown of the 
+{% include components/heading.html heading='Isometric Log-Ratio' level=3 %}
 
-* **Simplex to real space**: Compositional data lies in a simplex space, which is a subset of the real space where all components are non-negative and sum up to a constant (usually 1 or 100). The ilr transformation maps the compositions from the simplex space to the real space, allowing the use of standard statistical techniques that assume Euclidean geometry.
-* **Isometry**: The ilr transformation is an isometry, which means that it preserves the Aitchison geometry of the simplex. The Aitchison distance between compositions in the simplex space is equal to the Euclidean distance between their ilr-transformed counterparts in the real space. This property ensures that the relative distances and relationships between compositions are maintained after the transformation.
-* **Orthonormal basis**: The ilr transformation relies on the construction of an orthonormal basis for the simplex space. An orthonormal basis is a set of vectors that are orthogonal (perpendicular) to each other and have unit length. The choice of the orthonormal basis is not unique, and different bases can be used depending on the specific problem or interpretation desired.
+The Isometric Log-Ratio (<abbr>ilr</abbr>) transformation is a technique used to transform compositional data from the simplex space to the real space while preserving the Aitchison geometry (and the properties it provides).  The ILR transformation allows us to use the Euclidean distance to compare transformed compositions on the original relative proportions of components.  Here is a breakdown of the 
+
+* **Simplex to real space**: Compositional data lies in a simplex space, which is a subset of the real space where all components are non-negative and sum up to a constant (usually 1 or 100). The ILR transformation maps the compositions from the simplex space to the real space, allowing the use of standard statistical techniques that assume Euclidean geometry.
+* **Isometry**: The ILR transformation is an isometry, which means that it preserves the Aitchison geometry of the simplex. The Aitchison distance between compositions in the simplex space is equal to the Euclidean distance between their ilr-transformed counterparts in the real space. This property ensures that the relative distances and relationships between compositions are maintained after the transformation.
+* **Orthonormal basis**: The ILR transformation relies on the construction of an orthonormal basis for the simplex space. An orthonormal basis is a set of vectors that are orthogonal (perpendicular) to each other and have unit length. The choice of the orthonormal basis is not unique, and different bases can be used depending on the specific problem or interpretation desired.
 
 {% highlight python %}def ilr_transformation(X):
     """
-    Applies the Isometric Log-Ratio (ilr) transformation to a compositional data matrix X.
+    Applies the Isometric Log-Ratio (ILR) transformation to a compositional data matrix X.
     """
     D = len(X[0])
     
@@ -423,7 +425,54 @@ The Isometric Log-Ratio (<abbr>ilr</abbr>) transformation is a technique used to
     return X_ilr
 {% endhighlight %}
 
-The choice of the orthonormal basis for the ilr transformation can impact the interpretation of the results. Different bases may highlight different balances or contrasts between components, so the selection of the basis should be guided by the specific research question or domain knowledge.  
+The choice of the orthonormal basis for the ILR transformation can impact the interpretation of the results. Different bases may highlight different balances or contrasts between components, so the selection of the basis should be guided by the specific research question or domain knowledge. 
+
+{% include components/heading.html heading='Centered Log-Ratio' level=3 %}
+
+The centered log ratio (<abbr>CLR</abbr>) transformation is another powerful tool introduced by John Aitchison to address these challenges. It allows us to transform compositional data into a form that can be analyzed using standard multivariate statistical techniques.
+
+*  It removes the constant sum constraint, allowing the use of standard multivariate statistical methods.
+*  It preserves the relative magnitudes and relationships between components.
+*  It facilitates the interpretation of compositional variability and covariance structure.
+
+While the CLR transformation is useful, it's important to be aware of its limitations.
+
+*  The CLR transformation cannot handle zero values in the composition. Data preprocessing may be needed to address this.  he inability to handle zero values is a significant practical concern, especially in fields like ecology or microbiome research where zero counts are common. Various strategies exist to address this, such as multiplicative replacement or Bayesian approaches, but each has its own implications for the analysis
+*  The resulting CLR-transformed data has a singular covariance matrix, which can cause issues in some multivariate analyses like principal component analysis or discriminant analysis.
+*  Interpreting results in the CLR space can be challenging and may require back-transformation.
+
+{% highlight python %}def clr_transformation(compositions):
+    """
+    Perform the centered log-ratio (CLR) transformation on compositional data.
+    
+    Parameters:
+    compositions : list of list
+        List of compositions. Each inner list is a composition,
+        and each element in the inner list is a component.
+    
+    Returns:
+    list of list
+        clr-transformed data
+    """
+    
+    clr_transformed = []
+    for composition in compositions:
+        geo_mean = geometric_mean(composition)
+        clr_comp = [math.log(max(x, 1e-10) / geo_mean) for x in composition]
+        clr_transformed.append(clr_comp)
+    
+    return clr_transformed
+
+
+def geometric_mean(composition):
+        """Calculate the geometric mean of a composition."""
+        log_sum = sum(math.log(max(x, 1e-10)) for x in composition)
+        return math.exp(log_sum / len(composition)){% endhighlight %}
+
+
+The ILR and CLR are both transformations differ in their approach and properties. While the ILR transformation creates orthonormal coordinates that preserve distances and angles, the CLR transformation centers the data on the geometric mean of the composition. The ILR results in a set of coordinates equal to the number of parts minus one, maintaining full rank, whereas the CLR produces a set of coordinates equal to the number of parts, resulting in a singular covariance matrix. ILR coordinates are interpretable in terms of log-ratios between groups of parts, while CLR coordinates represent the logarithm of each part relative to the geometric mean of all parts.
+
+When choosing between ILR and CLR, consider the specific requirements of your analysis. Use ILR when you need a full-rank transformation for statistical methods that assume non-singularity, such as regression or principal component analysis. ILR is also preferable when interpreting relationships between groups of components is important. On the other hand, CLR is more suitable when you want to preserve the number of original components and when the interpretation of individual parts relative to the whole composition is crucial. CLR can be particularly useful for exploratory data analysis and visualizations, as it maintains a one-to-one correspondence with the original parts. However, be cautious when applying methods that assume non-singularity to CLR-transformed data.
 
 {% include components/heading.html heading='Conclusion and Further Reading' level=2 %}
 
