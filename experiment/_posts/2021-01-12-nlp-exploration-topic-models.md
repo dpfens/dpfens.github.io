@@ -922,6 +922,9 @@ Topic discovery does not need to be done entirely manually.  Some of these model
     <figcaption>An example workflow for processing corpuses of text in the context of topic modelling.  A feedback loop can be created using PLDA models and LLDA models to manually filter out incoherent topics.  By repeatedly finding new topics outside of the current set of known topics, more topics are found with each iteration, until there are no more coherent topics to be identified or the user is satisfied.  The words that contribute solely to incoherent topics could be considered stopwords and removed from the preprocessed documents.</figcaption>
 </figure>
 
-The topic compositions of a given corpus of text can be analyzed using <a href="/blog/compositional-data-analysis">compositional data analysis</a> to remove outliers make inferences about the relationships between topics.
 
-Lastly, topic models can also be applied to data other than text.  For example, topic models have been adapted to create <a href="https://snap.stanford.edu/node2vec/">embeddings of nodes in a graph</a>.  Happy modelling!
+Some other applications include:
+
+*  [topic distributions as compositional data](/blog/compositional-data-analysis)
+*  [Network node embeddings as node2vec](https://snap.stanford.edu/node2vec/)
+*  Documents as trajectories of topic distributions, allowing usage of time series analysis of documents.
