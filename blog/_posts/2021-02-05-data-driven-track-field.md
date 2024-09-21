@@ -262,7 +262,7 @@ We could go about creating our own custom metrics for distance running, which wo
 
 <dl>
     <dt>Opening position</dt>
-    <dd>The position obtained by a competitor in the opening of the race.  This period of time would be from when the starting gun goes of, to when the competitors have all reached the inside of the track.</dd>
+    <dd>The position obtained by a competitor in the opening of the race.  The race opening would be from when the starting gun goes of, to when the competitors have all reached the inside of the track.</dd>
 
     <dt>Early/middle/closing position improvement</dt>
     <dd>These 3 metrics number of positions a competitor improves  over the first/middle/last x% of a race.  If this number is negative, indicates that they their position worsened during that period.</dd>
@@ -344,6 +344,72 @@ For governing organizations like USATF, race-level metrics serve as crucial tool
     <dt>Pace variability</dt>
     <dd>A measure of how consistent runners' paces were throughout the race. This can be calculated as the standard deviation of split times for each runner, then averaged across all participants.</dd>
 </dl>
+
+##### Normalization
+
+At its core, normalization is the process of adjusting values measured on different scales to a common scale, enabling meaningful comparisons. For runners and race analysts, this concept is particularly important when examining split times across various race distances, terrains, weather conditions, and competitor speeds.
+
+Raw split times, while informative, can be misleading when comparing performances across different races or even within the same race. Factors such as elevation changes, weather conditions, and fatigue can significantly impact split times, making direct comparisons challenging. Normalization addresses these issues by creating a level playing field, allowing us to discern patterns, assess relative performance, and gain deeper insights into a runner's pacing strategy and overall effort.
+
+Imagine trying to compare your 5K splits to your marathon splits, or your performance in a hilly trail race to a flat road race. Without normalization, these comparisons would be apples to oranges. Normalization allows us to account for factors such as distance, terrain, weather conditions, and even individual athletic ability. This enables runners and coaches to gain deeper insights into performance trends, make fair comparisons, and set realistic goals.
+For example, normalizing data could help you understand if your pacing strategy in a 10K is relatively more consistent than in a half marathon, even though the absolute pace differences between splits might be smaller in the longer race.
+
+###### Min-Max Scaling
+
+Min-max scaling is perhaps the most straightforward normalization technique. It scales all values to a fixed range, typically between 0 and 1. This method is intuitive because it preserves the relative differences between data points.
+For instance, if you're comparing split times across different races, min-max scaling would transform the slowest split to 0 and the fastest to 1, with all others falling in between. This allows you to easily see which portions of each race were relatively faster or slower, regardless of the absolute pace.  However, it's important to note that this method is sensitive to outliers and may not account for the overall distribution of split times unless explicitly done so.
+
+###### Age/Gender Normalization
+
+Age/Gender/Regional Normalization involves adjusting raw running times based on established age-graded tables or world records for specific age groups and genders. These tables are typically derived from statistical analyses of top performances across various distances and demographics. For instance, a female runner's marathon time might be normalized against the women's world record, while a male runner's time would be normalized against the men's world record, allowing for a fair comparison of their relative achievements.
+
+The mathematics behind normalization can vary, but a common approach is to calculate a percentage of the age/gender-group world record or to use a performance coefficient. This results in a score that represents how close a runner's performance is to the theoretical best for their age and gender. For example, a normalized score of 80% would indicate that the runner's performance is 80% as good as the world's best for their age and gender in that particular event. This approach not only facilitates fairer comparisons but also provides individual runners with a consistent metric to track their own progress over time, regardless of the natural effects of aging on raw performance.
+
+###### Relative
+
+Relative normalization is a particularly useful technique in this context. This method involves dividing each split time by the overall race time, resulting in a percentage or decimal representation of how much time was spent on each section of the race relative to the total. For instance, if a runner completes a 10K race in 40 minutes with 5K splits of 19:30 and 20:30, the normalized splits would be 0.4875 and 0.5125, respectively.  This method is particularly powerful for comparing pacing strategies across different race distances or between athletes.
+
+This relative normalization allows us to identify patterns in pacing strategies across different runners, races, or even an individual's performance over time. We can easily see if a runner tends to start strong and fade (resulting in lower normalized values for earlier splits) or if they employ a negative split strategy (with higher normalized values for later splits). This information can be invaluable for coaches and athletes looking to optimize race strategies.
+
+###### Distance from Average Pace
+
+For those focused on pacing strategy, normalizing splits based on their distance from the average pace can be illuminating. This approach highlights deviations from a steady pace and can reveal patterns such as positive or negative splits. Taking this a step further, calculating the standard deviation of speed or pace for each segment of the race provides a measure of consistency. A lower standard deviation indicates a more even pacing strategy, which is often associated with optimal performance in distance events. By combining these normalized measures, runners can gain a comprehensive understanding of their pacing dynamics and work towards refining their race strategy for peak performance.
+
+For example, if your average pace in a marathon was 8:00/mile, and you ran the first mile in 7:45, it would be normalized to -0.25, indicating you ran 15 seconds faster than your average pace.
+
+###### Z-Score Normalization
+
+Z-score normalization takes this concept further by expressing each split as a number of standard deviations from the mean. This method is particularly useful when comparing splits across different races or runners, as it accounts for both the average pace and the variability of pace within each race. Z-scores allow us to identify which splits were truly exceptional relative to the runner's overall performance, rather than just fast or slow in absolute terms.
+
+In the context of running splits, a z-score of 0 would represent the average split time, with positive scores indicating slower splits and negative scores faster ones. Z-score normalization is especially valuable when you want to understand how extreme a particular split is relative to the overall distribution of splits in a race or across multiple races.
+
+##### Similarity
+
+###### Strategy/Execution
+
+As runners, we often discuss race strategies in qualitative terms - negative splits, even pacing, or the dreaded positive splits. But what if we could quantify these strategies and compare them objectively? Enter the Earth Mover's Distance (EMD), a powerful mathematical tool that's gaining traction in the world of running analytics.
+The EMD, originally developed for image processing, provides a way to measure the dissimilarity between two probability distributions. In the context of running, we can use it to compare different racing strategies by treating each runner's pace distribution over the course of a race as a probability distribution. This approach allows us to go beyond simple concepts like "negative" or "positive" splits and capture the nuances of how a runner distributes their effort throughout an entire race.
+
+Why is this important? For one, it gives coaches and athletes a more precise way to analyze and compare race strategies. Instead of merely saying that two runners had different approaches, we can now quantify exactly how different those approaches were. This opens up new avenues for personalized training and race planning. For example, a coach could use EMD to track how closely an athlete adheres to their planned race strategy across multiple events, or to compare an athlete's typical strategy to those of top performers in their event.
+
+Moreover, the EMD can reveal insights that might be missed by traditional metrics. Consider two runners who both run negative splits, but one does so with a dramatic surge in the final quarter, while the other gradually increases pace throughout the race. Traditional split analysis might treat these strategies as similar, but the EMD would reveal the substantial differences between them.
+
+From a research perspective, the EMD could be used to study large datasets of race performances. Researchers could cluster runners based on their pacing strategies, potentially uncovering patterns that correlate with factors like event distance, athlete experience, or even physiological characteristics. This could lead to new insights about optimal pacing strategies for different types of runners or races.
+
+It's important to note that while the EMD provides a powerful tool for quantifying and comparing race strategies, it doesn't inherently tell us which strategy is better. A large EMD between two runners' strategies doesn't necessarily mean one runner performed better than the other - it simply means their approaches were very different. The value of the EMD lies in its ability to objectively quantify these differences, providing a foundation for further analysis and decision-making.
+
+###### Quality
+One particularly effective approach involves dividing a given performance by a relevant record - be it local, regional, national, or world record at the time the race took place. This method allows us to contextualize a performance within its specific temporal and geographical framework. For instance, a 10.00-second 100-meter dash in 1990 would be evaluated differently than the same time achieved in 2024, as the world record and overall competitive landscape have evolved.
+
+By expressing performances as a percentage of the corresponding record, we create a normalized scale that accounts for the general progression of the sport. This normalization enables us to compare performances across different events, genders, and time periods with greater fairness. A performance that is 98% of a world record in the marathon can be meaningfully compared to one that is 97% of a world record in the long jump, despite the vastly different nature of these events.
+
+This approach has several advantages. First, it automatically accounts for the inherent differences in absolute times across distances. A 10:00 3000m and a 15:00 5000m might seem hard to compare directly, but if we know they're both 90% of their respective world records, we can immediately grasp their similar levels of excellence. Second, by using records relevant to the time period when a race took place, we can make fairer historical comparisons, acknowledging that a 4:05 mile in 1950 is a very different achievement than the same time today.
+
+To further refine our analysis, these normalized values can be used to create a similarity metric based on the contextual quality of the performances. For example, if Athlete A's performance is 0.96 of the relevant record, and Athlete B's is 0.94, the difference metric would be 0.02, translating to a 0.98 similarity metric. This number succinctly expresses how close or far apart these two performances are in terms of their relative quality.
+
+Moreover, these quantified similarity metrics can be applied to analyze an athlete's consistency across different events or throughout their career. By comparing an athlete's performances in various disciplines to the respective records, we can gain insights into their versatility and specialization. This method can also help in identifying outlier performances or detecting potential doping cases by flagging unusually large improvements relative to the established records.
+
+However, this method isn't without its limitations. World records in some events may be of varying quality - an exceptionally strong world record in one event might make performances in that event appear relatively weaker compared to events with "softer" records. Additionally, this approach doesn't account for the varying difficulty of improving as performances get closer to world-record level.
 
 #### Clusters/Packs
 <b>EDIT</b>: I originally wrote extensively on how to pack detection based on density.  I decided to split that into its <a href="https://dougfenstermacher.com/blog/pack-behavior-classifications-competition">own post</a>.  In short, pack membership can and should be tracked over time in races as well as the role competitors have in each pack.  Pack membership can be performed on a computer very cheaply and quickly, to the point that it can be done in real-time.  Below is a alluvial representing the creation and disbanding of packs over time, as well as the changes in membership.
@@ -451,11 +517,9 @@ def intersection_distance(speed1, distance1, speed2, distance2):
 
 Sprints and distance events share many of the same qualities.  Sprints have a few unique qualities: 
 
-<ul>
 *  Sprinters have more strategic value in the context of a team.  Sprinters tend to perform better when competing in multiple events, and thus tend to yield more points in team competitions.  This means that coaches correctly allocating sprinters to the optimal events can yield more benefits to the team.
 *  Sprint events are less strategic.  Most sprinting events do not have time for many mid-race events to occur that require conscious decision-making, so in-race strategic metrics will not likely lead to significant changes in the race outcome.
 *  The act of sprinting/hurdling is more technical than distance events.  The sprint events require more tactical expertise such as coming out of blocks, maintaining sprinting form throughout the race, proper hurdle form, and dipping at the finish line.  Based on the importance of these technical skills, sprinters and sprint coaches could benefit by having more technical metrics to evaluate their performances.
-</ul>
 
 Based on these qualities, we will be focusing more on technical metrics than strategic metrics for sprinting/hurdles.
 
