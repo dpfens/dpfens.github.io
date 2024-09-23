@@ -8,9 +8,335 @@ tags: trajectory math python
 
 {% include components/heading.html heading='Overview' level=2 %}
 
-For the last couple of years, I have been working with time series data.  As usual, it started with something I was trying to do that involved race results.  But I discovered for myself that trajectory analysis can be applied to many fields.  In fact, it can be applied to any temporal data that uses vector spaces.  Some of the applications include identifying segments of movement, trajectory clustering, convoy detection, pattern mining, and classification, anomaly detection, and predictions.  In this post, I will only cover movement segmentation, trajectory clustering, and convoy detection.
+For the last couple of years, I have been working with time series data.  As usual, it started with something I was trying to do that involved race results.  But I discovered for myself that trajectory analysis can be applied to many fields.  In fact, it can be applied to any temporal data that uses vector spaces.  Some of the applications include identifying segments of movement, trajectory clustering, convoy detection, pattern mining, and classification, anomaly detection, and predictions.  In this post, I will only cover segmentation, trajectory clustering, and convoy detection.
 
-{% include components/heading.html heading='Movement Segmentation' level=2 %}
+{% include components/heading.html heading='Segmentation' level=2 %}
+
+{% include components/heading.html heading='Change Points' level=3 %}
+
+Change point detection is a fundamental technique in time series analysis, particularly crucial in trajectory segmentation. This method aims to identify points in a time series where significant changes occur in the underlying statistical properties of the data. In the context of trajectory segmentation, change point detection helps divide complex paths or movements into distinct, meaningful segments, each potentially representing different behaviors, states, or environmental influences.
+
+The primary goal of change point detection in trajectory analysis is to pinpoint moments where the characteristics of movement undergo substantial shifts. These shifts could manifest as changes in speed, direction, acceleration, or other relevant metrics. By identifying these critical points, analysts can break down complex trajectories into simpler, more homogeneous segments, facilitating deeper insights into the behavior of moving entities, be they vehicles, animals, or even particles in a physical system.
+
+Applications of change point detection in trajectory segmentation span various fields. In transportation, it can help identify different phases of a vehicle's journey, such as stops, turns, or changes in traffic conditions. Wildlife researchers use this technique to analyze animal movements, segmenting paths into behaviors like foraging, resting, or migration. In sports analytics, change point detection can break down an athlete's performance into distinct phases, offering insights into strategy changes or fatigue onset.
+
+The effectiveness of change point detection in trajectory segmentation largely depends on the choice of algorithm and its parameters. Some methods focus on detecting abrupt changes, while others are more sensitive to gradual transitions. The selection of an appropriate algorithm often involves balancing factors such as computational efficiency, sensitivity to different types of changes, and robustness to noise in the data. Common approaches include statistical methods like CUSUM (Cumulative Sum), Bayesian techniques, and machine learning-based algorithms.
+
+One notable algorithm is the E-Divisive Means (EDM) method. EDM is a non-parametric approach to change point detection that excels in identifying multiple change points in multivariate time series data. It works by recursively segmenting the time series, maximizing the difference in multivariate means between adjacent segments. This method is particularly useful in trajectory analysis due to its ability to handle multidimensional data, making it suitable for complex trajectories that involve changes in multiple parameters simultaneously. EDM's strength lies in its flexibility and its capacity to detect both subtle and dramatic changes in trajectory characteristics, making it a valuable tool in diverse applications from urban mobility studies to complex system analysis.
+
+
+{% highlight python linenos %}{% raw %}
+from typing import List, Callable
+import tomotopy as tp
+import random
+import math
+
+
+class EDivisiveMeans:
+    """
+    Implements the E-Divisive Means algorithm for detecting change points in multivariate time 
+    series data.  This algorithm identifies points in a time series where the statistical
+    properties of the data change significantly. It's useful for detecting shifts in trends,
+    sudden changes in behavior, or transitions between different states in your data.
+    The E-Divisive Means algorithm is a non-parametric method that can detect multiple change
+    points in multivariate time series. It works by recursively dividing the time series into
+    segments and using an energy statistic to measure the difference between segments.
+    Configuration:
+    The algorithm can be fine-tuned using two main parameters:
+    1. Significance Level (alpha):
+       - Controls how strict the algorithm is in declaring a change point
+       - Lower values make the algorithm more conservative, detecting only very strong changes
+       - Higher values make it more sensitive, potentially detecting more subtle changes
+       - Range: 0 < alpha < 1, typically set between 0.01 and 0.1
+    2. Minimum Segment Size:
+       - Defines the smallest number of data points that can be considered a separate segment
+       - Helps prevent the algorithm from detecting changes in very short segments of data
+       - Should be set based on the granularity of changes you're interested in and your data's 
+         sampling rate
+       - Example: If your data is sampled daily and you're not interested in changes that occur 
+                  over less than a month, you might set this to 30
+    Usage Tips:
+    - Start with default values and adjust based on your specific needs and data characteristics
+    - If you're getting too many change points, try decreasing alpha or increasing min_segment_size
+    - If you're not detecting changes you believe are significant, try increasing alpha or 
+      decreasing min_segment_size
+    - Remember that the appropriate configuration can vary depending on your data and use case
+    Detailed Algorithm Explanation:
+    1. Initialization: Start with the entire time series as one segment.
+    2. Divide and Compare:
+       - For each possible splitting point in the current segment:
+         a. Calculate the energy statistic between the two resulting sub-segments.
+         b. The energy statistic measures the difference between the multivariate distributions
+            of the two sub-segments.
+       - Identify the splitting point that maximizes the energy statistic.
+    3. Statistical Significance:
+       - Perform a permutation test to determine if the best split is statistically significant.
+       - This involves randomly shuffling the data many times and comparing the energy statistic
+         of these shuffled versions to the original split.
+    4. Recursion:
+       - If the split is significant:
+         a. Add this point to the list of change points.
+         b. Recursively apply steps 2-4 to each of the two resulting segments.
+    5. Termination:
+       - Stop when no more significant change points are found, or when segments become too small
+         to be further divided (as defined by min_segment_size).
+    Key features:
+    1. Non-parametric: Does not assume any specific distribution of the data.
+    2. Multivariate: Can handle multidimensional data.
+    3. Multiple change points: Can detect multiple change points in a single time series.
+    4. Statistical significance: Uses permutation tests to ensure statistical significance of
+    detected change points.
+    Attributes:
+        alpha (float): The significance level for the statistical tests (default: 0.05)
+        min_segment_size (int): The minimum size of a segment to consider for splitting (default: 30)
+        _energy_cache (dict): A cache to store computed energy statistics for efficiency.
+    """
+
+    def __init__(self, alpha=0.05, min_segment_size=30):
+        """
+        Initialize the E-Divisive Means detector.
+        Args:
+            alpha (float, optional): The significance level for detecting change points. 
+                - Range: 0 < alpha < 1
+                - Default: 0.05 (5% significance level)
+                - Lower values (e.g., 0.01) make the detector more conservative
+                - Higher values (e.g., 0.1) make it more sensitive to changes
+            min_segment_size (int, optional): The minimum number of data points required in a segment.
+                - Default: 30
+                - Represents the smallest chunk of data that can be considered its own segment
+                - Should be set based on the minimum timeframe over which you expect meaningful 
+                  changes to occur in your data
+                - Example: For hourly data, setting this to 24 would mean the smallest detectable 
+                           change occurs over a day
+        Example usage:
+            # Default configuration
+            detector = EDivisiveMeans()
+            # Custom configuration: More sensitive to changes, allowing smaller segments
+            sensitive_detector = EDivisiveMeans(alpha=0.1, min_segment_size=20)
+            # Custom configuration: More conservative, requiring larger segments
+            conservative_detector = EDivisiveMeans(alpha=0.01, min_segment_size=50)
+        """
+        self.alpha = alpha
+        self.min_segment_size = min_segment_size
+        self._energy_cache = {}
+
+    def detect(self, data):
+        """
+        Detect change points in the given multivariate time series data.
+        Args:
+            data (list of list): The multivariate time series data. Each inner list represents a data point
+                                 with multiple dimensions.
+        Returns:
+            list: Indices of detected change points.
+        """
+        self._energy_cache.clear()  # clear energy cache
+        change_points = []
+        self._recursive_segmentation(data, 0, len(data), change_points)
+        self._energy_cache.clear()
+        return change_points
+
+    def _recursive_segmentation(self, data, start_index, end_index, change_points):
+        """
+        Recursively segment the data to find change points.
+        Args:
+            data (list of list): The multivariate time series data.
+            start_index (int): The start index of the current segment.
+            end_index (int): The end index of the current segment.
+            change_points (list): List to store detected change points.
+        """
+        if end_index - start_index < 2 * self.min_segment_size:
+            return
+
+        max_energy = float('-inf')
+        best_split = None
+
+        for i in range(start_index + self.min_segment_size, end_index - self.min_segment_size + 1):
+            energy = self._calculate_energy_statistic(data, start_index, i, end_index)
+            if energy > max_energy:
+                max_energy = energy
+                best_split = i
+
+        if best_split is not None and self._is_statistically_significant(data[start_index:end_index], max_energy):
+            change_points.append(best_split)
+            self._recursive_segmentation(data, start_index, best_split, change_points)
+            self._recursive_segmentation(data, best_split, end_index, change_points)
+
+    def _calculate_energy_statistic(self, data, start1, end1, end2):
+        """
+        Calculate the energy statistic between two segments of the data.
+        The energy statistic measures the difference between two multivariate distributions.
+        It is defined as:
+        E = (2 * n1 * n2 / (n1 + n2)) * ||mean1 - mean2||^2
+        where n1 and n2 are the sizes of the two segments, mean1 and mean2 are their respective
+        multivariate means, and ||.||^2 is the squared Euclidean norm.
+        Args:
+            data (list of list): The multivariate time series data.
+            start1 (int): Start index of the first segment.
+            end1 (int): End index of the first segment (exclusive) / Start index of the second segment.
+            end2 (int): End index of the second segment (exclusive).
+        Returns:
+            float: The calculated energy statistic.
+        """
+        cache_key = f"{start1},{end1},{end2}"
+
+        # Check if the result is already in the cache
+        if cache_key in self._energy_cache:
+            return self._energy_cache[cache_key]
+
+        n1 = end1 - start1
+        n2 = end2 - end1
+        mean1 = self._calculate_mean(data, start1, end1)
+        mean2 = self._calculate_mean(data, end1, end2)
+        diff = self._subtract_means(mean1, mean2)
+
+        energy = (2 * n1 * n2 / (n1 + n2)) * self._dot_product(diff, diff)
+
+        # Store the result in the cache
+        self._energy_cache[cache_key] = energy
+        return energy
+    
+    def _is_statistically_significant(self, segment_data, energy, num_permutations=1000):
+        """
+        Determine if a split is statistically significant using a permutation test.
+        This method uses stratified sampling and adaptive importance sampling to improve
+        efficiency while maintaining accuracy.
+        Args:
+            segment_data (list of list): The data segment to test.
+            energy (float): The energy statistic of the proposed split.
+            num_permutations (int): The number of permutations to use in the test.
+        Returns:
+            bool: True if the split is statistically significant, False otherwise.
+        """
+        segment_size = len(segment_data)
+        num_strata = min(10, segment_size)
+        strata_size = segment_size // num_strata
+        strata = []
+
+        # Create strata based on energy values
+        for i in range(num_strata):
+            start_index = i * strata_size
+            end_index = segment_size if i == num_strata - 1 else (i + 1) * strata_size
+            strata.append(segment_data[start_index:end_index])
+
+        num_greater_or_equal = 0
+        total_permutations = 0
+
+        # Calculate the maximum number of permutations that could still lead to a significant result
+        max_allowed_greater_or_equal = math.floor(self.alpha * num_permutations)
+
+        for i in range(num_permutations):
+            selected_stratum = random.choice(strata)
+            shuffled_data = self._shuffle(selected_stratum[:])
+            max_permuted_energy = float('-inf')
+
+            for j in range(1, len(selected_stratum)):
+                perm_energy = self._calculate_energy_statistic(shuffled_data, 0, j, len(selected_stratum))
+                max_permuted_energy = max(max_permuted_energy, perm_energy)
+
+            if max_permuted_energy >= energy:
+                num_greater_or_equal += 1
+
+            total_permutations += 1
+
+            # Early stopping condition: if we've exceeded the maximum allowed number of greater-or-equal energies
+            if num_greater_or_equal > max_allowed_greater_or_equal:
+                return False
+
+            # Early stopping condition: if it's impossible to reach significance
+            if num_permutations - i + num_greater_or_equal <= max_allowed_greater_or_equal:
+                return True
+
+            # Adaptive importance sampling
+            if max_permuted_energy >= energy:
+                observed_significance = num_greater_or_equal / total_permutations
+                additional_permutations = math.floor(num_permutations * max(0.1, observed_significance / self.alpha))
+                for k in range(additional_permutations):
+                    shuffled_data = self._shuffle(selected_stratum[:])
+                    max_permuted_energy = float('-inf')
+
+                    for j in range(1, len(selected_stratum)):
+                        perm_energy = self._calculate_energy_statistic(shuffled_data, 0, j, len(selected_stratum))
+                        max_permuted_energy = max(max_permuted_energy, perm_energy)
+
+                    if max_permuted_energy >= energy:
+                        num_greater_or_equal += 1
+
+                    total_permutations += 1
+
+                    # Check early stopping conditions after each additional permutation
+                    if num_greater_or_equal > max_allowed_greater_or_equal:
+                        return False
+                    if num_permutations - i - k + num_greater_or_equal <= max_allowed_greater_or_equal:
+                        return True
+
+        p_value = num_greater_or_equal / total_permutations
+        return p_value <= self.alpha
+
+    def _shuffle(self, array):
+        """
+        Shuffle the given array in-place using the Fisher-Yates algorithm.
+        Args:
+            array (list): The array to shuffle.
+        Returns:
+            list: The shuffled array.
+        """
+        for i in range(len(array) - 1, 0, -1):
+            j = random.randint(0, i)
+            array[i], array[j] = array[j], array[i]
+        return array
+    
+    def _calculate_mean(self, data, start_index, end_index):
+        """
+        Calculate the mean of a segment of multivariate data.
+        Args:
+            data (list of list): The multivariate time series data.
+            start_index (int): The start index of the segment.
+            end_index (int): The end index of the segment (exclusive).
+        Returns:
+            list: The mean vector of the segment.
+        """
+        dimensions = len(data[0])
+        mean = [0] * dimensions
+
+        for i in range(start_index, end_index):
+            for j in range(dimensions):
+                mean[j] += data[i][j]
+
+        for j in range(dimensions):
+            mean[j] /= (end_index - start_index)
+
+        return mean
+    
+    def _subtract_means(self, mean1, mean2):
+        """
+        Subtract two mean vectors.
+        Args:
+            mean1 (list): The first mean vector.
+            mean2 (list): The second mean vector.
+        Returns:
+            list: The difference between the two mean vectors.
+        """
+        return [val1 - val2 for val1, val2 in zip(mean1, mean2)]
+    
+    def _dot_product(self, v1, v2):
+        """
+        Calculate the dot product of two vectors.
+        Args:
+            v1 (list): The first vector.
+            v2 (list): The second vector.
+        Returns:
+            float: The dot product of the two vectors.
+        """
+        return sum([val1 * val2 for val1, val2 in zip(v1, v2)])
+
+{% endraw %}
+{% endhighlight %}
+
+The E-Divisive Means (EDM) algorithm offers several distinct advantages over other change point detection methods, particularly in the context of trajectory segmentation. One of its primary strengths is its non-parametric nature, which allows it to operate effectively without making strong assumptions about the underlying distribution of the data. This flexibility makes EDM well-suited for real-world trajectory data, which often exhibits complex, non-Gaussian behaviors. Additionally, EDM's ability to handle multivariate time series is crucial for trajectory analysis, where multiple parameters (such as position, velocity, and acceleration) may change simultaneously. Unlike some traditional methods that struggle with high-dimensional data, EDM maintains its effectiveness as the number of variables increases. The algorithm's divisive approach, which recursively splits the time series, allows it to detect multiple change points with high accuracy, even when the number of change points is unknown a priori. This feature is particularly valuable in trajectory segmentation, where the number of behavioral changes or environmental transitions is often not known in advance. Furthermore, EDM has shown robustness to noise and outliers, a common challenge in real-world trajectory data. Its computational efficiency, especially when implemented with optimizations, makes it suitable for large-scale trajectory datasets, enabling practical applications in fields ranging from urban planning to wildlife ecology.
+
+{% include components/heading.html heading='Movement' level=3 %}
+
+While change point detection methods like E-Divisive Means offer powerful tools for trajectory segmentation, they represent just one approach in a diverse toolkit for analyzing movement data. As we shift our focus, it's important to recognize that different segmentation techniques can reveal various aspects of trajectory behavior, each offering unique insights. One such complementary method is stop point detection, which focuses specifically on identifying locations where a moving entity pauses or remains stationary for a significant period. This technique is particularly valuable in contexts where the cessation of movement is as informative as the movement itself, such as in urban mobility studies or logistics analysis. Stop point detection algorithms typically employ criteria like spatial and temporal thresholds to distinguish genuine stops from brief pauses or GPS inaccuracies. By combining change point detection with stop point analysis and other segmentation methods, researchers and analysts can build a more comprehensive understanding of trajectory behaviors. This multi-faceted approach allows for the extraction of richer insights, capturing both the dynamic changes in movement patterns and the significant stationary events that punctuate these movements. As we delve deeper into trajectory segmentation techniques, we'll explore how these various methods can be integrated to provide a holistic view of movement data across different domains and applications.
 
 Movement segmentation is simple:  It identifies when an object is considers moving, and when it is considered not moving.  This is most commonly used in services like Google Maps to determine when someone is at a given store, restaurant, home, etc. and when they are just passing by.
 
