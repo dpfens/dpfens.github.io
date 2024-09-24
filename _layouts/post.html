@@ -25,6 +25,7 @@
                                     </div>
                                 {% endif %}
                                 <h1 class="headline text-center">{{ page.title }}</h1>
+                                <p class="fw-light text-center">{{ page.date | date_to_long_string: "ordinal", "US" }}</p>
                                 <p class="sub-headline fw-light">{{ page.introduction }}</p>
                             </div>
                         </div>
