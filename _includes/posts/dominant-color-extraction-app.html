@@ -114,9 +114,7 @@
     if (window.Worker) {
         const worker = new Worker('/assets/js/posts/color-extraction/worker.js');
         worker.onmessage = function(event) {
-            console.log(event);
             const data = event.data;
-            console.log(data);
             data.clusters.sort(function(a, b) {
                 return b.points.length - a.points.length;
             });
