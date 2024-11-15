@@ -339,7 +339,7 @@ For governing organizations like USATF, race-level metrics serve as crucial tool
     <dd>Cross country and road races have different terrain in different segments.  By identifying which segments/splits are consistently fastest or slowest, we can estimate a difficulty of the segments.  The splits for these segments cna also be compared to the splits of participants from other races to further refine the validity of the measure.</dd>
     <dt>Mean/Median race time/split</dt>
     <dd>Compare the mean and median race/split times to identify if the race/segment skewed faster or slower, in a simple measure for anyone to understand.</dd>
-    <dt>Dropout rate<dt>
+    <dt>Dropout rate</dt>
     <dd>The percentage of registered participants who did not finish the race. This can indicate course difficulty, weather conditions, or other factors affecting race completion.</dd>
     <dt>Pace variability</dt>
     <dd>A measure of how consistent runners' paces were throughout the race. This can be calculated as the standard deviation of split times for each runner, then averaged across all participants.</dd>
