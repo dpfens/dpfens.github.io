@@ -385,10 +385,21 @@ In the context of running splits, a z-score of 0 would represent the average spl
 
 ##### Similarity
 
+
+
 ###### Strategy/Execution
 
 As runners, we often discuss race strategies in qualitative terms - negative splits, even pacing, or the dreaded positive splits. But what if we could quantify these strategies and compare them objectively? Enter the Earth Mover's Distance (EMD), a powerful mathematical tool that's gaining traction in the world of running analytics.
-The EMD, originally developed for image processing, provides a way to measure the dissimilarity between two probability distributions. In the context of running, we can use it to compare different racing strategies by treating each runner's pace distribution over the course of a race as a probability distribution. This approach allows us to go beyond simple concepts like "negative" or "positive" splits and capture the nuances of how a runner distributes their effort throughout an entire race.
+
+The Earth Mover's Distance (EMD), originally developed for image processing, provides a way to measure the dissimilarity between two probability distributions. In the context of running, we can use it to compare different racing strategies by treating each runner's pace distribution over the course of a race as a probability distribution. This approach allows us to go beyond simple concepts like "negative" or "positive" splits and capture the nuances of how a runner distributes their effort throughout an entire race.
+
+Consider a marathon where we break down a runner's pace into 26 discrete measurements, one for each mile. To transform this into a probability distribution, we normalize these paces so they sum to 1 - essentially creating a distribution that shows what "proportion" of the runner's effort was spent at each mile marker.
+
+Let's look at two hypothetical runners in the Chicago Marathon. Runner A maintains a steady 8:00 minute/mile pace for the first 20 miles, then gradually slows to 8:30 for the final 6.2 miles - a classic "positive split" strategy. Runner B starts at 8:30 minute/mile pace and progressively speeds up, running the final 6.2 miles at 7:30 pace - a "negative split" approach. When we normalize these paces into distributions, we can see Runner A's distribution weighted heavily toward the faster paces in the early miles, while Runner B's distribution shows more density in the faster paces during the later miles.
+
+The EMD then quantifies how much "work" would be needed to transform Runner A's pace distribution into Runner B's. In this case, it would show a relatively large value, reflecting the substantial difference between their pacing strategies. This becomes particularly interesting when we consider that both runners might finish with the same overall time, despite taking markedly different approaches to distribute their effort throughout the race.
+
+This quantitative approach allows us to move beyond simply labeling these as "positive" versus "negative" splits, and instead precisely measure the magnitude of difference between these contrasting strategies.
 
 Why is this important? For one, it gives coaches and athletes a more precise way to analyze and compare race strategies. Instead of merely saying that two runners had different approaches, we can now quantify exactly how different those approaches were. This opens up new avenues for personalized training and race planning. For example, a coach could use EMD to track how closely an athlete adheres to their planned race strategy across multiple events, or to compare an athlete's typical strategy to those of top performers in their event.
 
@@ -402,6 +413,10 @@ It's important to note that while the EMD provides a powerful tool for quantifyi
 One particularly effective approach involves dividing a given performance by a relevant record - be it local, regional, national, or world record at the time the race took place. This method allows us to contextualize a performance within its specific temporal and geographical framework. For instance, a 10.00-second 100-meter dash in 1990 would be evaluated differently than the same time achieved in 2024, as the world record and overall competitive landscape have evolved.
 
 By expressing performances as a percentage of the corresponding record, we create a normalized scale that accounts for the general progression of the sport. This normalization enables us to compare performances across different events, genders, and time periods with greater fairness. A performance that is 98% of a world record in the marathon can be meaningfully compared to one that is 97% of a world record in the long jump, despite the vastly different nature of these events.
+
+Let's examine how this works with real performances. Consider three remarkable achievements from different eras: Paavo Nurmi's 14:28.2 5000m from 1924, Emil Zatopek's 13:57.2 from 1954, and Joshua Cheptegei's 12:35.36 from 2020. At first glance, Nurmi's time might appear modest by today's standards. However, when we normalize these performances against the world records of their respective eras (14:28.2 versus 14:28.2 in 1924, 13:57.2 versus 13:51.2 in 1954, and 12:35.36 versus 12:35.36 in 2020), we see that Nurmi's run was 100% of the world record, Zatopek's was 99.3%, and Cheptegei's was 100%. This normalization reveals that all three performances were extraordinarily close in relative quality, despite spanning nearly a century and differing by almost two minutes in absolute terms.
+
+This becomes even more powerful when comparing across events. Take Eliud Kipchoge's 2:01:09 marathon from 2022 (approximately 99.8% of the existing record) and Armand Duplantis's 6.23m pole vault from 2023 (100% as the current record). Despite these performances occurring in radically different disciplines - one endurance-based and one technical - our normalization method allows us to appreciate that both performances represent similar levels of excellence relative to their events.
 
 This approach has several advantages. First, it automatically accounts for the inherent differences in absolute times across distances. A 10:00 3000m and a 15:00 5000m might seem hard to compare directly, but if we know they're both 90% of their respective world records, we can immediately grasp their similar levels of excellence. Second, by using records relevant to the time period when a race took place, we can make fairer historical comparisons, acknowledging that a 4:05 mile in 1950 is a very different achievement than the same time today.
 
@@ -466,18 +481,29 @@ There are many important events in a race, such when a serious contender trips, 
 
 {% highlight python %}{% raw %}def intersect_time(speed1, speed2, gap):
     """
-    Returns the time it takes for 2 objects travelling in the same direction
-    to intersect
+    Calculates the time until two objects moving at constant speeds in the same direction 
+    intersect, where one object must be catching up to the other.
 
     Parameters:
-        speed1 (float): speed of an object
-        speed2 (float): speed of the other object
-        gap (float): Distance between the two objects
+        speed1 (float): Speed of the first object (must be positive)
+        speed2 (float): Speed of the second object (must be positive)
+        gap (float): Initial distance between the objects (must be positive),
+                     measured as (position of faster object - position of slower object)
 
     Returns:
-        float: time until they intersect
+        float: Time until intersection in the same units as used in the speed parameters
+              (e.g., if speeds are in m/s, returns seconds)
+
     Raises:
-        ValueError
+        ValueError: If either speed is negative
+        ValueError: If speeds are equal (parallel motion, never intersects)
+        ValueError: If faster object is behind slower object (will never intersect)
+
+    Notes:
+        - Assumes motion in a single dimension (same direction)
+        - Assumes constant speeds
+        - The faster object must be ahead of the slower object for intersection to occur
+        - Does not account for physical object dimensions (treats objects as points)
     """
     if speed1 < 0 or speed2 < 0:
         raise ValueError('Object speeds must be positive')
@@ -490,19 +516,30 @@ There are many important events in a race, such when a serious contender trips, 
 
 def intersection_distance(speed1, distance1, speed2, distance2):
     """
-    Calculated the time it takes for 2 objects travelling in the same direction
-    to intersect
+    Calculates the position where two objects moving at constant speeds in the same direction 
+    will intersect, where one object must be catching up to the other.
 
     Parameters:
-        speed1 (float): speed of an object
-        distance1 (float): distance of an object
-        speed2 (float): speed of the other object
-        distance2 (float): distance of the other object
+        speed1 (float): Speed of first object (must be positive)
+        distance1 (float): Initial position of first object on the path
+        speed2 (float): Speed of second object (must be positive)
+        distance2 (float): Initial position of second object on the path
 
     Returns:
-        float: distance where the objects intersect
+        float: Position along the path where intersection occurs, in same units as distance parameters
+
     Raises:
-        ValueError
+        ValueError: If either speed is negative
+        ValueError: If speeds are equal (parallel motion, never intersects)
+        ValueError: If object positions and speeds result in diverging paths (will never intersect)
+
+    Notes:
+        - Assumes motion in a single dimension (same direction)
+        - Assumes constant speeds
+        - Objects must be moving in a way that allows intersection 
+          (faster object must be behind slower object)
+        - Does not account for physical object dimensions (treats objects as points)
+        - Uses the same coordinate system as the input distances
     """
     if speed1 < 0 or speed2 < 0:
         raise ValueError('Object speeds must be positive')
@@ -548,9 +585,9 @@ The sequence of ordered boolean (true/false) values indicating if the correspond
 Over the course of modern athletics, many techniques for traversing hurdles have existed.  While some have been determined to be superior to others, others have simply gone out of style. For example, <a href="https://en.wikipedia.org/wiki/Rod_Milburn">Rod Milburn</a> used the double-arm lead technique to go over hurdles to reduce his time in the air. 
  This technique was prominent and (to my knowledge), was never proven to inferior to modern techniques.  The technique lost popularity and fell into obscurity.  I learned of this because the sprinting coach at Virginia Tech while I was running there was <a href="https://en.wikipedia.org/wiki/Charles_Foster_(hurdler)">Charles Foster</a> raced against Milburn as an athlete, and went on to use the technique himself during his career.  Like the double-arm lead, it is very possible that some techniques that are not popularity may have merit as an effective technique.  Recording the technique used will allow the track & field community to evaluate old and new techniques more methodically, so, hopefully, superior techniques are chosen over the popular ones.  Such records of a hurdle technique can inform the decision of other coaches/athletes regarding whether or not to adopt the hurdling technique, or, in the case of the athlete who executed the performance, whether or not to continue with it.
 
- ## Jumps
+## Jumps
 
- #### Technical metrics
+#### Technical metrics
 
 ##### Lefts/Rights/Strides count
 The total number of strides leading up to take-off, commonly referred to lefts/rights in pole vault, and determine how far a jumper has to accelerate before take-off.  Jumpers/vaulters are capable of different performances when using different numbers of strides.  Recording the number used for a jump allows all coaches/athletes to determine whether the strides contributed to the quality (or lack thereof) of a given jump.  Katie Nageotte excellently describes how the terms "lefts"/"rights" came about in her <a href="https://knageotte.wixsite.com/polevault/post/pole-vault-101">Pole Vault 101</a> post under the <strong>In the Jump/Technique</strong> section.
@@ -994,38 +1031,81 @@ There are a couple common what-if scenarios:
 We can do all of these calculations of these calculationwithout using any advanced math:
 {% highlight python %}{% raw %}def calc_speed(time, distance):
     """
+    Calculates average speed from time and distance measurements.
+
     Parameters:
-        time (float):  Amount of time needed to travel the given distance
-        distance (float):  Distance travelled in the given amount of time
+        time (float): Amount of time taken (must be positive, in any time unit)
+        distance (float): Distance covered (must be positive, in any distance unit)
 
     Returns:
-        float: Speed of a competitor
+        float: Average speed in units of distance/time (e.g., if distance is meters 
+              and time is seconds, returns meters/second)
+
+    Raises:
+        ZeroDivisionError: If time is zero
+        ValueError: If time or distance is negative
+
+    Notes:
+        - Assumes constant speed over the given distance
+        - Returns average speed if speed was not constant
+        - Input units must be consistent (e.g., meters with meters, seconds with seconds)
     """
     return float(distance) / time
 
 
 def calc_time(speed, distance):
     """
+    Calculates time required to cover a given distance at a given speed.
+
     Parameters:
-        time (float):  Speed at which the given distance was travelled
-        distance (float):  Distance travelled at the given speed
+        speed (float): Speed of travel (must be positive, in distance/time units)
+        distance (float): Distance to be covered (must be positive, in same distance 
+                         units as used in speed)
 
     Returns:
-        float: Amount of time needed to travel the given distance
+        float: Time required in same time units as used in speed parameter
+               (e.g., if speed is m/s, returns seconds)
+
+    Raises:
+        ZeroDivisionError: If speed is zero
+        ValueError: If speed or distance is negative
+
+    Notes:
+        - Assumes constant speed over the entire distance
+        - Input units must be consistent with each other
+        - Does not account for acceleration/deceleration
     """
     return distance / float(speed)
 
 
 def intercept_speed(distance_delta, speed, distance_remaining):
     """
+    Calculates the constant speed needed to catch up to a competitor who is 
+    ahead and moving at a constant speed.
+
     Parameters:
-        distance_delta (float):  Distance between the competitor and a given runner
-        speed (float):  Speed of the competitor
-        distance_remaining (float):  Distance remaining in the race for the competitor
+        distance_delta (float): Current distance between the pursuer and competitor 
+                               (must be positive, measured as competitor's position 
+                               minus pursuer's position)
+        speed (float): Competitor's constant speed (must be positive)
+        distance_remaining (float): Distance remaining for competitor to finish 
+                                  (must be positive)
 
     Returns:
-        float: speed required to catch the competitor by the time they travel the
-            remaining distance in the race.
+        float: Required constant speed for pursuer to catch competitor exactly at 
+               the finish, in same units as competitor's speed
+
+    Raises:
+        ZeroDivisionError: If speed is zero
+        ValueError: If any parameter is negative
+
+    Notes:
+        - Assumes both pursuer and competitor maintain constant speeds
+        - Assumes straight-line pursuit (same path)
+        - All distance units must be consistent (e.g., all meters)
+        - Result may be unrealistically high if distance_delta is large compared 
+          to distance_remaining
+        - Does not account for physical limitations or maximum possible speeds
     """
     total_distance = distance_delta + distance_remaining
     time_to_beat = calc_time(speed, distance_remaining)
@@ -1033,6 +1113,28 @@ def intercept_speed(distance_delta, speed, distance_remaining):
 
 
 def calc_pace(speed):
+    """
+    Converts speed to pace (time per unit distance).
+
+    Parameters:
+        speed (float): Speed (must be positive, in any distance/time units)
+
+    Returns:
+        float: Pace in time/distance units (inverse of input speed units)
+               (e.g., if speed is in m/s, returns s/m)
+
+    Raises:
+        ZeroDivisionError: If speed is zero
+        ValueError: If speed is negative
+
+    Notes:
+        - Commonly used in running where pace is often preferred over speed
+          (e.g., minutes per mile instead of miles per hour)
+        - Units of result are inverse of input units
+        - For example:
+          * If speed is m/s, returns seconds per meter
+          * If speed is km/h, returns hours per kilometer
+    """
     return 1.0 / speed{% endraw %}{% endhighlight %}
 
 We can use the code above like so:
@@ -1057,16 +1159,58 @@ Moving on to the last question last question:  <q>If I sustained a given pace fr
 
 {% highlight python %}{% raw %}def maximum_place_improvement(max_speed, competitor_speeds, competitor_distances, competitor_distances_remaining):
     """
-    The maximum number of places an entity could gain by meeting a given speed.
+    Calculates the maximum number of competitors that can be overtaken given a 
+    maximum sustainable speed.
 
     Parameters:
-        max_speed (float):  The maximum speed of the entity
-        competitor_speeds (list|tuple):  The speeds of the competitors
-        competitor_distances (list|tuple):  Distance of the competitors from the entity
-        competitor_distances_remaining (list|tuple):  Distances remaining in the race for each competitor
+        max_speed (float): Maximum sustainable speed of the pursuing athlete (must be positive)
+        competitor_speeds (list|tuple): List of current speeds for each competitor ahead
+                                      (must all be positive, in same units as max_speed)
+        competitor_distances (list|tuple): List of distances between the pursuing athlete
+                                         and each competitor (must all be positive, measured
+                                         as competitor position minus pursuer position)
+        competitor_distances_remaining (list|tuple): List of remaining race distances for
+                                                   each competitor (must all be positive)
 
     Returns:
-        int: Number of places that can be gained at the max_speed
+        int: Maximum number of places that can be gained by maintaining max_speed
+
+    Raises:
+        ValueError: If max_speed is negative or zero
+        ValueError: If any competitor speed is negative or zero
+        ValueError: If any distance is negative
+        ValueError: If input lists have different lengths
+        ValueError: If any input list is empty
+
+    Notes:
+        - All three lists must be aligned (index i in each list refers to the same competitor)
+        - Lists should be sorted by increasing required intercept speed (typically this means
+          sorting by current race position from back to front)
+        - Assumes:
+            * Pursuing athlete can immediately achieve and maintain max_speed
+            * All competitors maintain their current speeds
+            * No interference between competitors during overtaking
+            * Straight-line pursuit (same racing line)
+            * No tactical responses from competitors
+        - Distance units must be consistent across all parameters
+        - Speed units must be consistent across all parameters
+        - Only counts competitors that can be caught before they finish
+        - Stops counting at the first competitor that cannot be caught
+        - Does not account for:
+            * Race course features (turns, hills, etc.)
+            * Fatigue effects
+            * Tactical positioning
+            * Pack dynamics
+            * Energy conservation needs
+
+    Example:
+        >>> max_speed = 5.0  # m/s
+        >>> competitor_speeds = [4.8, 4.9, 5.1]  # m/s
+        >>> competitor_distances = [10, 20, 30]  # meters ahead
+        >>> competitor_distances_remaining = [100, 100, 100]  # meters to finish
+        >>> maximum_place_improvement(max_speed, competitor_speeds, 
+                                   competitor_distances, competitor_distances_remaining)
+        2  # Can catch first two competitors, but not the third
     """
     places = 0
     for speed, distance_delta, distance_remaining in zip(competitor_speeds, competitor_distances, competitor_distances_remaining):
