@@ -5,9 +5,9 @@ layout: default
 
 <div class="hero bg-orange-3 border-3 border-bottom border-black">
     <div class="hero-left hero-content hero-top d-flex flex-column justify-content-center border-lg-3 border-end-lg border-lg-black py-4 min-vh-50">
-        <h1 class="headline">Escapist reader turned digital architect</h1>
-        <p class="tagline">I'm Doug Fenstermacher, a web developer by day, bookworm by night, and a proud native of Gloucester, Virginia. Growing up in a small town on dial-up internet surrounded by the salty breeze, I developed a knack for computers and for DIY. These days, I channel that coastal curiosity into crafting elegant applications and diving into the depths of modern technology.</p>
-        <p class="tagline">From being a funeral home assistant to health studies, my path to software development has not been a straight line. But the detours along that path taught me relentless determination, empathy, and the importance of balance—all skills that now shape my approach to building digital experiences.</p>
+        <h1 class="headline">Small-town developer building tomorrow's tech</h1>
+        <p class="tagline">I'm Doug Fenstermacher, and I build software from a place where the internet still goes out when it storms.  Growing up in rural Gloucester, Virginia where I downloaded MS-DOS games on dial-up as a child, taught me that great technology works everywhere, not just in tech hubs.</p>
+        <p class="tagline">My path from funeral home assistant in high school to engineer wasn't straight, but those detours taught me real solutions come from intimately understanding real problems. After 10 years building cutting-edge systems in tech research, I bring both the theoretical depth to build it right and the practical wisdom to build what matters.</p>
     </div>
     <div class="hero-right hero-content hero-bottom px-0 pt-0 min-vh-50 h-lg-100">
         <img class="w-100 h-100 object-fit-cover" src="/assets/img/1cdaab4b-605f-4c49-92fb-338f65ddf1b6.jpeg">
@@ -19,17 +19,17 @@ layout: default
         <img class="w-100 h-100 object-fit-cover" src="/assets/img/53c23ce7-7706-405d-a366-2a5e85e46749.jpeg">
     </div>
     <div class="hero-right hero-top hero-content d-flex flex-column justify-content-center pt-3 min-vh-50">
-        <h2 class="headline">From algorithms to altruism: How I code for a cause</h2>
-        <p class="tagline">My hometown, a small, close-knit community nestled on the coast of Virginia, faces the risk of being left behind in a world increasingly driven by technology. As the digital divide widens, some residents struggle to keep pace with the rapid changes. I refuse to accept a future where anyone in my hometown, or anywhere else, is denied the opportunities that technology provides.</p>
-        <p class="tagline">I believe technology can be a powerful force for good, and I am committed to being a part of that movement. I've seen how technology can connect isolated communities, and provide education to underserved areas. It's not always easy, but the moments when my work makes a real impact makes the late nights worthwhile.</p>
+        <h2 class="headline">Engineering for the other 70%</h2>
+        <p class="tagline">The Tidewater region, like most of rural America, exists in a different technological reality than Silicon Valley assumes. Here, broadband and cell phone service are not ubiquitous, and technical literacy varies dramatically. These deficits act as design constraint that produces better engineering.</p>
+        <p class="tagline">Resource-constrained environments demand more robust architecture. Every optimization matters when serving users who can't upgrade their way out of problems. The same rigor I brought to NLP models and distributed systems becomes essential when serving users who can't upgrade their way out of problems. But beyond the technical challenge, I've seen well-designed systems transform possibilities: rural students accessing MIT courseware on limited connections, elderly neighbors consulting specialists via telehealth, local businesses finding customers beyond county lines. Thoughtful engineering dismantles structural disadvantages.</p>
     </div>
 </div>
 
 <div class="row pt-5">
     <div class="col-12 offset-md-2 col-md-8">
-        <h2 class="headline text-center">The palette of my skills</h2>
-        <p class="tagline">My skills are like a thriving garden, with some areas blooming beautifully and others still budding with potential. Web development, systems engineering, machine learning, and operations research are just a few of the plants I've cultivated over time. Like any dedicated gardener, I tend to each skill with care, nurturing them with knowledge and experience to help them flourish.</p>
-        <p class="tagline">While some parts of my garden are lush and vibrant, showcasing the fruits of my labor, others are still seedlings, requiring patience, attention, and continuous care to reach their full potential. I approach my skills with a gardener's mindset, understanding that growth is a process and that even the most beautiful gardens require ongoing maintenance and improvement.</p>
+        <h2 class="headline text-center">Where Research Meets Resource Reality</h2>
+        <p class="tagline">My skillset reflects a decade of work in higher education and research institutions filtered through the lens of real-world applicability. Each capability listed below has been tested at scale and refined for environments where resources cannot be taken for granted.</p>
+        <p class="tagline">This isn't a comprehensive inventory but a curated selection of where I can deliver immediate value. The connecting thread is systems thinking: whether optimizing database queries, implementing ML pipelines, or architecting distributed systems, I approach problems holistically, considering not just technical elegance but operational reality.</p>
     </div>
 </div>
 
@@ -89,18 +89,27 @@ Craft resilient, scalable systems that hum without ego. I wield Docker, orchestr
         <img class="w-100 h-100 object-fit-cover" src="/assets/img/3e7a9410-3454-4fbc-a75d-266be5048481.jpeg">
     </div>
     <div class="hero-right hero-content hero-bottom d-flex flex-column justify-content-center pt-3 min-vh-50">
-        <h2 class="headline">From Narnia to neural networks</h2>
-        <p class="tagline">My childhood was a literary safari, devouring Christian fables, whimsical fantasies, and breathless escapades in running books. College opened a banquet of knowledge: philosophy's mind-bending riddles, biology's intricate ecosystems, the dizzying ballet of finance and management. Each bite exposed the world's dizzying vastness, igniting a lifelong quest to understand its complexities and dream on its scale. Now, I dive into the densest textbooks and dissect the elegance of source code, fueling my passion to craft digital experiences that mirror this breathtaking reality, not just sell it.</p>
+        <h2 class="headline">Through the Looking Glass of Literature</h2>
+        <p class="tagline">My reading habits, ranging from speculative fiction to technical papers, reflect a Tidewater upbringing where books were windows to elsewhere. This wasn't escapism but education in perspective. Le Guin taught me that all systems embed values. Butler showed how power structures replicate in new technologies. Gibson reminded me that the future is unevenly distributed.</p>
+        <p class="tagline">This literary foundation matters in engineering. When you've spent years thinking about alternative worlds, questioning the architecture of a system comes naturally. The same critical lens I apply to narrative structures helps me identify unstated assumptions in codebases.</p>
     </div>
 </div>
 
 
 <div class="hero bg-red-2 border-3 border-bottom border-black">
     <div class="hero-left hero-content hero-top d-flex flex-column justify-content-center border-lg-3 border-end-lg border-lg-black py-4 px-5 min-vh-50">
-        <h2 class="headline">Trailblazing code, then trail running</h2>
-        <p class="tagline">My creative process isn't fueled by trendy brainstorming sessions or noisy workspaces. It thrives in the quiet moments—amidst the rustling of leaves, the rhythmic pounding of footsteps on trails, and the whispered words on pages. It's a homegrown, small-town approach to tech, where inspiration blooms organically, not manufactured.</p>
+        <h2 class="headline">The Long Run Home</h2>
+        <p class="tagline">There's a particular clarity that comes from running the same routes where I trained in high school, now with a decade of Silicon Valley experience to reflect on. The patience required for long-distance running directly translates to system architecture: both require thinking in longer cycles than the industry typically rewards.</p>
     </div>
     <div class="hero-right hero-content hero-bottom px-0 pt-0 min-vh-50 h-lg-100">
         <img class="w-100 h-100 object-fit-cover" src="/assets/img/e75eeaea-6eb8-4869-81c3-4444517da83d.jpeg">
+    </div>
+</div>
+
+<div class="row pt-5">
+    <div class="col-12 offset-md-2 col-md-8">
+        <h2 class="headline text-center">The View from Between</h2>
+        <p class="tagline">I work from the Tidewater by choice, not circumstance. This positionphysically removed from tech hubs but deeply embedded in their networks—offers perspective that pure immersion cannot. I see both what technology promises and where it fails to deliver.</p>
+        <p class="tagline">My value lies not in bridging worlds but in understanding why they diverged in the first place.</p>
     </div>
 </div>
