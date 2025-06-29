@@ -109,7 +109,7 @@ Craft resilient, scalable systems that hum without ego. I wield Docker, orchestr
 <div class="row pt-5">
     <div class="col-12 offset-md-2 col-md-8">
         <h2 class="headline text-center">The View from Between</h2>
-        <p class="tagline">I work from the Tidewater by choice, not circumstance. This positionphysically removed from tech hubs but deeply embedded in their networks—offers perspective that pure immersion cannot. I see both what technology promises and where it fails to deliver.</p>
+        <p class="tagline">I work from the Tidewater by choice, not circumstance. This position, physically removed from tech hubs, offers perspective that pure immersion cannot. I see both what technology promises and where it fails to deliver.</p>
         <p class="tagline">My value lies not in bridging worlds but in understanding why they diverged in the first place.</p>
     </div>
 </div>
