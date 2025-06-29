@@ -333,4 +333,4 @@ maximin_share=55.0, value_proportional_except_1=Fraction(12, 1), is_ef2=True, is
 Fairpy can be used to allocate goods fairly based on the valuations of each individual agent and to analyze those allocations based on measures of fairness.  Allocations can be performed on allocations of any kind, so long as the agent valuations can be quantified.
 
 I hope to be able to use Fairpy to evaluate systems for allocating goods, such as welfare systems. 
- This library has all of the calcultions to objectively measure equality/inequality.
+ This library has all of the calculations to objectively measure equality/inequality.
