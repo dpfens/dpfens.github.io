@@ -16,7 +16,7 @@ layout: default
 
 <div class="hero bg-orange-3 border-3 border-bottom border-black">
     <div class="hero-left hero-bottom hero-content border-lg-3 border-end-lg border-lg-black px-0 pt-0 min-vh-50 h-lg-100">
-        <img class="w-100 h-100 object-fit-cover" src="/assets/img/53c23ce7-7706-405d-a366-2a5e85e46749.jpeg">
+        <img class="w-100 h-100 object-fit-cover" src="/assets/img/53c23ce7-7706-405d-a366-2a5e85e46749.jpg">
     </div>
     <div class="hero-right hero-top hero-content d-flex flex-column justify-content-center pt-3 min-vh-50">
         <h2 class="headline">Engineering for the other 70%</h2>
