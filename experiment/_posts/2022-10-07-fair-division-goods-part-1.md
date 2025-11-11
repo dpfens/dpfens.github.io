@@ -122,7 +122,7 @@ We seek an **allocation** \\(A = (A_1, A_2, \ldots, A_n)\\) that partitions the 
 - Every item is allocated: \\(\bigcup_i A_i = M\\) (complete allocation)
 - Each \\(A_i \subseteq M\\) is agent \\( i \\)'s bundle
 
-For divisible goods, we allow fractional allocations where each item *g* is divided with agent \\( i \\) receiving share \\(\alpha_{i,g} \in [0,1]\\) such that \(\sum_i \alpha_{i,g} = 1\\) for each item \\( g \\).
+For divisible goods, we allow fractional allocations where each item \\( g \\) is divided with agent \\( i \\) receiving share \\(\alpha_{i,g} \in [0,1]\\) such that \(\sum_i \alpha_{i,g} = 1\\) for each item \\( g \\).
 
 **Why This Formalization Matters**
 
@@ -139,7 +139,7 @@ By abstracting to this mathematical model, we develop algorithms and theorems th
 
 Our siblings are dividing **goods**, items that agents want to receive. But fair division theory also considers **chores**, tasks that agents want to avoid, and **mixed manna** where some items are goods to some agents and chores to others.
 
-**Goods** have the property that \\(v_i(S) \geq 0\\) for all bundles *S*, and typically \\(v_i(S \cup \{g\}) \geq v_i(S)\\) (adding an item doesn't hurt, by monotonicity). Examples: inheritance assets, desirable tasks, resources. The siblings' estate consists entirely of goods, so each item has non-negative value to everyone.
+**Goods** have the property that \\(v_i(S) \geq 0\\) for all bundles \\( S \\), and typically \\(v_i(S \cup \{g\}) \geq v_i(S)\\) (adding an item doesn't hurt, by monotonicity). Examples: inheritance assets, desirable tasks, resources. The siblings' estate consists entirely of goods, so each item has non-negative value to everyone.
 
 **Chores** have \\(v_i(S) \leq 0\\) (negative utility), and \\(v_i(S \cup \{g\}) \leq v_i(S)\\) (adding a chore makes things worse). Examples: household duties, unpleasant tasks, burdens. If the estate included debts or maintenance obligations, these would be chores.
 
@@ -177,8 +177,8 @@ We require valuation functions to satisfy certain basic axioms:
 **Monotonicity** (for goods): More items are weakly better: if \\(S \subseteq T\\), then \\(v_i(S) \leq v_i(T)\\). Adding items to a bundle doesn't decrease its value. This captures the idea that goods are desirable.  You can always discard unwanted items (free disposal), so receiving extra items can't hurt you.
 
 Mathematically, this implies:
-- \\(v_i(S \cup \{g\}) \geq v_i(S)\\) for any item *g* and bundle *S*
-- \\(v_i(S \cup T) \geq \max\{v_i(S), v_i(T)\}\\) for any bundles *S* and *T*
+- \\(v_i(S \cup \{g\}) \geq v_i(S)\\) for any item \\( g \\) and bundle \\( S \\)
+- \\(v_i(S \cup T) \geq \max\{v_i(S), v_i(T)\}\\) for any bundles \\( S \\) and \\( T \\)
 
 The monotonicity assumption simplifies analysis enormously. When it fails (as with chores or mixed manna), we need different mathematical machinery.
 
@@ -215,7 +215,7 @@ v_i(S \cup \{g\}) - v_i(S) \geq v_i(T \cup \{g\}) - v_i(T) \text{ for all } S \s
 $$
 
 
-The incremental benefit of item *g* is higher when added to small bundle *S* than when added to larger bundle *T ⊇ S*.
+The incremental benefit of item \\( g \\) is higher when added to small bundle \\( S \\) than when added to larger bundle *T ⊇ S*.
 
 **Example**: Sam might value the first $100,000 in liquid assets highly (pays off urgent debt), the next $100,000 moderately (emergency fund), and additional amounts with decreasing urgency. The tenth investment account adds less value than the first. Submodularity models satiation and substitution effects.
 
@@ -235,7 +235,7 @@ $$
 v_i(S \cup \{g\}) - v_i(S) \leq v_i(T \cup \{g\}) - v_i(T) \text{ for all } S \subseteq T
 $$
 
-Adding item *g* is more valuable when you already have many items (because they complement each other).
+Adding item \\( g \\) is more valuable when you already have many items (because they complement each other).
 
 **Example**: Jordan might value the piano at $80,000 and the sheet music at $1,000 separately, but together they're worth $100,000 because the combination unlocks Jordan's ability to play professionally. The piano without music, or music without piano, provides limited value; together they create synergy.
 
@@ -452,49 +452,113 @@ Now that we can represent preferences mathematically, we can formalize what it m
 
 Why is this compelling? Envy-freeness respects each agent's subjective preferences while creating a kind of social stability. If no one envies anyone else, there's no grounds for complaint based on "you got something better than me." It's a **relative** fairness criterion for comparing your bundle to others' bundles, not to some absolute standard.
 
-**Formal Definition**: An allocation *A = (A₁, A₂, ..., Aₙ)* is **envy-free** (EF) if for all agents *i* and *j*:
+**Formal Definition**: An allocation \\( A = (A_1, A_2, \ldots, A_n) \\) is **envy-free** (EF) if for all agents \\( i \\) and \\( j \\):
 
 $$
 v_i(A_i) \geq v_i(A_j)
 $$
 
-Agent *i* values their own bundle *Aᵢ* at least as much as they value agent *j*'s bundle *Aⱼ*, according to *i*'s own valuation function.
+Agent \\( i \\) values their own bundle *Aᵢ* at least as much as they value agent \\( j \\)'s bundle \\( A_j \\), according to \\( i \\)'s own valuation function.
 
 Note several key aspects of this definition:
 
-**Subjectivity**: We use *vᵢ* for both sides, so agent *i*'s own valuation determines whether they envy. We don't ask "is Maya's bundle objectively better than Jordan's?" We ask "does Maya prefer Jordan's bundle to her own, by Maya's assessment?"
+**Subjectivity**: We use *vᵢ* for both sides, so agent \\( i \\)'s own valuation determines whether they envy. We don't ask "is Maya's bundle objectively better than Jordan's?" We ask "does Maya prefer Jordan's bundle to her own, by Maya's assessment?"
 
-**All pairs**: The condition must hold for *every* pair of agents *i* and *j*. There are *n(n-1)* such ordered pairs. For three siblings, that's 6 comparisons we must verify. As *n* grows, the number of constraints grows quadratically, having computational implications.
+**All pairs**: The condition must hold for *every* pair of agents \\( i \\) and \\( j \\). There are *n(n-1)* such ordered pairs. For three siblings, that's 6 comparisons we must verify. As \\( n \\) grows, the number of constraints grows quadratically, having computational implications.
 
 **Weakness of envy**: The inequality is weak (*≥*, not *>*). Agents are allowed to be *indifferent* between bundles. If Maya values her bundle at $450k and also values Jordan's bundle at $450k, she's envy-free despite the exact tie.
 
-[Continue with existing example and analysis...]
-
 {% include components/heading.html heading='Proportionality: Receiving Your Fair Share' level=4 %}
 
-[Keep existing content but add this formal context at the beginning:]
+**Intuition**: While envy-freeness asks "do I prefer someone else's bundle?", proportionality asks "did I receive my fair share?" It's an **absolute** rather than relative standard. If there are \\(n\\) agents with equal claim to the items, each should receive at least \\(1/n\\) of the total value—by their own assessment.
 
-**Formal Definition**: An allocation *A = (A₁, A₂, ..., Aₙ)* is **proportional** (PROP) if for all agents *i*:
+Proportionality captures a fundamental principle: **equal entitlement implies equal shares**. When agents have symmetric rights to resources, each deserves a proportional fraction. This criterion doesn't care whether others received more or less than you; it only asks whether you cleared the \\(1/n\\) threshold.
+
+**Why proportionality matters**:
+
+**Individual sovereignty**: Your guarantee doesn't depend on what happens to others. Even if the allocation process is unfair to someone else, if you personally received your \\(1/n\\) share, proportionality is satisfied from your perspective. This makes proportionality robust to variations in how others are treated.
+
+**Minimal fairness guarantee**: Proportionality represents a floor below which fairness clearly fails. If you receive less than \\(1/n\\) of value (by your own assessment), you have an objective complaint: "I was shortchanged relative to an equal division."
+
+**Interpersonal comparability**: Unlike envy-freeness, proportionality requires comparing utility across agents. When we say Maya's fair share is \\(\$233,333\\) and Jordan's fair share is \\(\$233,333\\), we're implicitly claiming that one unit of Maya's utility equals one unit of Jordan's utility. This is a strong assumption—philosophically controversial but practically necessary for making allocation decisions.
+
+**Examples from the sibling case**:
+
+Consider an allocation where:
+- Maya receives {house} → \\(v_{\text{Maya}}(\{\\text{house}\}) = \$450,000\\)
+- Jordan receives {investments} → \\(v_{\text{Jordan}}(\{\\text{investments}\}) = \$180,000\\)  
+- Sam receives {everything else} → \\(v_{\text{Sam}}(\{\\text{other items}\}) = \$300,000\\)
+
+**Proportionality check**:
+- Maya: \\(\$450,000 \geq \$700,000/3 = \$233,333\\) ✓
+- Jordan: \\(\$180,000 \geq \$700,000/3 = \$233,333\\) ✗
+- Sam: \\(\$300,000 \geq \$700,000/3 = \$233,333\\) ✓
+
+Jordan fails proportionality despite receiving substantial value (\\(\$180,000\\)). The investments represent 25.7% of Jordan's total valuation of all items, which falls short of the 33.3% threshold required for three agents.
+
+**Proportionality versus envy-freeness**:
+
+These criteria capture different notions of fairness:
+
+- **Proportionality is absolute**: You compare your bundle to the total pool, not to others' bundles
+- **Envy-freeness is relative**: You compare your bundle to each other agent's bundle
+- **Proportionality is individual**: Each agent's condition can be checked independently
+- **Envy-freeness is pairwise**: Requires checking all \\(n(n-1)\\) ordered pairs
+
+A proportional allocation can harbor envy. Suppose:
+- Maya receives {house, car} → value to Maya: \\(\$475,000\\) (67.9% of her total)
+- Jordan receives {piano, photos} → value to Jordan: \\(\$320,000\\) (45.7% of their total)  
+- Sam receives {investments, watches, other items} → value to Sam: \\(\$600,000\\) (85.7% of their total)
+
+Each sibling exceeds their \\(1/3\\) proportional share. But Maya might envy Sam's bundle: \\(v_{\text{Maya}}(\\{\text{Sam's items}\\}) = \$480,000 > \$475,000\\). Proportionality satisfied, envy-freeness violated.
+
+**Conversely**, could an allocation be envy-free but not proportional? With additive valuations and goods (not chores or mixed manna), this cannot happen—envy-freeness implies proportionality, as we'll prove shortly. But with more complex valuation structures or chores, the implication can fail.
+
+**The normalization assumption**:
+
+Proportionality crucially depends on how we normalize valuations. We set \\(v_i(M) = \$700,000\\) for all siblings, making their fair shares directly comparable (\\(\$233,333\\) each). But this normalization embeds a philosophical assumption: one dollar of value to Maya equals one dollar of value to Jordan.
+
+In reality, utility might not be comparable across people. Maya might experience greater or lesser satisfaction per dollar than Jordan—we cannot directly measure subjective utility. The normalization is a **modeling choice** that enables proportionality to be well-defined.
+
+Alternative normalizations could set:
+- \\(v_i(M) = 1\\) for all agents (total normalized to 1, fair share = \\(1/n\\))
+- \\(v_i(M)\\) determined by agents' actual reporting (fair share = \\(v_i(M)/n\\))
+
+The first approach (common scaling) is standard in fair division theory. The second (individual scaling) would make proportionality vacuous—any allocation where each agent receives *something* would be proportional by their own scaling.
+
+**When proportionality fails**:
+
+Proportionality can fail even with carefully designed allocations when:
+
+1. **High-value items exist**: If a single item is worth more than \\(1/n\\) of total value to an agent who doesn't receive it, they cannot achieve proportionality without that item or sufficient compensation.
+
+2. **Competing preferences**: When multiple agents highly value the same items, someone must go without and potentially fall below \\(1/n\\).
+
+3. **Indivisibility constraints**: Even if we could theoretically split value to achieve proportionality, indivisible items cannot be fractionally allocated.
+
+For the siblings, the house is worth \\(\$450,000\\) to both Maya and Sam—64% of their respective total valuations. Only one can receive it. The other must reach \\(\$233,333\\) through other items, which may or may not be possible depending on the allocation.
+
+This fundamental tension between indivisibility and proportionality motivates **relaxed fairness criteria** that we'll explore in Part 2: approximate proportionality, maximin share guarantees, and other weaker notions that remain achievable even when perfect proportionality is impossible.
+
+**Formal Definition**: An allocation \\( A = (A_1, A_2, \ldots, A_n) \\) is **proportional** (PROP) if for all agents \\( i \\):
 
 $$
 v_i(A_i) \geq v_i(M) / n
 $$
 
-where \\( m \\) is the set of all items and *n* is the number of agents. Agent *i* receives a bundle they value at least as much as *1/n* of the total value of all items.
+where \\( m \\) is the set of all items and \\( n \\) is the number of agents. Agent \\( i \\) receives a bundle they value at least as much as \\( 1/n \\) of the total value of all items.
 
-The proportionality criterion embodies a principle of **equal shares for equal entitlement**. If you're one of *n* equally deserving agents, you deserve at least *1/n* of the value.
+The proportionality criterion embodies a principle of **equal shares for equal entitlement**. If you're one of \\( n \\) equally deserving agents, you deserve at least \\( 1/n \\) of the value.
 
 **Key properties of proportionality**:
 
 **Absolute standard**: Unlike envy-freeness, proportionality doesn't compare your bundle to others'. It compares your bundle to the total pool of items. You might receive much less than another agent (by your valuation) yet still satisfy proportionality.
 
-**Individual sovereignty**: Your proportionality guarantee doesn't depend on what others receive. Even if every other agent receives nothing, if you receive *1/n* of total value, proportionality is satisfied for you.
+**Individual sovereignty**: Your proportionality guarantee doesn't depend on what others receive. Even if every other agent receives nothing, if you receive \\( 1/n \\) of total value, proportionality is satisfied for you.
 
 **Normalization dependence**: The criterion crucially depends on how we normalize valuations. We've set *vᵢ(M) = 700,000* for all siblings, making their fair shares comparable. But if we used different scales (Maya values total at 1, Jordan values total at 100), proportionality would mean different things.
 
 This normalization implicitly makes an **interpersonal utility comparison**: one unit of Maya's utility equals one unit of Jordan's utility. This is a strong assumption that some philosophers reject, but it's necessary to define proportionality across agents.
-
-[Continue with existing example and analysis...]
 
 {% include components/heading.html heading='The Relationship Between Fairness Criteria' level=4 %}
 
@@ -502,7 +566,7 @@ How do envy-freeness and proportionality relate? Neither implies the other in ge
 
 **Theorem** (Folklore): For goods with **non-atomic** valuations (where no single item is valued by any agent), envy-freeness implies proportionality.
 
-**Proof sketch**: Suppose allocation *A* is envy-free. Consider agent *i*. Since *i* doesn't envy anyone, we have:
+**Proof sketch**: Suppose allocation \\( A \\) is envy-free. Consider agent \\( i \\). Since \\( i \\) doesn't envy anyone, we have:
 
 $$
 v_i(A_i) \geq v_i(A_j) \text{ for all } j
@@ -528,7 +592,7 @@ $$
 v_i(A_i) \geq v_i(M) / n
 $$
 
-So agent *i* satisfies proportionality.
+So agent \\( i \\) satisfies proportionality.
 
 This shows that **envy-freeness is a stronger condition than proportionality** (when valuations are non-atomic). If you achieve envy-freeness, you get proportionality "for free."
 
@@ -542,9 +606,9 @@ However, the reverse doesn't hold: proportional allocations can harbor envy. You
 
 A third crucial criterion is **efficiency**: ensuring the allocation doesn't waste value through poor matching.
 
-**Formal Definition**: An allocation *A* is **Pareto optimal** (or **Pareto efficient**) if there exists no other allocation *A'* such that:
-- \\(v_i(A'_i) \geq v_i(A_i)\\) for all agents *i* (no one is worse off)
-- \\(v_j(A'_j) > v_j(A_j)\\) for at least one agent *j* (someone is strictly better off)
+**Formal Definition**: An allocation \\( A \\) is **Pareto optimal** (or **Pareto efficient**) if there exists no other allocation *A'* such that:
+- \\(v_i(A'_i) \geq v_i(A_i)\\) for all agents \\( i \\) (no one is worse off)
+- \\(v_j(A'_j) > v_j(A_j)\\) for at least one agent \\( j \\) (someone is strictly better off)
 
 In other words, you cannot reallocate items to make at least one person better off without making anyone worse off.
 
@@ -592,7 +656,27 @@ Ideally, we want allocations that are both fair (EF and PROP) and efficient (Par
 
 {% include components/heading.html heading='The Impossibility of Achieving Both: A Formal Result' level=3 %}
 
-[Keep the existing content about impossibility but add this formal framing:]
+We've now defined our two core fairness criteria: envy-freeness and proportionality. Both seem reasonable. Both capture important intuitions about what makes an allocation fair. Naturally, we'd like allocations that satisfy both—no one envies anyone else, and everyone receives at least their fair share.
+
+For **divisible goods**, this ideal is achievable. The Dubins-Spanier theorem (1961) proves that envy-free allocations always exist for divisible resources, and such allocations automatically satisfy proportionality. We'll explore this elegant theory in the cake-cutting section.
+
+But for **indivisible goods**, the situation is fundamentally different. The discrete nature of items creates inherent tensions between fairness criteria. Sometimes, no matter how cleverly we allocate, we cannot simultaneously satisfy both envy-freeness and proportionality.
+
+Consider what happens with our siblings if we try to satisfy both criteria. We need:
+- **Envy-freeness**: \\(v_i(A_i) \geq v_i(A_j)\\) for all pairs \\(i, j\\)
+- **Proportionality**: \\(v_i(A_i) \geq v_i(M)/3\\) for all \\(i\\)
+
+Both conditions involve inequalities that must hold simultaneously. For continuous goods, we can fine-tune allocations to satisfy all constraints. But with discrete items, we face rigid constraints: the house goes to exactly one sibling, the piano goes to exactly one sibling, and so on.
+
+Let's think about why this creates problems. Suppose Maya receives the house, worth \\(\$450,000\\) to her—well above her proportional share of \\(\$233,333\\). If Sam also values the house at \\(\$450,000\\), then \\(v_{\text{Sam}}(\{\text{house}\}) > v_{\text{Sam}}(A_{\text{Sam}})\\) almost certainly (since Sam's bundle must be worth at most \\(\$250,000\\) to Sam from remaining items). Sam envies Maya.
+
+We might try to fix this by giving Sam compensatory items—say, the watches worth \\(\$400,000\\) to Sam. But now Sam's bundle is worth \\(\$400,000+\\) to Sam, and if Maya also values this bundle highly, we've just created envy in the other direction.
+
+The problem compounds with three agents. Every allocation decision constrains the remaining options. Give one sibling a high-value item, and other siblings either:
+1. Fall below their proportional threshold (violating proportionality), or
+2. Receive enough value that someone envies them (violating envy-freeness)
+
+We're caught in a tension where satisfying one criterion makes satisfying the other increasingly difficult. This isn't a failure of imagination—it's a fundamental mathematical impossibility.
 
 We now arrive at the first major impossibility result: with indivisible items, we cannot always guarantee both envy-freeness and proportionality simultaneously.
 
@@ -620,7 +704,7 @@ Failed proportionality.
 
 By symmetry, giving the diamond to Bob instead just swaps who fails the criteria.
 
-This captures a fundamental barrier: when a single item is worth more than *1/n* of the total value to an agent, and multiple agents want it, we cannot guarantee proportionality. When agents have identical or highly similar preferences for items, we cannot guarantee envy-freeness.
+This captures a fundamental barrier: when a single item is worth more than \\( 1/n \\) of the total value to an agent, and multiple agents want it, we cannot guarantee proportionality. When agents have identical or highly similar preferences for items, we cannot guarantee envy-freeness.
 
 **Corollary**: For indivisible goods, we cannot always achieve:
 1. Envy-freeness + Proportionality
