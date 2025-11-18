@@ -46,9 +46,9 @@ Let's begin by understanding what perfect fairness looks like, so we know what w
 
 We've established a frustrating reality: with indivisible items, perfect fairness often eludes us. The house cannot be split into fractional pieces. The photo albums cannot be subdivided. The watches must go to someone as a collection. These discrete constraints create the situations we've seen where no allocation satisfies both envy-freeness and proportionality.
 
-But what if we could divide everything? What if the family home could be partitioned like a plot of land, each sibling receiving a contiguous piece? What if the investment portfolio could be split to arbitrary precision, not just by whole accounts but by fractional shares? What if every asset were perfectly divisible, like cutting a cake?
+But what if we could divide everything? What if the family home could be partitioned like a plot of land, each sibling receiving a contiguous piece? What if the investment portfolio could be split to arbitrary precision like in fractional shares? What if every asset were perfectly divisible, like cutting a cake?
 
-This isn't mere mathematical fantasy. Some real-world resources genuinely behave this way: time-sharing of computational resources, division of land parcels, allocation of continuous budgets, or splitting of infinitely divisible financial instruments. More importantly, studying the divisible case provides crucial intuition for the harder indivisible problems we'll tackle later. The algorithms and impossibility results for divisible goods form the foundation upon which modern fair division theory is built.
+Some real-world resources genuinely behave this way: time-sharing of computational resources, division of land parcels, allocation of continuous budgets, or splitting of infinitely divisible financial instruments. More importantly, studying the divisible case provides crucial intuition for the harder indivisible problems we'll tackle later. The algorithms and impossibility results for divisible goods form the foundation upon which modern fair division theory is built.
 
 In this part, we'll explore **cake-cutting**: the theory of fairly dividing a continuous, heterogeneous resource among agents with different preferences. We'll discover that when items are divisible:
 
@@ -517,7 +517,7 @@ For groups larger than ~10 agents, consider:
 
 2. **Theory guides practice**: Understanding *why* cut-and-choose guarantees envy-freeness helps us recognize when it applies to our problems.
 
-3. **Computation matters**: Last diminisher's O(n²) complexity isn't just theoretical. It makes the protocol impractical for large groups.
+3. **Computation matters**: Last diminisher's O(n²) complexity makes the protocol impractical for large groups.
 
 4. **Diverse preferences create opportunity**: When Alice and Bob have opposite preferences, cut-and-choose produces outcomes where both agents can exceed their minimum guarantees.
 
@@ -857,7 +857,7 @@ Consider two scenarios, both producing identical allocations:
 
 Are these scenarios equally fair?
 
-Many people would argue no, despite the identical outcomes. Scenario B feels more legitimate because agents participated in the process. The protocol itself creates fairness, not just it's result. This is the domain of **procedural fairness**: the idea that how we reach an allocation matters as much as what allocation we reach.
+Many people would argue no, despite the identical outcomes. Scenario B feels more legitimate because agents participated in the process. This is the domain of **procedural fairness**: the idea that how we reach an allocation matters as much as what allocation we reach.
 
 Cake-cutting protocols embody deep philosophical commitments that often go unexamined. In this section, we'll make those commitments explicit and explore how different ethical frameworks lead to different protocol designs.
 
@@ -877,7 +877,7 @@ Why does procedure matter?
 
 **Transparency and trust**: Procedural fairness reduces the need for trust in a central authority. Cut-and-choose doesn't require agents to trust that the allocator has correctly understood their preferences or computed fairly. The mechanism itself guarantees fairness through its structure. This matters enormously in settings where agents are skeptical of authorities or where information asymmetries exist.
 
-**Psychological acceptability**: Research in behavioral economics shows that people care about process, not just outcomes. They're more satisfied with allocations they perceive as resulting from fair procedures, even when those allocations are objectively worse for them than alternatives. A union might accept lower wages resulting from fair negotiation more readily than higher wages imposed unilaterally.
+**Psychological acceptability**: Research in behavioral economics shows that people care about process as well as outcomes. They're more satisfied with allocations they perceive as resulting from fair procedures, even when those allocations are objectively worse for them than alternatives. A union might accept lower wages resulting from fair negotiation more readily than higher wages imposed unilaterally.
 
 **Legitimacy in perpetuity**: When siblings use a fair procedure to divide an inheritance, they can't later claim "the allocation was unfair" because they participated in creating it. The procedure creates a form of consent. Even if Maya later regrets her choice, she cannot argue the process wronged her. This prevents endless renegotiation and stabilizes social arrangements.
 

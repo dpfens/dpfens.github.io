@@ -1156,7 +1156,7 @@ For our siblings (*n* = 3, *m* = 8): *O(3⁴ × 8) = O(648)* operations. Instant
 
 Even for *n* = 20 agents and *m* = 100 items: *O(20⁴ × 100) = O(16,000,000)* operations. Still easily computable.
 
-**The key insight**: When we're willing to accept **EF1** rather than exact envy-freeness, the problem remains tractable. The relaxation doesn't just make solutions exist. It makes them efficiently computable.
+When we're willing to accept **EF1** rather than exact envy-freeness, the problem remains tractable. The relaxation makes solutions exist and efficiently computable.
 
 **The NP-Hard Barrier: When Exact Optimization Becomes Intractable**
 
@@ -1457,7 +1457,7 @@ Assuming equal weights is not value-neutral. It's a substantive ethical choice t
 
 We've established that exact fairness is often impossible. The relaxations we've defined (EF1, MMS, PROPm) are approximations. But when do approximations become "fair enough" that people accept them?
 
-This is partly a psychological question, not just philosophical. Research in behavioral economics and psychology of fairness offers insights:
+This is partly a psychological question as well as philosophical. Research in behavioral economics and psychology of fairness offers insights:
 
 **Small deviations are psychologically negligible**: [Kahneman and Tversky's prospect theory](https://www.princeton.edu/~kahneman/docs/Publications/prospect_theory.pdf) shows that people exhibit reference dependence. Small changes from a reference point are barely noticed. If you receive a bundle worth $233k with fair share $233.3k, the $300 shortfall is psychologically negligible.
 
@@ -1891,7 +1891,7 @@ Let agents choose based on their values:
 - Time-sensitive agents choose Option A
 - Welfare-maximizing agents choose Option C
 
-Fairness isn't just about outcomes. It's about respecting agent autonomy in determining what fairness means. When multiple approaches are technically defensible, the choice is legitimately theirs to make.
+Fairness is about respecting agent autonomy in determining what fairness means as well as outcomes. When multiple approaches are technically defensible, the choice is legitimately theirs to make.
 
 We've now built a complete framework for navigating discrete fair division: understanding what fairness notions exist, what they mean philosophically, what computational trade-offs they involve, and how to choose among them based on context.
 

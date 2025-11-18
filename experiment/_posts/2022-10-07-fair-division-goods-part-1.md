@@ -17,7 +17,7 @@ The lawyer suggests the obvious solution: sell everything, split the proceeds th
 
 Except Maya starts crying. Jordan looks devastated. Sam seems satisfied, but guilty about it.
 
-This is where most discussions of fairness end and most implementations of "fair division" begin. We recognize that equal splits of monetary value don't capture what people actually care about. But here's the uncomfortable truth that drives everything in this post: **there is no single, mathematically correct definition of "fair."**
+Equal monetary splits satisfy accountants but devastate families, which is precisely why we need mathematical fairness criteria that respect subjective value, not just market prices. We recognize that equal splits of monetary value don't capture what people actually care about. But here's the uncomfortable truth that drives everything in this post: **there is no single, mathematically correct definition of "fair."**
 
 Let me show you why intuitive solutions fail by working through three attempts:
 
@@ -29,7 +29,7 @@ Problem: Maya can't afford to keep the house without taking on debt, effectively
 **Attempt 2: Divide by Preference**  
 Maya gets the house, Jordan gets the piano plus some investments, Sam gets the most liquid assets. We try to balance by valuation. But Maya receives $450,000 in value while Jordan and Sam each receive $125,000.
 
-Problem: Jordan and Sam feel shortchanged. This violates **proportionality**, each sibling should receive at least their "fair share" (1/3 of the total value by their own assessment). Jordan might not envy Maya's specific bundle (Jordan doesn't want the house), but Jordan believes they deserved more overall.
+Jordan and Sam each receive $125,000 while Maya gets $450,000 which is a 3.6x disparity that feels inequitable despite Maya needing the house most. The allocation violates proportionality because receiving less than 1/3 of total value (by your own assessment) constitutes objective shortchanging.
 
 **Attempt 3: Hybrid Approach**  
 Maya gets the house but we insist she compensate her siblings partially, say $50,000 each. Jordan gets the piano plus investments worth $75,000. Sam gets liquid assets totaling $75,000 plus $50,000 from Maya.
@@ -133,7 +133,7 @@ This abstract setup unifies many concrete problems:
 - **Course assignment**: Agents are students, items are course seats, valuations reflect academic interests and degree requirements
 - **Divorce settlements**: Agents are spouses, items are marital property, valuations reflect need and sentimental value
 
-By abstracting to this mathematical model, we develop algorithms and theorems that apply across all these domains. The formalization lets us reason precisely about what's possible and what's not.
+By abstracting to this mathematical model, we develop algorithms and theorems that apply across all these domains. By abstracting to agents, items, and valuation functions, we can prove theorems that hold whether we're dividing estates, allocating computational resources, or assigning students to courses: universality through formalization.
 
 {% include components/heading.html heading='Goods, Chores, and Mixed Manna' level=3 %}
 
@@ -174,7 +174,7 @@ We require valuation functions to satisfy certain basic axioms:
 
 **Normalization**: An empty bundle has zero value: \\(v_i(\emptyset) = 0\\). This gives us a baseline for comparison: receiving nothing is worth nothing. Without this, utility comparisons become meaningless (is a bundle worth 100 utils good if the empty bundle is worth -1000?).
 
-**Monotonicity** (for goods): More items are weakly better: if \\(S \subseteq T\\), then \\(v_i(S) \leq v_i(T)\\). Adding items to a bundle doesn't decrease its value. This captures the idea that goods are desirable.  You can always discard unwanted items (free disposal), so receiving extra items can't hurt you.
+**Monotonicity captures free disposal**: More items are weakly better: if \\(S \subseteq T\\), then \\(v_i(S) \leq v_i(T)\\). Adding items to a bundle doesn't decrease its value. This captures the idea that goods are desirable.  You can always discard unwanted items (free disposal), so receiving extra items can't hurt you.
 
 Mathematically, this implies:
 - \\(v_i(S \cup \{g\}) \geq v_i(S)\\) for any item \\( g \\) and bundle \\( S \\)
@@ -322,7 +322,7 @@ Total value to Sam: \\(v_{\text{Sam}}(M) = \$700,000\\)
 
 Notice several crucial properties of these valuations:
 
-**Normalization**: We've scaled valuations so \\(v_i(M) = \$700,000\\) for all siblings. This interpersonal normalization makes fairness criteria meaningful—when we say each deserves \\(1/3\\) of total value, we mean \\(\$233,333\\) for everyone. Without common scaling, proportionality would be ill-defined.
+**Normalization grounds our utility scale:**: We've scaled valuations so \\(v_i(M) = \$700,000\\) for all siblings. This interpersonal normalization makes fairness criteria meaningful—when we say each deserves \\(1/3\\) of total value, we mean \\(\$233,333\\) for everyone. Without common scaling, proportionality would be ill-defined.
 
 **Divergent preferences**: The siblings value individual items very differently. Jordan's \\(\$200,000\\) valuation of photos far exceeds Maya's \\(\$8,000\\) and Sam's \\(\$3,000\\). Sam's \\(\$400,000\\) valuation of the watches dwarfs Maya's \\(\$2,000\\) and Jordan's \\(\$5,000\\). This heterogeneity is what makes fair division both challenging and interesting—if everyone valued everything identically, any equal split would work.
 
@@ -474,7 +474,8 @@ Note several key aspects of this definition:
 
 Proportionality captures a fundamental principle: **equal entitlement implies equal shares**. When agents have symmetric rights to resources, each deserves a proportional fraction. This criterion doesn't care whether others received more or less than you; it only asks whether you cleared the \\(1/n\\) threshold.
 
-**Why proportionality matters**:
+**Proportionality establishes a fairness floor**
+Unlike envy-freeness (which compares you to others), proportionality asks whether you cleared an absolute threshold—did you receive at least 1/n of total value by your own assessment? Falling short constitutes objective shortchanging, independent of what others received.
 
 **Individual sovereignty**: Your guarantee doesn't depend on what happens to others. Even if the allocation process is unfair to someone else, if you personally received your \\(1/n\\) share, proportionality is satisfied from your perspective. This makes proportionality robust to variations in how others are treated.
 
@@ -558,7 +559,7 @@ The proportionality criterion embodies a principle of **equal shares for equal e
 
 **Normalization dependence**: The criterion crucially depends on how we normalize valuations. We've set *vᵢ(M) = 700,000* for all siblings, making their fair shares comparable. But if we used different scales (Maya values total at 1, Jordan values total at 100), proportionality would mean different things.
 
-This normalization implicitly makes an **interpersonal utility comparison**: one unit of Maya's utility equals one unit of Jordan's utility. This is a strong assumption that some philosophers reject, but it's necessary to define proportionality across agents.
+When we declare that Maya's $233,333 share equals Jordan's $233,333 share, we're making a philosophically controversial claim: that one unit of Maya's satisfaction equals one unit of Jordan's. Proportionality requires this assumption, even though subjective experiences aren't directly comparable.
 
 {% include components/heading.html heading='The Relationship Between Fairness Criteria' level=4 %}
 
@@ -676,7 +677,7 @@ The problem compounds with three agents. Every allocation decision constrains th
 1. Fall below their proportional threshold (violating proportionality), or
 2. Receive enough value that someone envies them (violating envy-freeness)
 
-We're caught in a tension where satisfying one criterion makes satisfying the other increasingly difficult. This isn't a failure of imagination—it's a fundamental mathematical impossibility.
+We're caught in a tension where satisfying one criterion makes satisfying the other increasingly difficult. This is a fundamental mathematical impossibility.
 
 We now arrive at the first major impossibility result: with indivisible items, we cannot always guarantee both envy-freeness and proportionality simultaneously.
 
@@ -772,7 +773,7 @@ These foundations reveal both the promise and the challenge of fair division. Th
 
 But here's the key insight that will guide everything that follows: **the impossibilities depend crucially on indivisibility**. If we could divide items arbitrarily those impossibility results vanish.  For example, if the family home could be cut like a cake into fractional pieces without destroying value. With perfect divisibility, elegant existence theorems guarantee that envy-free, proportional, and Pareto optimal allocations always exist.
 
-This observation motivates the next phase of our journey: **studying the divisible case as a theoretical foundation before returning to confront the harsh realities of indivisibility**.
+Since indivisibility creates impossibilities but divisibility permits elegant solutions, understanding the continuous case reveals what we sacrifice when items must remain whole and why approximations become necessary.
 
 In Part II, we'll explore cake-cutting, which is the theory of fairly dividing continuous, heterogeneous resources among agents with different preferences. You might wonder: why study an idealized model when our siblings face discrete, indivisible items? Three reasons:
 
