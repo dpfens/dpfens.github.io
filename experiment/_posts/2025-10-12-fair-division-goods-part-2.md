@@ -77,19 +77,19 @@ This is why continuous resources are "easier" in fair division: the ability to d
 
 We formalize the cake-cutting problem as follows:
 
-Let the "cake" be the interval **C = [0, 1]**, representing a continuous resource. Each agent \\(i\\) has a **valuation measure** \\(V_i\\) that assigns value to measurable subsets of the cake. We require that \\(V_i\\) satisfies:
+Let the "cake" be the interval **C = [0, 1]**, representing a continuous resource. Each agent \\( i \\) has a **valuation measure** \\( V_i \\) that assigns value to measurable subsets of the cake. We require that \\( V_i \\) satisfies:
 
-1. **Non-negativity**: \\(V_i(S) \geq 0\\) for all measurable sets \\(S \subseteq C\\)
-2. **Normalization**: \\(V_i(C) = 1\\) (the entire cake has value 1 to each agent)
-3. **Additivity**: For disjoint sets \\( S \\) and \\(T \\), \\(V_i(S \cup T) = V_i(S) + V_i(T)\\)
-4. **Divisibility**: For any set \\(S\\) and any \\(0 \leq \lambda \leq 1\\), there exists a subset \\(T \subseteq S\\) such that \\(V_i(T) = \lambda \cdot V_i(S)\\)
+1. **Non-negativity**: \\( V_i(S) \geq 0 \\) for all measurable sets \\( S \subseteq C \\)
+2. **Normalization**: \\( V_i(C) = 1 \\) (the entire cake has value 1 to each agent)
+3. **Additivity**: For disjoint sets \\( S \\) and \\( T \\), \\( V_i(S \cup T) = V_i(S) + V_i(T)\\)
+4. **Divisibility**: For any set \\( S \\) and any \\( 0 \leq \lambda \leq 1 \\), there exists a subset \\( T \subseteq S \\) such that \\( V_i(T) = \lambda \cdot V_i(S)\\)
 
 These axioms capture the essence of "continuous divisibility." Additivity means that the value of two separate pieces is the sum of their individual values (no complementarities or substitutabilities in the continuous model). Divisibility ensures we can always find a piece worth exactly any fraction of a larger piece's value.  This is the mathematical heart of what makes continuous division tractable.
 
-An **allocation** is a partition of the cake into \\(n\\) disjoint pieces \\((A_1, A_2, \ldots, A_n)\\) where agent \\(i\\) receives piece \\(A_i\\). The fairness criteria we've already defined, envy-freeness and proportionality, apply directly:
+An **allocation** is a partition of the cake into \\( n \\) disjoint pieces \\((A_1, A_2, \ldots, A_n)\\) where agent \\( i \\) receives piece \\( A_i \\). The fairness criteria we've already defined, envy-freeness and proportionality, apply directly:
 
-- **Envy-free**: \\(V_i(A_i) \geq V_i(A_j)\\) for all agents \\(i, j\\)
-- **Proportional**: \\(V_i(A_i) \geq 1/n\\) for all agents \\(i\\)
+- **Envy-free**: \\( V_i(A_i) \geq V_i(A_j)\\) for all agents \\( i, j \\)
+- **Proportional**: \\( V_i(A_i) \geq 1/n \\) for all agents \\( i \\)
 
 The crucial question: do such allocations always exist?
 
@@ -777,7 +777,7 @@ The lower bounds on exact envy-freeness have motivated research into approximate
 
 An allocation is **ε-envy-free** if for all agents \\( i \\) and \\( j \\):
 
-\\(V_i(A_i) \geq V_i(A_j) - \varepsilon\\)
+\\( V_i(A_i) \geq V_i(A_j) - \varepsilon \\)
 
 Agent \\( i \\) might envy agent \\( j \\), but by at most *ε*. When *ε = 0*, we have exact envy-freeness. As *ε* grows, the guarantee weakens.
 

@@ -143,8 +143,8 @@ Welfare allocation differs from inheritance division in several crucial ways:
 **Massive scale**: A city's housing assistance program might serve 50,000 recipients choosing from 5,000 available units. A federal food assistance program might serve 40 million households. Algorithms that work for 3 siblings dividing 8 items become computationally infeasible at this scale.
 
 The implications:
-- Exact optimization is impossible.  Even checking if an allocation satisfies fairness criteria requires O(n²) comparisons for n recipients
-- Algorithms must be **nearly linear** in complexity: O(n log n) or O(n) where n is recipients
+- Exact optimization is impossible.  Even checking if an allocation satisfies fairness criteria requires \\( O(n²) \\) comparisons for n recipients
+- Algorithms must be **nearly linear** in complexity: \\( O(n log n) \\) or \\( O(n) \\) where n is recipients
 - Parallelization and distributed computation become essential
 - Heuristics with good average-case performance replace algorithms with worst-case guarantees
 
@@ -245,7 +245,7 @@ Let's do concrete calculations. Assume a system needs to allocate housing vouche
 - **Verdict: Completely infeasible**
 - Examples: Nash welfare maximization, leximin optimization, many sophisticated mechanisms
 
-**The implication**: At government scale, **we can afford O(nm) or possibly O(n²), but nothing more**. Sophisticated algorithms that work beautifully for small problems become impossible.
+**The implication**: At government scale, **we can afford \\( O(nm) \\) or possibly \\( O(n²) \\), but nothing more**. Sophisticated algorithms that work beautifully for small problems become impossible.
 
 This rules out:
 - Nash welfare maximization (O(n³m³) even with efficient algorithms)
@@ -255,9 +255,9 @@ This rules out:
 
 What remains:
 - Round-robin allocation (O(nm))
-- Greedy matching (O(nm) or O(nm log n))  
-- Serial dictatorship (O(nm))
-- Simple priority systems (O(n log n) for sorting + O(nm) for assignment)
+- Greedy matching \\( (O(nm) \\) or \\( O(nm log n)) \\)  
+- Serial dictatorship \\( (O(nm) \\) ) 
+- Simple priority systems \\( (O(n log n) \\) for sorting + \\( O(nm) \\) for assignment)
 
 The computational constraint is a **hard filter**: regardless of philosophical appeal or fairness guarantees, algorithms that don't scale to millions of recipients cannot be used. This forces pragmatism.
 
@@ -266,7 +266,7 @@ The computational constraint is a **hard filter**: regardless of philosophical a
 Modern systems can parallelize computation across multiple machines. If we have 1,000 processors, we might speed up computation by 1,000× (though overhead reduces this in practice).
 
 But parallelization doesn't change asymptotic complexity:
-- O(n³) with 1,000× parallelization is still O(n³/1,000)
+- \\( O(n³) \\) with 1,000× parallelization is still O(n³/1,000)
 - For n = 50,000: still 125 trillion operations / 1,000 = 125 billion operations, requiring ~2 minutes
 - This might make borderline algorithms feasible, but doesn't help with truly expensive algorithms
 
@@ -366,7 +366,7 @@ We'll examine three algorithmic approaches that see real-world use:
 2. **Allocate serially**: In priority order, each recipient selects their most-preferred available resource
 3. **Iterate**: Continue until all resources are allocated or all recipients are served
 
-**Computational complexity**: O(n log n) for sorting priorities + O(nm) for allocation = **O(nm)** where n is recipients, m is resources. Perfectly scalable.
+**Computational complexity**: \\( O(n log n) \\) for sorting priorities + \\( O(nm) \\) for allocation = **O(nm)** where n is recipients, m is resources. Perfectly scalable.
 
 **Fairness properties**:
 - **Strategyproof** for priorities: Given your priority rank, your best strategy is to report preferences truthfully
@@ -411,7 +411,7 @@ Process:
 2. **Allocate probabilistically**: Each recipient's probability of receiving a resource is proportional to their priority score
 3. **Implement via lottery**: Convert probabilities to lottery odds; run lottery to determine allocations
 
-**Computational complexity**: O(n) to compute probabilities + O(n log n) for lottery = **O(n log n)**. Still scalable.
+**Computational complexity**: \\( O(n) \\) to compute probabilities + \\( O(n log n) \\) for lottery = **O(n log n)**. Still scalable.
 
 **Fairness properties**:
 - **Ex-ante equal treatment**: Applicants with identical need scores have identical probabilities
@@ -457,8 +457,8 @@ Instead of deterministic cutoff (all families with ≥35 points get subsidy):
 3. **Iterate and refine**: Allow inter-group trading if it improves leximin
 
 **Computational complexity**: If groups have size g and there are n/g groups:
-- Within-group leximin: O(g^m) per group (expensive for exact leximin)
-- Total: O((n/g) × g^m) = O(n × g^(m-1))
+- Within-group leximin: \\( O(g^m) \\) per group (expensive for exact leximin)
+- Total: \\( O((n/g) × g^m)  = O(n × g^(m-1)) \\)
 - For small g (e.g., g=100), this is feasible
 
 **Fairness properties**:
@@ -726,7 +726,7 @@ Part 4 has focused on real-world applications. This reading list emphasizes prac
 
 **[Gale and Shapley (1962). College Admissions and the Stability of Marriage](https://www.jstor.org/stable/2312726).** *American Mathematical Monthly.* The foundational paper on stable matching. While not explicitly about fair division, stable matching algorithms underlie many assignment mechanisms. Essential for understanding how matching with preferences works. Accessible and elegantly written.
 
-**[Kuhn (1955). The Hungarian Method for the Assignment Problem](https://onlinelibrary.wiley.com/doi/10.1002/nav.3800020109).** *Naval Research Logistics Quarterly.* The O(n³) algorithm for maximum weight bipartite matching. Fundamental for utilitarian allocation when agents have unit-demand (each wants one item). Technical but includes clear exposition of the algorithm.
+**[Kuhn (1955). The Hungarian Method for the Assignment Problem](https://onlinelibrary.wiley.com/doi/10.1002/nav.3800020109).** *Naval Research Logistics Quarterly.* The \\( O(n³) \\) algorithm for maximum weight bipartite matching. Fundamental for utilitarian allocation when agents have unit-demand (each wants one item). Technical but includes clear exposition of the algorithm.
 
 **[Budish and Cantillon (2012). The Multi-Unit Assignment Problem: Theory and Evidence from Course Allocation at Wharton](https://www.aeaweb.org/articles?id=10.1257/aer.102.5.2237).** *American Economic Review.* Extends matching to multi-unit demand (agents want multiple items). Real-world deployment at business school with thousands of students. Shows how theory meets institutional constraints. Important case study.
 

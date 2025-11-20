@@ -104,7 +104,7 @@ The shift from fairness to welfare is adopting a different ethical framework. On
 
 {% include components/heading.html heading='Theory: Social Welfare Functions' level=3 %}
 
-A **social welfare function** is a mathematical object that aggregates individual utilities into a single measure of collective well-being. Given an allocation *A = (A₁, ..., A_n)* where agent *i* receives bundle *A_i* with utility *v_i(A_i)*, a social welfare function *SW* computes a single number representing how good this allocation is for society:
+A **social welfare function** is a mathematical object that aggregates individual utilities into a single measure of collective well-being. Given an allocation *A = (A₁, ..., A_n)* where agent  \\( i \\) receives bundle  \\( A_i \\) with utility  \\( v_i(A_i) \\), a social welfare function *SW* computes a single number representing how good this allocation is for society:
 
 $$
 SW(A) = f(v_1(A_1), v_2(A_2), \ldots, v_n(A_n))
@@ -214,15 +214,15 @@ This formulation, introduced by [John Nash](https://en.wikipedia.org/wiki/Nash_s
 
 **Built-in egalitarianism**: Nash welfare severely penalizes giving someone very little. If any agent receives utility close to zero, the product becomes close to zero, tanking total welfare. This creates strong incentive to avoid leaving anyone with nearly nothing.
 
-Mathematically: if agent \\(i\\)'s utility is \\(\epsilon\\) (tiny), then no matter how large other agents' utilities are, the product is bounded by \\(\epsilon \times\\) (product of others). The only way to make the product large is to make every factor reasonably large.
+Mathematically: if agent \\( i \\)'s utility is \\(\epsilon \\) (tiny), then no matter how large other agents' utilities are, the product is bounded by \\(\epsilon \times \\) (product of others). The only way to make the product large is to make every factor reasonably large.
 
-**Scale-invariance**: Unlike utilitarian welfare, Nash welfare is invariant to rescaling utilities. If we multiply agent \\(i\\)'s utilities by a constant, the optimal allocation doesn't change. This addresses the interpersonal comparison problem: we don't need to decide on "correct" scales.
+**Scale-invariance**: Unlike utilitarian welfare, Nash welfare is invariant to rescaling utilities. If we multiply agent \\( i \\) 's utilities by a constant, the optimal allocation doesn't change. This addresses the interpersonal comparison problem: we don't need to decide on "correct" scales.
 
-Formally: \\(SW_{\text{Nash}}(c_1v_1, c_2v_2, \ldots, c_nv_n) = (\prod_i c_i) \times SW_{\text{Nash}}(v_1, v_2, \ldots, v_n)\\). Since the constants multiply out, the optimal allocation maximizing \\(SW_{\text{Nash}}\\) is the same regardless of the constants \\(c_i\\).
+Formally: \\( SW_{\text{Nash}}(c_1v_1, c_2v_2, \ldots, c_nv_n) = (\prod_i c_i) \times SW_{\text{Nash}}(v_1, v_2, \ldots, v_n)\\). Since the constants multiply out, the optimal allocation maximizing \\( SW_{\text{Nash}}\\) is the same regardless of the constants \\( c_i \\).
 
 **Pareto optimality**: Allocations maximizing Nash welfare are always Pareto optimal. You cannot improve one person's utility without decreasing another's at optimum. This is a deep result from Nash's bargaining theory.
 
-**Diminishing returns**: The logarithmic formulation shows why Nash welfare favors equality: \\(\log\\) has diminishing marginal returns. Going from utility 1 to 2 increases \\(\log\\) by \\(\log(2) \approx 0.69\\). Going from 100 to 101 increases \\(\log\\) by \\(\log(101/100) \approx 0.01\\). The function values small improvements to worse-off agents more than large improvements to better-off agents.
+**Diminishing returns**: The logarithmic formulation shows why Nash welfare favors equality: \\(\log \\) has diminishing marginal returns. Going from utility 1 to 2 increases \\(\log \\) by \\(\log(2) \approx 0.69 \\). Going from 100 to 101 increases \\(\log \\) by \\(\log(101/100) \approx 0.01 \\). The function values small improvements to worse-off agents more than large improvements to better-off agents.
 
 **Example with our siblings**:
 
@@ -1036,7 +1036,7 @@ print(f"  Utilitarian (sum):        ${metrics_maximin['utilitarian']:,}")
 print(f"  Nash (geometric mean):    ${metrics_maximin['nash_geometric_mean']:,.0f}")
 print(f"  Maximin (minimum):        ${metrics_maximin['maximin']:,}"){% endhighlight %}
 
-**Key Insight**: The auxiliary variable trick transforms a minimax problem into a standard maximization. By introducing $z$ and constraining $v_i(A_i) \geq z$ for all $i$, we ensure $z$ equals the minimum utility. Maximizing $z$ then maximizes the minimum.
+**Key Insight**: The auxiliary variable trick transforms a minimax problem into a standard maximization. By introducing \\( z \\) and constraining \\( v_i(A_i) \geq z \\) for all \\( i \\), we ensure \\( z \\) equals the minimum utility. Maximizing \\( z \\) then maximizes the minimum.
 
 This formulation is elegant but computationally expensive. The MIP solver must search exponentially many allocations in the worst case.
 
@@ -1128,7 +1128,7 @@ print(f"  Utilitarian (sum):        ${metrics_leximin['utilitarian']:,}")
 print(f"  Nash (geometric mean):    ${metrics_leximin['nash_geometric_mean']:,.0f}")
 print(f"  Maximin (minimum):        ${metrics_leximin['maximin']:,}"){% endhighlight %}
 
-**Note on Scalability**: The enumeration approach has complexity  \\( O(n^m) \\) where \\( n \\) is agents and \\( m \\) is items. For our siblings, \\( 3^8 = 6,561 \\) allocations is trivial. For 10 heirs with 20 items, \\( 10^{20} \\) allocations it's impossible. Production systems need sophisticated algorithms (branch-and-bound, constraint programming) or must accept approximations.
+**Note on Scalability**: The enumeration approach has complexity \\( O(n^m) \\) where \\( n \\) is agents and \\( m \\) is items. For our siblings, \\( 3^8 = 6,561 \\) allocations is trivial. For 10 heirs with 20 items, \\( 10^{20} \\) allocations it's impossible. Production systems need sophisticated algorithms (branch-and-bound, constraint programming) or must accept approximations.
 
 {% include components/heading.html heading='Comparative Analysis: Which Welfare Function for Which Situation?' level=4 %}
 
@@ -1545,7 +1545,7 @@ When agents have arbitrary valuations over bundles (not necessarily additive), m
 
 *Partition problem*: Given integers {a₁, ..., a_m}, can they be partitioned into two sets with equal sums?
 
-*Reduction*: Create 2 agents who both value item *j* at *a_j*. An allocation achieves sum Σaⱼ if and only if one agent gets total value Σaⱼ/2 (meaning the items can be partitioned equally). Thus, max-sum allocation is at least as hard as partition, which is NP-complete.
+*Reduction*: Create 2 agents who both value item  \\( j \\) at *a_j*. An allocation achieves sum Σaⱼ if and only if one agent gets total value Σaⱼ/2 (meaning the items can be partitioned equally). Thus, max-sum allocation is at least as hard as partition, which is NP-complete.
 
 Moreover, even for additive valuations, max-sum allocation with constraints (some items must go together, some items are mutually exclusive, capacity constraints) quickly becomes NP-hard.
 
@@ -1560,7 +1560,7 @@ For each item g:
     Assign g to agent i where vᵢ(g) is maximum
 ```
 
-Time complexity: **O(nm)** where n is agents and m is items. Just sort items by who values them most.
+Time complexity: \\( O(nm) \\) where \\( n \\) is agents and \\( m \\) is items. Just sort items by who values them most.
 
 This gives us an important insight: **For additive valuations, utilitarian welfare is easy to maximize**. The greedy algorithm of giving each item to whoever values it most is optimal. This explains why utilitarian approaches are popular in practice: they're computationally cheap.
 
@@ -1568,7 +1568,7 @@ This gives us an important insight: **For additive valuations, utilitarian welfa
 
 Variables: \\( x_{ig} \in \{0,1\} \\) indicates if agent \\( i \\) receives item \\( g \\)  
 Objective: \\( \text{maximize } \sum_i \sum_g v_i(g) \times x_{ig}\\)  
-Constraints: \\(\sum_i x_{ig} = 1\\) for all \\( g \\) (each item assigned to exactly one agent)  
+Constraints: \\(\sum_i x_{ig} = 1 \\) for all \\( g \\) (each item assigned to exactly one agent)  
 Additional constraints: bundle restrictions, capacity limits, etc.
 
 Modern MIP solvers like Google's OR-Tools (open-source) can solve surprisingly large instances of these problems. For our siblings (3 agents, 8 items), even complex constrained versions solve in milliseconds.
@@ -1690,7 +1690,7 @@ For our siblings, max-sum is **completely tractable**. With additive valuations,
 
 This greedy allocation maximizes total utility. Total value: $450k + $300k + $25k + $120k + $20k + $30k + $200k + $250k = $1,395k (assuming car goes to Maya).
 
-Time to compute: O(8 × 3) = O(24) operations, microseconds.
+Time to compute: \\( O(8 × 3) = O(24) \\) operations, microseconds.
 
 {% include components/heading.html heading='Max-Product (Nash): A Breakthrough Result' level=4 %}
 
@@ -1714,11 +1714,11 @@ Later work has improved the complexity:
 - [Anari et al. (2018)](https://arxiv.org/abs/1807.01402) gave a faster algorithm using continuous optimization
 - [Garg et al. (2021)](https://arxiv.org/abs/2107.02670) provided practical implementations
 
-**Time complexity**: The best algorithms run in approximately **O(n³m³)** time with modern techniques, where n is agents and m is items. This is polynomial but cubic in both dimensions. For our siblings: *O(3³ × 8³) = O(13,824)* operations. Still instantaneous, but noticeably slower than the O(24) greedy algorithm for max-sum.
+**Time complexity**: The best algorithms run in approximately **O(n³m³)** time with modern techniques, where \\( n \\) is agents and \\( m \\) is items. This is polynomial but cubic in both dimensions. For our siblings: \\( O(3³ × 8³) = O(13,824) \\) operations. Still instantaneous, but noticeably slower than the \\( O(24) \\) greedy algorithm for max-sum.
 
 For larger problems:
-- n=10, m=100: O(10³ × 100³) = O(10 billion) operations, seconds to minutes
-- n=100, m=1000: O(100³ × 1000³) = O(10¹⁵) operations, days (impractical)
+- n=10, m=100: \\( O(10³ × 100³) = O(10 billion) \\) operations, seconds to minutes
+- n=100, m=1000: \\( O(100³ × 1000³) = O(10¹⁵) \\) operations, days (impractical)
 
 **The limits of the breakthrough**:
 
@@ -1754,7 +1754,7 @@ The existence of polynomial-time algorithms for Nash welfare is a major theoreti
 
 Now we come to the hardest problem: maximizing the minimum utility (egalitarian or maximin welfare).
 
-*maximize min_i vᵢ(Aᵢ) subject to allocation constraints*
+*maximize \\( min_i vᵢ(Aᵢ) \\) subject to allocation constraints*
 
 This problem is **strongly NP-hard** and hard to approximate within any constant factor (unless P=NP).
 
@@ -1771,7 +1771,7 @@ Moreover, the problem is **inapproximable**: There exists a constant ε > 0 such
 
 The difficulty stems from the *min* function's properties:
 
-**Non-smooth**: The minimum function has sharp discontinuities when the identity of the minimum changes. At the boundary where agent *i* and agent *j* have equal utility, tiny changes flip which is the minimum, causing discrete jumps in the objective.
+**Non-smooth**: The minimum function has sharp discontinuities when the identity of the minimum changes. At the boundary where agent  \\( i \\) and agent  \\( j \\) have equal utility, tiny changes flip which is the minimum, causing discrete jumps in the objective.
 
 **Non-decomposable**: Unlike sums or products, we can't optimize the minimum by optimizing each component separately. The minimum couples all agents' utilities in a complex way.
 
@@ -1788,9 +1788,9 @@ The difficulty stems from the *min* function's properties:
 2. **Branch-and-bound**: Systematically explore allocation tree, pruning branches that cannot improve the minimum. Can handle larger instances than enumeration but still exponential worst-case.
 
 3. **Mixed Integer Programming**: Formulate as MIP with auxiliary variables:
-   - Variable *z* = minimum utility
-   - Constraints: *vᵢ(Aᵢ) ≥ z* for all agents *i*
-   - Maximize *z*
+   - Variable \\( z \\) = minimum utility
+   - Constraints: *vᵢ(Aᵢ) ≥ z* for all agents  \\( i \\)
+   - Maximize \\( z \\)
    
    This is still NP-hard but modern MIP solvers apply sophisticated heuristics.
 
@@ -1832,17 +1832,17 @@ All three welfare maximization problems can be formulated as mixed integer progr
 **MIP formulation for welfare maximization**:
 
 **Variables**:
-- \\(x_{ig} \in \{0,1\}\\): agent \\(i\\) receives item \\(g\\)
-- \\(u_i \geq 0\\): utility of agent \\(i\\)
+- \\( x_{ig} \in \{0,1\}\\): agent \\( i \\) receives item \\( g \\)
+- \\( u_i \geq 0 \\): utility of agent \\( i \\)
 
 **Constraints**:
-- \\(\sum_i x_{ig} = 1\\) for all \\(g\\) (each item assigned exactly once)
-- \\(u_i = \sum_g v_i(g) \times x_{ig}\\) for all \\(i\\) (utilities match allocation)
+- \\(\sum_i x_{ig} = 1 \\) for all \\( g \\) (each item assigned exactly once)
+- \\( u_i = \sum_g v_i(g) \times x_{ig}\\) for all \\( i \\) (utilities match allocation)
 
 **Objectives**:
-- Utilitarian: \\(\text{maximize } \sum_i u_i\\)
+- Utilitarian: \\(\text{maximize } \sum_i u_i \\)
 - Nash: \\(\text{maximize } \sum_i \log(u_i)\\) (requires non-linear solver or approximation)
-- Maximin: \\(\text{maximize } z\\) subject to \\(u_i \geq z\\) for all \\(i\\)
+- Maximin: \\(\text{maximize } z \\) subject to \\( u_i \geq z \\) for all \\( i \\)
 
 **When MIP succeeds**:
 
@@ -1949,7 +1949,7 @@ Let's be concrete about how welfare maximization scales with problem size:
 
 **Utilitarian (max-sum) with additive valuations**:
 
-| Agents (n) | Items (m) | Time | Method |
+| Agents \\( n \\) | Items \\( m \\) | Time | Method |
 |-----------|----------|------|--------|
 | 10 | 100 | < 1 sec | Greedy |
 | 100 | 1,000 | < 1 sec | Greedy |
@@ -1960,7 +1960,7 @@ Max-sum scales excellently as it is linear in both dimensions.
 
 **Nash (max-product) with additive valuations**:
 
-| Agents (n) | Items (m) | Time | Method |
+| Agents \\( n \\) | Items \\( m \\) | Time | Method |
 |-----------|----------|------|--------|
 | 10 | 100 | Seconds | Poly-time algorithm |
 | 20 | 200 | Minutes | Poly-time algorithm |
@@ -1971,7 +1971,7 @@ Nash welfare hits practical limits around n=50 as it is polynomial but expensive
 
 **Maximin (max-min)**:
 
-| Agents (n) | Items (m) | Time | Method |
+| Agents \\( n \\) | Items \\( m \\) | Time | Method |
 |-----------|----------|------|--------|
 | 5 | 20 | Seconds | MIP or enumeration |
 | 10 | 50 | Minutes to hours | MIP |
@@ -1980,7 +1980,7 @@ Nash welfare hits practical limits around n=50 as it is polynomial but expensive
 
 Maximin hits walls quickly as computation requires exponential growth.
 
-**The curse of agents**: Notice that agents (n) matter much more than items (m). Doubling items slows utilitarian by 2×, Nash by ~8×, maximin by ~2× (if MIP solves at all). But doubling agents slows utilitarian by 2×, Nash by ~8×, maximin by exponential factors.
+**The curse of agents**: Notice that agents \\( n \\) matter much more than items \\( m \\). Doubling items slows utilitarian by 2×, Nash by ~8×, maximin by ~2× (if MIP solves at all). But doubling agents slows utilitarian by 2×, Nash by ~8×, maximin by exponential factors.
 
 Why? **Items are allocated independently** (each item's assignment doesn't constrain others), while **agents are coupled** (all agents compete for all items, creating n-way interactions).
 
@@ -2177,9 +2177,9 @@ Suppose the welfare-maximizing allocation gives:
 - **Total**: $1,388k (highest possible)
 
 This maximizes utilitarian welfare. But checking fairness:
-- Maya's proportional share: $233k. She receives $450k ✓
-- Jordan's proportional share: $233k. Jordan receives $360k ✓
-- Sam's proportional share: $233k. Sam receives $578k ✓
+- Maya's proportional share: $233k. She receives $450k
+- Jordan's proportional share: $233k. Jordan receives $360k
+- Sam's proportional share: $233k. Sam receives $578k
 
 Actually, this allocation is both optimal and proportional! Let me reconsider.
 
@@ -2308,16 +2308,16 @@ Rawls's difference principle is sometimes interpreted as requiring leximin rathe
 
 **Formal Definition**: Given two allocations A and B, let \\(\mathbf{u^A}\\) and \\(\mathbf{u^B}\\) denote their utility vectors sorted in non-decreasing order:
 
-\\(\mathbf{u^A} = (u^A_1, u^A_2, \ldots, u^A_n)\\) where \\(u^A_1 \leq u^A_2 \leq \ldots \leq u^A_n\\)  
-\\(\mathbf{u^B} = (u^B_1, u^B_2, \ldots, u^B_n)\\) where \\(u^B_1 \leq u^B_2 \leq \ldots \leq u^B_n\\)
+\\(\mathbf{u^A} = (u^A_1, u^A_2, \ldots, u^A_n)\\) where \\( u^A_1 \leq u^A_2 \leq \ldots \leq u^A_n \\)  
+\\(\mathbf{u^B} = (u^B_1, u^B_2, \ldots, u^B_n)\\) where \\( u^B_1 \leq u^B_2 \leq \ldots \leq u^B_n \\)
 
-We say **A is leximin-better than B** (written \\(A \succ_{\text{lex}} B\\)) if there exists an index \\(k\\) such that:
-- \\(u^A_i = u^B_i\\) for all \\(i < k\\) (utilities are equal at all positions before k)
-- \\(u^A_k > u^B_k\\) (at position k, A has strictly higher utility)
+We say **A is leximin-better than B** (written \\( A \succ_{\text{lex}} B \\)) if there exists an index \\( k \\) such that:
+- \\( u^A_i = u^B_i \\) for all \\( i < k \\) (utilities are equal at all positions before k)
+- \\( u^A_k > u^B_k \\) (at position \\( k \\), A has strictly higher utility)
 
-In other words, A and B have identical sorted utilities until some position \\(k\\), where A's utility exceeds B's. The first position where they differ determines the comparison.
+In other words, A and B have identical sorted utilities until some position \\( k \\), where A's utility exceeds B's. The first position where they differ determines the comparison.
 
-**Allocation** \\(A \approx_{\text{lex}} B\\) (leximin-equivalent) if \\(u^A = u^B\\) (sorted utility vectors are identical).
+**Allocation** \\( A \approx_{\text{lex}} B \\) (leximin-equivalent) if \\( u^A = u^B \\) (sorted utility vectors are identical).
 
 **Example with our siblings**:
 
@@ -2355,15 +2355,15 @@ Notice that Allocation 4 Pareto-dominates Allocation 1 (Jordan tied, Maya and Sa
 
 **Proof sketch**: Suppose allocation A is leximin-optimal but not Pareto optimal. Then there exists an allocation B that Pareto-dominates A: every agent has at least as much utility in B, and at least one agent has strictly more.
 
-Consider the sorted utility vectors \\(\mathbf{u}^A\\) and \\(\mathbf{u}^B\\). Since B Pareto-dominates A:
-- For every agent i, \\(u_i^B \geq u_i^A\\)
-- For at least one agent j, \\(u_j^B > u_j^A\\)
+Consider the sorted utility vectors \\(\mathbf{u}^A \\) and \\(\mathbf{u}^B \\). Since B Pareto-dominates A:
+- For every agent i, \\( u_i^B \geq u_i^A \\)
+- For at least one agent j, \\( u_j^B > u_j^A \\)
 
 Since these are sorted vectors, this means:
-- \\(u^B_k \geq u^A_k\\) for all positions k (componentwise, B's sorted vector is at least as large)
-- \\(u^B_k > u^A_k\\) for at least one position k (strict inequality somewhere)
+- \\( u^B_k \geq u^A_k \\) for all positions k (componentwise, B's sorted vector is at least as large)
+- \\( u^B_k > u^A_k \\) for at least one position k (strict inequality somewhere)
 
-By the leximin ordering, \\(B \succ_{\text{lex}} A\\) (B is leximin-better than A). This contradicts the assumption that A is leximin-optimal. Therefore, no such B can exist, and A must be Pareto optimal.
+By the leximin ordering, \\( B \succ_{\text{lex}} A \\) (B is leximin-better than A). This contradicts the assumption that A is leximin-optimal. Therefore, no such B can exist, and A must be Pareto optimal.
 
 This is a powerful result: **leximin combines egalitarian prioritization with efficiency**. Unlike simple maximin, we can't improve leximin allocations through Pareto improvements. The "waste" problem of maximin disappears.
 
@@ -2486,7 +2486,7 @@ print(f"Minimum utility: ${min(best_utilities):,.0f}"){% endhighlight %}
 
 **Output interpretation**: The algorithm finds the allocation that maximizes the minimum utility, then among those, maximizes the second-lowest utility, and so on. This ensures both egalitarian prioritization and Pareto optimality.
 
-**Computational note**: This exhaustive search has time complexity O(n^m) where n is agents and m is items, exponential in the number of items. For our siblings, 3^8 = 6,561 allocations are checked, taking milliseconds. For larger problems, more sophisticated algorithms are needed.
+**Computational note**: This exhaustive search has time complexity \\( O(n^m) \\) where \\( n \\) is agents and \\( m \\) is items, exponential in the number of items. For our siblings, 3^8 = 6,561 allocations are checked, taking milliseconds. For larger problems, more sophisticated algorithms are needed.
 
 {% include components/heading.html heading='Real-World Impact: The Spliddit Case Study' level=4 %}
 
@@ -2648,7 +2648,7 @@ Formally, let's denote the k-th stage optimization as finding allocations that m
 - This is maximin on a constrained space (allocations from Stage 1)
 - Still NP-hard, but on a potentially smaller search space
 
-**Stage k**: Continue for all n agents
+**Stage k**: Continue for all \\( n \\) agents
 
 The **total complexity** is at least as hard as maximin (since Stage 1 is maximin), but potentially harder because:
 1. We must find **all** optimal solutions at each stage, not just one
@@ -2659,8 +2659,8 @@ The **total complexity** is at least as hard as maximin (since Stage 1 is maximi
 
 | Welfare Function | Complexity (additive valuations) | Feasible Problem Size |
 |-----------------|----------------------------------|----------------------|
-| Utilitarian | O(nm) (greedy) | Millions of items |
-| Nash | O(n³m³) (polynomial) | Hundreds of items |
+| Utilitarian | \\( O(nm) (greedy) \\) | Millions of items |
+| Nash | \\( O(n³m³) (polynomial) \\) | Hundreds of items |
 | Simple Maximin | Strongly NP-hard | Tens of items (exact) |
 | Leximin | Strongly NP-hard | Tens of items (exact) |
 
@@ -2712,20 +2712,20 @@ The sequential approach builds the leximin optimum stage by stage.
 
 **Exponential growth of solution sets**: At Stage 1, we might find that 1,000 allocations all achieve the optimal minimum z₁*. Now Stage 2 must optimize over these 1,000 allocations. If we're lucky, this eliminates most of them. If we're unlucky, hundreds of allocations also achieve optimal second-minimum z₂*, forcing Stage 3 to consider hundreds of candidates.
 
-The size of S_k (allocations remaining after k stages) varies wildly:
+The size of \\( S_k \\) (allocations remaining after k stages) varies wildly:
 - **Best case**: Each stage eliminates all but one allocation. After Stage 1, only one allocation achieves z₁*, so we're done. Total cost: one maximin optimization.
-- **Worst case**: Many allocations achieve optimal values at each stage. All n stages must be executed, each requiring optimization over potentially exponential candidates.
+- **Worst case**: Many allocations achieve optimal values at each stage. All \\( n \\) stages must be executed, each requiring optimization over potentially exponential candidates.
 
 **Constrained optimization costs**: Each stage solves:
 ```
-maximize: z_k (the k-th smallest utility)
+maximize:  \\( z_k \\) (the k-th smallest utility)
 subject to:
   - Allocation constraints (items partitioned)
   - z_1 = z₁* (minimum equals Stage 1 optimum)
   - z_2 = z₂* (second-minimum equals Stage 2 optimum)
   - ...
-  - z_{k-1} = z*_{k-1} (previous stages optimal)
-  - Additional constraints to define z_k as k-th smallest
+  - \\( z_{k-1} = z*_{k-1} \\) (previous stages optimal)
+  - Additional constraints to define \\( z_k \\) as k-th smallest
 ```
 
 The constraints accumulate. Each stage's optimization is more complex than the last because we're adding constraints from previous stages. This makes integer programming solvers work harder. Branch-and-bound trees grow larger, relaxations become weaker, and computation slows.
@@ -2738,7 +2738,7 @@ maximize: Σ log(v_i(A_i))
 ```
 Done. One problem, one solution.
 
-For leximin, we solve n optimization problems in sequence, each dependent on the previous. Even if each individual stage were fast (it isn't, Stage 1 is NP-hard maximin), the accumulation makes the total expensive.
+For leximin, we solve \\( n \\) optimization problems in sequence, each dependent on the previous. Even if each individual stage were fast (it isn't, Stage 1 is NP-hard maximin), the accumulation makes the total expensive.
 
 **Practical implications**:
 
@@ -3065,7 +3065,7 @@ What we've discovered is that this isn't a binary choice, but a spectrum of poss
 
 We explored three major social welfare functions, each embodying a different ethical framework:
 
-**Utilitarian Welfare (sum of utilities)** represents pure efficiency: maximize total value created, regardless of how it's distributed. For additive valuations, greedy allocation achieves the optimum in O(nm) time making it computationally cheap. But it can justify extreme inequality: if giving everything to one agent maximizes the sum, utilitarianism endorses that outcome. The philosophical commitment: aggregate outcomes matter more than individual treatment.
+**Utilitarian Welfare (sum of utilities)** represents pure efficiency: maximize total value created, regardless of how it's distributed. For additive valuations, greedy allocation achieves the optimum in \\( O(nm) \\) time making it computationally cheap. But it can justify extreme inequality: if giving everything to one agent maximizes the sum, utilitarianism endorses that outcome. The philosophical commitment: aggregate outcomes matter more than individual treatment.
 
 **Nash Welfare (product of utilities)** provides a sophisticated middle ground. By multiplying utilities rather than summing them, it achieves Pareto optimality (no wasted value) while severely penalizing allocations that leave anyone with very little. The logarithmic transformation reveals its egalitarian character: gains to worse-off agents count for more. Remarkably, maximizing Nash welfare for additive valuations is polynomial-time computable despite appearing non-convex, a major breakthrough in the field. The philosophical commitment: balance efficiency with equity, protecting the worse-off through diminishing returns.
 
@@ -3082,8 +3082,8 @@ The computational story parallels the philosophical one:
 
 | Welfare Function | Complexity | Feasible Size | Philosophical Character |
 |------------------|------------|---------------|------------------------|
-| Utilitarian | O(nm) | Millions | Pure efficiency |
-| Nash | O(n³m³) | Hundreds | Balanced |
+| Utilitarian | \\( O(nm) \\) | Millions | Pure efficiency |
+| Nash | \\( O(n³m³) \\) | Hundreds | Balanced |
 | Maximin/Leximin | Strongly NP-hard | Tens | Pure equity |
 
 **Efficiency is computationally cheap; equity is expensive.** This reflects the fundamental structure of these problems. Aggregating value (utilitarian) decomposes naturally: assign each item independently to whoever values it most. Equalizing outcomes (maximin) requires coordinating all assignments simultaneously to ensure no one is left behind, creating combinatorial complexity.

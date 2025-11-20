@@ -71,15 +71,15 @@ Envy-freeness, taken to its logical conclusion, might reward those who inflate t
 
 **Proportionality as Entitlement: Deserving Your "Share"**
 
-**Proportionality** takes a different philosophical stance: each agent deserves at least 1/*n* of the total value according to their own assessment. This is an **absolute** criterion. It doesn't compare your bundle to others', but to the total pool.
+**Proportionality** takes a different philosophical stance: each agent deserves at least 1/\\( n \\) of the total value according to their own assessment. This is an **absolute** criterion. It doesn't compare your bundle to others', but to the total pool.
 
 Why should proportionality matter morally?
 
-**Equal entitlement**: If *n* agents have equal claims to a resource (heirs to an estate, citizens with equal rights, team members with equal standing), each deserves an equal share. Proportionality formalizes this intuition: if there are 3 equal heirs, each deserves at least 1/3 of the estate's value.
+**Equal entitlement**: If \\( n \\) agents have equal claims to a resource (heirs to an estate, citizens with equal rights, team members with equal standing), each deserves an equal share. Proportionality formalizes this intuition: if there are 3 equal heirs, each deserves at least 1/3 of the estate's value.
 
 This embodies a principle from **distributive justice**: resources should be divided according to claims or rights. If claims are equal, distribution should be equal (or at least proportional).
 
-**Individual security**: Proportionality provides a guarantee independent of what others receive. You know you'll get at least 1/*n* of total value, regardless of how items are allocated to others. This is a form of **individual sovereignty**. your entitlement doesn't depend on others' bundles.
+**Individual security**: Proportionality provides a guarantee independent of what others receive. You know you'll get at least 1/\\( n \\) of total value, regardless of how items are allocated to others. This is a form of **individual sovereignty**. your entitlement doesn't depend on others' bundles.
 
 Contrast with envy-freeness: whether you're envy-free depends on what others received. If Jordan receives high-value items, Maya might envy Jordan even if Maya's absolute share is reasonable. Proportionality ignores such comparisons, focusing only on whether you received your due.
 
@@ -128,7 +128,7 @@ This allocation is proportional but not envy-free. Maya can't complain based on 
 
 Different philosophical traditions prioritize differently:
 
-**Libertarians** (in the tradition of Nozick) might favor proportionality: if you're entitled to 1/*n* of the resource, receiving that entitlement fulfills justice. What others receive is irrelevant. Justice is about respecting individual rights, not minimizing envy.
+**Libertarians** (in the tradition of Nozick) might favor proportionality: if you're entitled to 1/\\( n \\) of the resource, receiving that entitlement fulfills justice. What others receive is irrelevant. Justice is about respecting individual rights, not minimizing envy.
 
 **Egalitarians** might favor envy-freeness: fairness requires not just adequate resources but equal standing and mutual respect. If you envy others, it suggests the allocation creates hierarchy or inequality of status, which is objectionable even if everyone receives "enough."
 
@@ -159,7 +159,7 @@ Any allocation must give the diamond to someone. Say Alice receives the diamond 
 **Proportionality check**:
 - Total value: 100 units (the pebble contributes nothing)
 - Fair share: 100/2 = 50 units each
-- Alice receives 100 ≥ 50 ✓
+- Alice receives 100 ≥ 50
 - Bob receives 0 < 50 ✗
 
 This allocation fails both criteria. Could we do better? No. Any allocation gives one agent the diamond (value 100) and the other the pebble (value 0). By symmetry, we cannot satisfy either criterion.
@@ -186,9 +186,9 @@ Think of it this way: you look at someone else's bundle and think "I wish I had 
 
 **Why is this compelling?** EF1 acknowledges that with indivisible goods, someone might receive a "better" bundle in absolute terms. But it ensures that the advantage is marginal and attributable to a single item. If bundles were goods in a store, EF1 says: "Your cart might be slightly better than mine, but only because of one item you grabbed. Without that item, we'd be even."
 
-**Formal Definition**: An allocation \\(A = (A_1, A_2, \ldots, A_n)\\) is **envy-free up to one good** (EF1) if for all agents \\(i\\) and \\(j\) with \\(i \neq j\\), either:
-- \\(v_i(A_i) \geq v_i(A_j)\\) (no envy), or
-- There exists an item \\(g \in A_j\\) such that \\(v_i(A_i) \geq v_i(A_j \setminus \{g\})\\)
+**Formal Definition**: An allocation \\( A = (A_1, A_2, \ldots, A_n) \\) is **envy-free up to one good** (EF1) if for all agents \\( i \\) and \\( j \\) with \\( i \ne j \\), either:
+- \\( v_i(A_i) \geq v_i(A_j) \\) (no envy), or
+- There exists an item \\( g \in A_j \\) such that \\( v_i(A_i) \geq v_i(A_j \setminus \{g\}) \\)
 
 In words: for every pair of agents, either the first doesn't envy the second, or there's some item in the second's bundle whose removal would eliminate the first's envy.
 
@@ -236,9 +236,9 @@ Under EF1, the item whose removal eliminates envy might be a cherry-picking remo
 
 **Why is this compelling?** EFx captures the intuition that you don't envy an entire bundle, you envy it only because it has more items. If the other agent had one fewer item (any item at all), you'd be satisfied. This suggests the bundles are nearly balanced; no single item is carrying all the weight of the envy.
 
-**Formal Definition**: An allocation \\(A = (A_1, A_2, \ldots, A_n)\\) is **envy-free up to any good** (EFx) if for all agents \\(i\\) and \\(j\\) with \\(i \neq j\\), either:
-- \\(v_i(A_i) \geq v_i(A_j)\\) (no envy), or  
-- For **all** items \\(g \in A_j\\), we have \\(v_i(A_i) \geq v_i(A_j \setminus \{g\})\\)
+**Formal Definition**: An allocation \\( A = (A_1, A_2, \ldots, A_n) \\) is **envy-free up to any good** (EFx) if for all agents \\( i \\) and \\( j \\) with \\( i \ne j \\), either:
+- \\( v_i(A_i) \geq v_i(A_j) \\) (no envy), or  
+- For **all** items \\( g \in A_j \\), we have \\( v_i(A_i) \geq v_i(A_j \setminus \{g\}) \\)
 In words: for every pair of agents, either the first doesn't envy the second, or removing **any single item** from the second's bundle would eliminate the first's envy.
 
 **Example continuation**: Return to our previous allocation where Jordan envied Maya:
@@ -270,7 +270,7 @@ This has profound computational implications: finding EF1 allocations is relativ
 
 The notions above (EF1, EFx) are **relative** fairness criteria: they compare your bundle to others' bundles. Now we introduce an **absolute** fairness criterion that doesn't require comparison.
 
-**Intuition**: Imagine you must divide all items into *n* bundles, knowing that after you create the bundles, an adversary will choose first, then the next adversary, and so on, with you receiving the last remaining bundle. How would you divide the items to maximize the value of the worst bundle (the one you'll get)?
+**Intuition**: Imagine you must divide all items into \\( n \\) bundles, knowing that after you create the bundles, an adversary will choose first, then the next adversary, and so on, with you receiving the last remaining bundle. How would you divide the items to maximize the value of the worst bundle (the one you'll get)?
 
 Your optimal division strategy (the one that maximizes your guaranteed value) determines your **maximin share** (MMS). This is the value you can guarantee yourself through careful partitioning, regardless of what others choose.
 
@@ -278,15 +278,15 @@ An allocation provides an **MMS guarantee** if each agent receives a bundle wort
 
 **Why is this compelling?** MMS embodies a notion of **individual rationality** for fair division. If you could unilaterally control the partitioning (but not the assignment), you'd create bundles strategically to maximize your minimum. Receiving at least your MMS means you're doing as well as you could guarantee in that scenario: you have no grounds for complaint based solely on your individual expectations.
 
-MMS is inspired by proportionality but adapted to indivisibility. With divisible goods, proportionality guarantees each agent 1/*n* of the total value. With indivisible goods, this is often impossible. MMS asks: what fraction can you guarantee yourself through strategic partitioning? Often this is less than 1/*n*, and MMS accepts that reduced expectation.
+MMS is inspired by proportionality but adapted to indivisibility. With divisible goods, proportionality guarantees each agent 1/\\( n \\) of the total value. With indivisible goods, this is often impossible. MMS asks: what fraction can you guarantee yourself through strategic partitioning? Often this is less than 1/\\( n \\), and MMS accepts that reduced expectation.
 
-**Formal Definition**: For an agent \\( i \\) with valuation function *v_i* over items *M*, their **maximin share** MMS_i is:
+**Formal Definition**: For an agent \\( i \\) with valuation function *v_i* over items \\( M \\), their **maximin share** MMS_i is:
 
 $$
 MMS_i = max_{partitions (B₁,...,B_n) of M} min_{j ∈ {1,...,n}} v_i(B_j)
 $$
 
-In words: across all possible ways to partition the items into *n* bundles, choose the partition that maximizes the value of the worst bundle (from agent \\( i \\)'s perspective). That maximum worst-case value is \\( i \\)'s MMS.
+In words: across all possible ways to partition the items into \\( n \\) bundles, choose the partition that maximizes the value of the worst bundle (from agent \\( i \\)'s perspective). That maximum worst-case value is \\( i \\)'s MMS.
 
 An allocation *A = (A₁, ..., A_n)* **satisfies MMS** if for all agents \\( i \\): *v_i(A_i) ≥ MMS_i*.
 
@@ -325,7 +325,7 @@ Notice this is far below her proportional share of $233,333. The house's dominan
 
 Now suppose the actual allocation gives Maya {house, car}, worth $475,000 to her. Does this satisfy Maya's MMS? Yes! $475,000 ≫ $68,000. Maya receives far more than her maximin share.
 
-**Computing MMS is Hard**: The definition requires optimizing over all possible partitions. For *m* items and *n* agents, there are exponentially many partitions. [Bouveret and Lemaître (2016)](https://www.sciencedirect.com/science/article/pii/S0004370215001551) proved that computing exact MMS is **NP-complete** even for additive valuations. This means finding an optimal partition to determine MMS is computationally hard.
+**Computing MMS is Hard**: The definition requires optimizing over all possible partitions. For \\( m \\) items and \\( n \\) agents, there are exponentially many partitions. [Bouveret and Lemaître (2016)](https://www.sciencedirect.com/science/article/pii/S0004370215001551) proved that computing exact MMS is **NP-complete** even for additive valuations. This means finding an optimal partition to determine MMS is computationally hard.
 
 In practice, we use approximation algorithms or heuristics to estimate MMS. For small instances (like our three siblings with 8 items), exact computation via exhaustive search or integer programming is feasible.
 
@@ -341,17 +341,17 @@ However, approximate MMS guarantees are achievable. The best known result: [Garg
 
 Finally, we examine a direct relaxation of proportionality, analogous to how EF1 relaxes envy-freeness.
 
-**Intuition**: An allocation is **PROPm** (proportional up to one good) if each agent receives at least their proportional share (1/*n* of total value) minus the value of the most valuable item.
+**Intuition**: An allocation is **PROPm** (proportional up to one good) if each agent receives at least their proportional share (1/\\( n \\) of total value) minus the value of the most valuable item.
 
 This captures the idea that with indivisible goods, you might miss your fair share, but only because one particularly valuable item went to someone else. You receive everything you deserve except for that one item.
 
-**Formal Definition**: An allocation *A = (A₁, ..., A_n)* satisfies **PROPm** if for all agents \\( i \\):
+**Formal Definition**: An allocation \\( A = (A_1, ..., A_n) \\) satisfies **PROPm** if for all agents \\( i \\):
 
 $$
 v_i(A_i) ≥ v_i(M)/n - max_{g ∈ M} v_i(g)
 $$
 
-where *M* is the set of all items. In words: agent \\( i \\)'s bundle is worth at least their fair share minus the value of the most valuable item (by \\( i \\)'s valuation).
+where \\( M \\) is the set of all items. In words: agent \\( i \\)'s bundle is worth at least their fair share minus the value of the most valuable item (by \\( i \\)'s valuation).
 
 **Example**: Return to Maya. Her fair share is $700,000 / 3 ≈ $233,333. The most valuable item to Maya is the house at $450,000.
 
@@ -1141,7 +1141,7 @@ Understanding this complexity landscape is crucial for practitioners. It tells u
 
 Let's start with good news: some fairness notions remain computationally tractable despite indivisibility.
 
-**Round-robin allocation** runs in **O(nm) time** where *n* is the number of agents and *m* is the number of items. This is remarkably fast:
+**Round-robin allocation** runs in **O(nm) time** where \\( n \\) is the number of agents and \\( m \\) is the number of items. This is remarkably fast:
 - For 10 agents and 100 items: 1,000 operations
 - For 100 agents and 1,000 items: 100,000 operations  
 - For 1,000 agents and 10,000 items: 10,000,000 operations
@@ -1150,11 +1150,11 @@ On a modern processor executing billions of operations per second, even the larg
 
 Moreover, round-robin provides strong guarantees: [Caragiannis et al. (2019)](https://arxiv.org/abs/1707.04731) proved that for agents with additive valuations, round-robin produces allocations that are **EF1** (envy-free up to one good). This is a remarkable result: a trivially simple algorithm achieves a strong fairness guarantee in linear time.
 
-**Finding EF1 allocations in general** is also polynomial-time computable. [Lipton et al. (2004)](https://doi.org/10.1145/1039488.1039502) developed an algorithm that constructs an EF1 allocation in *O(n⁴m)* time for additive valuations. While quartic in the number of agents, this remains polynomial and thus tractable for moderate *n*.
+**Finding EF1 allocations in general** is also polynomial-time computable. [Lipton et al. (2004)](https://doi.org/10.1145/1039488.1039502) developed an algorithm that constructs an EF1 allocation in \\( O(n^4m) \\) time for additive valuations. While quartic in the number of agents, this remains polynomial and thus tractable for moderate \\( n \\).
 
-For our siblings (*n* = 3, *m* = 8): *O(3⁴ × 8) = O(648)* operations. Instantaneous.
+For our siblings (\\( n \\) = 3, \\( m \\) = 8): *O(3⁴ × 8) = O(648)* operations. Instantaneous.
 
-Even for *n* = 20 agents and *m* = 100 items: *O(20⁴ × 100) = O(16,000,000)* operations. Still easily computable.
+Even for \\( n \\) = 20 agents and \\( m \\) = 100 items: *O(20⁴ × 100) = O(16,000,000)* operations. Still easily computable.
 
 When we're willing to accept **EF1** rather than exact envy-freeness, the problem remains tractable. The relaxation makes solutions exist and efficiently computable.
 
@@ -1164,17 +1164,17 @@ But now we encounter the complexity wall. Many natural fairness problems become 
 
 **Finding exact EF allocations** for indivisible goods is hard even to verify. Given a proposed allocation, we can check if it's envy-free in *O(n²m)* time (compare each pair of agents' valuations of their bundles). But finding such an allocation, or proving none exists, can require exhaustive search through exponentially many possible allocations.
 
-The number of ways to allocate *m* items to *n* agents is *n^m* when items can go to any agent. For *m* = 8 items and *n* = 3 agents: *3⁸ = 6,561* allocations. Searchable. For *m* = 20 items and *n* = 10 agents: *10²⁰* allocations. More than the number of stars in the observable universe. Utterly infeasible.
+The number of ways to allocate \\( m \\) items to \\( n \\) agents is *n^m* when items can go to any agent. For \\( m \\) = 8 items and \\( n \\) = 3 agents: *3⁸ = 6,561* allocations. Searchable. For \\( m \\) = 20 items and \\( n \\) = 10 agents: *10²⁰* allocations. More than the number of stars in the observable universe. Utterly infeasible.
 
-**Finding EFx allocations** (envy-free up to any good) has unknown complexity status. We don't even know if EFx allocations always exist for general additive valuations! [Plaut and Roughgarden (2020)](https://dl.acm.org/doi/10.1145/3391403.3399511) showed that EFx allocations exist for *n* = 2 agents with any valuations, and for *n* ≥ 3 agents with identical valuations. But the general case remains open.
+**Finding EFx allocations** (envy-free up to any good) has unknown complexity status. We don't even know if EFx allocations always exist for general additive valuations! [Plaut and Roughgarden (2020)](https://dl.acm.org/doi/10.1145/3391403.3399511) showed that EFx allocations exist for \\( n \\) = 2 agents with any valuations, and for \\( n \\) ≥ 3 agents with identical valuations. But the general case remains open.
 
 This is a striking gap in our knowledge: we have a natural fairness notion (EFx), we know weaker notions are computable (EF1), but we don't know if EFx is even achievable in principle, let alone efficiently computable. This represents the frontier of current research.
 
-**Computing exact MMS** (maximin share) is **NP-complete** even for additive valuations, as proved by [Bouveret and Lemaître (2016)](https://www.sciencedirect.com/science/article/pii/S0004370215001551). The problem is: given an agent's valuations and a threshold value *v*, does there exist a partition of items into *n* bundles such that every bundle is worth at least *v* to this agent?
+**Computing exact MMS** (maximin share) is **NP-complete** even for additive valuations, as proved by [Bouveret and Lemaître (2016)](https://www.sciencedirect.com/science/article/pii/S0004370215001551). The problem is: given an agent's valuations and a threshold value *v*, does there exist a partition of items into \\( n \\) bundles such that every bundle is worth at least *v* to this agent?
 
 This decision problem is NP-complete, meaning the optimization problem (finding the partition that maximizes the minimum bundle value) is NP-hard. In practice, this means that for large instances, computing exact MMS requires exponential time.
 
-**Why is MMS computation hard?** It requires optimizing over all possible partitions of *m* items into *n* bundles. The number of such partitions is given by the Stirling number of the second kind *S(m, n)*, which grows exponentially. For *m* = 20 items into *n* = 3 bundles: *S(20, 3) = 580,606* partitions. For *m* = 30 items into *n* = 5 bundles: over 10¹⁵ partitions.
+**Why is MMS computation hard?** It requires optimizing over all possible partitions of \\( m \\) items into \\( n \\) bundles. The number of such partitions is given by the Stirling number of the second kind *S(m, n)*, which grows exponentially. For \\( m \\) = 20 items into \\( n \\) = 3 bundles: *S(20, 3) = 580,606* partitions. For \\( m \\) = 30 items into \\( n \\) = 5 bundles: over 10¹⁵ partitions.
 
 **Finding MMS allocations** (allocations where every agent receives at least their MMS) is even harder, because it compounds the difficulty: we must compute each agent's MMS (NP-hard per agent) and then find an allocation satisfying all MMS constraints simultaneously. As mentioned earlier, [Kurokawa et al. (2018)](https://dl.acm.org/doi/10.1613/jair.5651) showed that MMS allocations don't always exist, so even if we could compute efficiently, we might search fruitlessly.
 
@@ -1186,15 +1186,15 @@ This exemplifies a crucial strategy: when exact optimization is intractable, car
 
 A striking observation: computational complexity in fair division is **more sensitive to the number of agents than the number of items**.
 
-Consider round-robin: *O(nm)*. If we double *m* (items), time doubles. If we double *n* (agents), time also doubles. Symmetric impact.
+Consider round-robin: \\( O(nm) \\). If we double \\( m \\) (items), time doubles. If we double \\( n \\) (agents), time also doubles. Symmetric impact.
 
-But consider finding EF1 allocations: *O(n⁴m)*. Doubling *m* doubles time. Doubling *n* increases time by a factor of 16. The number of agents has a **quartic** impact while items have only a **linear** impact.
+But consider finding EF1 allocations: \\( O(n^4m) \\). Doubling \\( m \\) doubles time. Doubling \\( n \\) increases time by a factor of 16. The number of agents has a **quartic** impact while items have only a **linear** impact.
 
 Why this asymmetry?
 
-**Fairness constraints scale with agent pairs**: To verify envy-freeness, we must check all *n(n-1)* pairs of agents. Each agent must not envy each other agent. This creates *O(n²)* constraints that must be satisfied simultaneously. As *n* grows, the constraint space explodes quadratically.
+**Fairness constraints scale with agent pairs**: To verify envy-freeness, we must check all *n(n-1)* pairs of agents. Each agent must not envy each other agent. This creates *O(n²)* constraints that must be satisfied simultaneously. As \\( n \\) grows, the constraint space explodes quadratically.
 
-**Item allocation is local**: Assigning items to agents requires *O(m)* decisions (where does each item go?). This scales linearly with *m*. While finding optimal assignments may be hard, the decision space grows only linearly in the number of items.
+**Item allocation is local**: Assigning items to agents requires *O(m)* decisions (where does each item go?). This scales linearly with \\( m \\). While finding optimal assignments may be hard, the decision space grows only linearly in the number of items.
 
 **Practical implication**: Fair division scales better to many items than to many agents. Dividing 1,000 items among 10 agents is much easier than dividing 100 items among 100 agents, even though the first problem has 10× more items total.
 
@@ -1235,9 +1235,9 @@ But for large problems, exact optimization becomes infeasible by necessity:
 | Approach | Time Complexity | Fairness Guarantee | Use Case |
 |----------|----------------|-------------------|----------|
 | Exact IP | Exponential (NP-hard) | Optimal (if exists) | Small, high-stakes |
-| EF1 algorithm | O(n⁴m) | EF1 (always exists) | Medium instances |
-| Round-robin | O(nm) | EF1 in expectation | Large instances |
-| Greedy heuristic | O(m log m) | No formal guarantee | Massive scale |
+| EF1 algorithm | \\( O(n^4m) \\) | EF1 (always exists) | Medium instances |
+| Round-robin | \\( O(nm) \\) | EF1 in expectation | Large instances |
+| Greedy heuristic | \\( O(m \log{m}) \\) | No formal guarantee | Massive scale |
 
 Moving down the table sacrifices guarantees for speed. The art is choosing the right row for your problem.
 
@@ -1262,7 +1262,7 @@ A practical heuristic: **stop optimizing when further improvement is smaller tha
 For small-to-medium fair division problems, **mixed integer programming (MIP)** solvers offer a practical middle ground between exponential exhaustive search and fast approximation.
 
 MIP formulates fair division as an optimization problem:
-- **Variables**: Binary variables *x_{ig}* indicating whether agent \\( i \\) receives item *g*
+- **Variables**: Binary variables \\( x_{ig} \\) indicating whether agent \\( i \\) receives item \\( g \\)
 - **Constraints**: Each item assigned to exactly one agent; fairness constraints (e.g., EF1 conditions)
 - **Objective**: Maximize social welfare (sum or product of utilities)
 
@@ -1273,7 +1273,7 @@ Modern MIP solvers (Gurobi, CPLEX, SCIP) use sophisticated techniques:
 
 **When MIP is feasible**:
 
-**Small instances**: *n* ≤ 10 agents, *m* ≤ 100 items. Modern solvers handle these routinely, often finding optimal solutions in seconds to minutes.
+**Small instances**: \\( n \\) ≤ 10 agents, \\( m \\) ≤ 100 items. Modern solvers handle these routinely, often finding optimal solutions in seconds to minutes.
 
 **Structured problems**: When constraints have special structure (sparse interactions, separable objectives), MIP solvers exploit this. A problem with 1,000 items but simple valuations might be easier than 50 items with complex complementarities.
 
@@ -1285,7 +1285,7 @@ Modern MIP solvers (Gurobi, CPLEX, SCIP) use sophisticated techniques:
 
 **Fairness constraints are hard**: EF1 constraints, especially when combined with other objectives, create non-convex feasible regions. MIP solvers must work harder to navigate these regions.
 
-**Scaling beyond medium size**: Once *n* > 20 or *m* > 500, MIP becomes unreliable. You might get lucky, or you might wait hours with no guarantee of completion.
+**Scaling beyond medium size**: Once \\( n \\) > 20 or \\( m \\) > 500, MIP becomes unreliable. You might get lucky, or you might wait hours with no guarantee of completion.
 
 For the **sibling case** (3 agents, 8 items), MIP is complete overkill. The problem is small enough for exhaustive search, and simple algorithms like round-robin already work well. But for slightly larger problems (5-10 heirs dividing 20-50 items), MIP offers a sweet spot: sophisticated enough to handle complexity, fast enough to be practical.
 
@@ -1304,7 +1304,7 @@ In practice, algorithm choice often comes down to a philosophical question: **Do
 - Speed matters more than worst-case protection
 - Typical instances are "nice" (valuations are diverse, items are balanced)
 
-The tension: **Algorithms with guarantees are often slower**. Lipton et al.'s EF1 algorithm runs in *O(n⁴m)*, while a heuristic achieving EF1 empirically might run in *O(nm)*, a cubic speedup. If your instances are typical rather than adversarial, the heuristic dominates.
+The tension: **Algorithms with guarantees are often slower**. Lipton et al.'s EF1 algorithm runs in \\( O(n^4m) \\), while a heuristic achieving EF1 empirically might run in *O(nm)*, a cubic speedup. If your instances are typical rather than adversarial, the heuristic dominates.
 
 A compromise approach: **Use heuristics with verification**. Run a fast heuristic, then verify if the result satisfies desired properties. If not, fall back to a slower algorithm with guarantees.
 
@@ -1330,14 +1330,14 @@ Let's be concrete about what different problem sizes allow:
 
 **100 agents, 1,000 items**:
 - Round-robin: milliseconds
-- EF1 algorithm (*O(100⁴ × 1000)*): hours
+- EF1 algorithm ( \\( O(100^4 × 1000) \\) ): hours
 - MIP solver: likely infeasible
 - Exact optimization: definitely infeasible
 - **Recommendation**: Use round-robin or similar fast heuristic. Verify fairness empirically. Accept approximate guarantees.
 
 **1,000 agents, 10,000 items**:
 - Round-robin: seconds
-- EF1 algorithm (*O(1000⁴ × 10000)*): years
+- EF1 algorithm ( \\( O(1000^4 × 10000) \\) ): years
 - MIP solver: hopeless
 - Exact optimization: hopeless
 - **Recommendation**: Use online algorithms or hierarchical approaches. Fairness must be statistical rather than individual.
@@ -1415,7 +1415,7 @@ But if the context were different, like an employer allocating bonuses to employ
 
 **Implicit Egalitarianism: All Agents Weighted Equally**
 
-Both envy-freeness and proportionality share an implicit assumption: **all agents matter equally**. Envy-freeness requires that no agent envies any other. Every agent's subjective satisfaction is given equal weight. Proportionality requires that each agent receives 1/*n* of value.
+Both envy-freeness and proportionality share an implicit assumption: **all agents matter equally**. Envy-freeness requires that no agent envies any other. Every agent's subjective satisfaction is given equal weight. Proportionality requires that each agent receives 1/\\( n \\) of value.
 
 This **egalitarian weighting** is normatively loaded. It assumes that the sibling who contributed more to parents' care doesn't deserve more. It assumes that the sibling with greater financial need doesn't deserve more. It assumes equal entitlement despite potential differences in desert, need, or contribution.
 
@@ -1435,7 +1435,7 @@ This **egalitarian weighting** is normatively loaded. It assumes that the siblin
 
 **Efficiency**: Utilitarian frameworks might accept unequal allocations if they maximize total welfare. If giving the piano to Jordan (who will use it professionally) creates more total value than equal distribution, efficiency might justify inequality.
 
-**Weighted fairness** generalizes our notions: instead of each agent deserving 1/*n* of value, agent \\( i \\) deserves *w_i / Σw_j* of value, where *w_i* is agent \\( i \\)'s weight. Envy-freeness can similarly be weighted: agent \\( i \\) should not envy agent \\( j \\) by more than the ratio *w_j / w_i*.
+**Weighted fairness** generalizes our notions: instead of each agent deserving 1/\\( n \\) of value, agent \\( i \\) deserves *w_i / Σw_j* of value, where *w_i* is agent \\( i \\)'s weight. Envy-freeness can similarly be weighted: agent \\( i \\) should not envy agent \\( j \\) by more than the ratio *w_j / w_i*.
 
 For our siblings, the question becomes: Should they be weighted equally? 
 
@@ -1554,7 +1554,7 @@ Let's systematically compare the fairness notions we've defined along key dimens
 |----------------|------|----------|----------------|----------------------|----------|
 | **Exact EF** | Relative | Strongest | No (indivisible) | No (NP-hard) | Divisible goods only |
 | **EFx** | Relative | Very Strong | Unknown | Unknown | When envy must be minimal |
-| **EF1** | Relative | Strong | Yes (goods) | Yes (O(n⁴m)) | Standard choice for most problems |
+| **EF1** | Relative | Strong | Yes (goods) | Yes ( \\( O(n^4m) \\) ) | Standard choice for most problems |
 | **MMS** | Absolute | Strong | No (n≥3) | No (NP-complete) | When guarantees must be individual |
 | **3/4-MMS** | Absolute | Moderate | Yes | Yes (polynomial) | When MMS too expensive |
 | **PROPm** | Absolute | Moderate | Yes | Yes | When items are balanced |
@@ -1574,18 +1574,18 @@ Different algorithms provide different guarantees. Here's what major algorithms 
 
 | Algorithm | Time Complexity | Fairness Guarantee | Efficiency | When to Use |
 |-----------|----------------|-------------------|-----------|-------------|
-| **Round-Robin** | O(nm) | EF1 (for additive) | Not guaranteed | Default choice: fast, simple, strong guarantee |
-| **Envy Cycle Elimination** (Lipton et al.) | O(n⁴m) | EF1 | Pareto optimal | When EF1 + efficiency both matter |
+| **Round-Robin** | \\( O(nm) \\) | EF1 (for additive) | Not guaranteed | Default choice: fast, simple, strong guarantee |
+| **Envy Cycle Elimination** (Lipton et al.) | \\( O(n⁴m) \\) | EF1 | Pareto optimal | When EF1 + efficiency both matter |
 | **Maximum Nash Welfare** | NP-hard (approx. poly) | EF1 + optimal welfare | By definition | Small instances where welfare matters |
-| **Greedy Round-Robin** | O(m log m + nm) | EF1 (empirical) | Better than random RR | Practical improvement over basic RR |
+| **Greedy Round-Robin** | \\( O(m log m + nm) \\) | EF1 (empirical) | Better than random RR | Practical improvement over basic RR |
 | **MMS Approximation** | Polynomial | 3/4-MMS | Not guaranteed | When individual guarantees critical |
-| **Sequential Allocation** | O(nm) | None formal | Not guaranteed | When speed absolutely critical |
+| **Sequential Allocation** | \\( O(nm) \\) | None formal | Not guaranteed | When speed absolutely critical |
 
 **How to read this table**:
 
 **Start with Round-Robin**: For most problems, it's the right default. Linear time, guaranteed EF1, simple to implement and explain. Only deviate if you have specific reasons.
 
-**Use Envy Cycle Elimination for efficiency**: If Pareto optimality matters (no wasted value) and you can afford O(n⁴m) time, upgrade to this. The algorithm repeatedly identifies and breaks envy cycles, producing efficient EF1 allocations.
+**Use Envy Cycle Elimination for efficiency**: If Pareto optimality matters (no wasted value) and you can afford \\( O(n⁴m) \\) time, upgrade to this. The algorithm repeatedly identifies and breaks envy cycles, producing efficient EF1 allocations.
 
 **Use Nash Welfare maximization for small, high-stakes problems**: When n < 10, m < 50, and every bit of welfare matters (legal disputes, high-value assets), invest in optimization. Accept longer computation for provably optimal results.
 
@@ -1806,7 +1806,7 @@ Let's apply this framework to Maya, Jordan, and Sam:
    - Accepts: Small envy (up to one item) as necessary compromise with indivisibility
 
 2. **Algorithm choice**: Envy cycle elimination or adjusted winner with verification
-   - Rationale: Small problem allows O(n⁴m) time, want EF1 + efficiency, need transparency
+   - Rationale: Small problem allows \\( O(n⁴m) \\) time, want EF1 + efficiency, need transparency
    - Accepts: Slightly slower than round-robin (still seconds) for stronger guarantees
 
 3. **Process**: Collaborative with verification
@@ -1911,7 +1911,7 @@ We've gone from cake-cutting which always has envy-free allocations to indivisib
 These relaxations are realistic acknowledgments that "almost fair" can be good enough when "perfectly fair" is impossible.
 
 **The Computational Landscape**: Finding exact fair allocations faces a complexity wall:
-- **Round-robin**: O(nm) time, guarantees EF1
+- **Round-robin**: \\( O(nm) \\) time, guarantees EF1
 - **EF1 algorithms**: Polynomial time with strong guarantees (the sweet spot for most applications)
 - **MMS computation**: NP-hard to compute exactly, but 3/4-approximations are tractable
 - **EFx allocations**: Unknown if polynomial-time algorithms even exist
@@ -2031,7 +2031,7 @@ Resolves a decades-old open problem by providing bounded protocol for envy-free 
 Classic paper proving that achieving envy-freeness with contiguous pieces requires protocols that are either unbounded or probabilistic for three or more agents. Established fundamental limitations.
 
 **[Deng, Xiaotie, Qi Qi, and Amin Saberi. "Algorithmic Solutions for Envy-Free Cake Cutting." *Operations Research* 60.6 (2012): 1461-1476.](https://pubsonline.informs.org/doi/10.1287/opre.1120.1116)**  
-Shows that Îµ-envy-free allocations with contiguous pieces can be found in O(n log(1/Îµ)) queries. A massive improvement over exact envy-freeness. Demonstrates value of accepting small approximation errors.
+Shows that Îµ-envy-free allocations with contiguous pieces can be found in \\( O(n log(1/Îµ)) \\) queries. A massive improvement over exact envy-freeness. Demonstrates value of accepting small approximation errors.
 
 {% include components/heading.html heading='Algorithmic Game Theory Perspectives' level=3 %}
 
