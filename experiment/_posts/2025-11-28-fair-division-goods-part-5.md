@@ -51,7 +51,7 @@ This section transforms you from a consumer of algorithms into an architect who 
 
 Each application highlights different aspects of fair division: welfare systems prioritize protecting the vulnerable, computational systems prioritize throughput, classrooms prioritize procedural fairness. The same theoretical foundation adapts to radically different practical requirements.
 
-{% include components/heading.html heading='The Architect's Perspective' level=3 %}
+{% include components/heading.html heading='The Architect\'s Perspective' level=3 %}
 
 Parts 1-3 taught you the tools: protocols, fairness criteria, welfare functions, complexity analysis. Part 4 teaches you **judgment** which is the ability to analyze a new problem, identify its key characteristics, map them to appropriate techniques, and make principled trade-offs when perfect solutions don't exist.
 
@@ -94,7 +94,7 @@ If you're reading Part 4 independently, here's what you need from earlier parts:
 
 These concepts appear throughout Part 4. While we provide brief refreshers, you'll benefit from deeper familiarity with Parts 1-3.
 
-{% include components/heading.html heading='Let's Begin' level=3 %}
+{% include components/heading.html heading='Let\'s Begin' level=3 %}
 
 The journey from theory to practice requires more than algorithms.  It requires wisdom about when and how to apply them. Part 4 develops that wisdom through sophisticated mechanisms, systematic frameworks, and real-world case studies.
 
@@ -502,7 +502,7 @@ We began Part 4 asking how to move beyond elegant theory toward messy reality. W
 
 The sophisticated mechanisms we've explored represent different strategies for navigating this complexity. They don't eliminate trade-offs; they make trade-offs explicit and manageable. They accept that 90% of optimal fairness combined with 90% of optimal efficiency beats 100% of either at the expense of the other.
 
-{% include components/heading.html heading='What We've Learned: The Synthesis' level=3 %}
+{% include components/heading.html heading='What We\'ve Learned: The Synthesis' level=3 %}
 
 **There is no universal "best" algorithm.** The right tool depends on:
 
@@ -544,7 +544,7 @@ The maturity to accept "good enough" when perfection is infeasible or counterpro
 
 The same theoretical foundation (valuation functions, fairness criteria, welfare functions) adapts to these radically different contexts. What changes is the weighting of objectives, the acceptable trade-offs, and the computational constraints. The architect's job is recognizing these contextual differences and choosing accordingly.
 
-{% include components/heading.html heading='The Practitioner's Toolkit: What You Now Have' level=3 %}
+{% include components/heading.html heading='The Practitioner\'s Toolkit: What You Now Have' level=3 %}
 
 After four parts, you possess:
 
