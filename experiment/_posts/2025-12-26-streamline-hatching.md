@@ -478,4 +478,4 @@ For those who want to dive deeper into the underlying techniques:
 
 ---
 
-*The complete implementation, including an interactive demo, is available on [CodePen](https://codepen.io/dfens/pen/emzmzdd). Try it with your own images and experiment with the parameters.  the best way to understand the system is to see how each setting affects the output.*
+*The complete implementation, including an interactive demo, is available on [CodePen](https://codepen.io/dfens/full/emzmzdd). Try it with your own images and experiment with the parameters.  the best way to understand the system is to see how each setting affects the output.*
