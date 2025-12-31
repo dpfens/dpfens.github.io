@@ -438,9 +438,9 @@ The implementation includes several presets that configure these parameters for 
 The implementation supports both CPU and WebGPU backends. The core algorithms are the same; only the tensor operations differ.
 
 For CPU:
-- Structure tensor computation: O(width × height × scales × kernel_size²)
-- ETF refinement: O(width × height × iterations × kernel_size²)
-- Stroke generation: O(stroke_count × max_length)
+- Structure tensor computation: `O(width × height × scales × kernel_size²)`
+- ETF refinement: `O(width × height × iterations × kernel_size²)`
+- Stroke generation: `O(stroke_count × max_length)`
 
 For interactive use on typical images (500×500), CPU processing takes 1-3 seconds on a modern browser. WebGPU reduces this substantially for the tensor operations but has overhead for the stroke generation phase which remains serial.
 
