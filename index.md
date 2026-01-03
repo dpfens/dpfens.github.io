@@ -9,7 +9,7 @@ layout: default
         <div>
             <p>My name is</p>
             <h1 class="headline"><span>Doug</span><br/><span>Fenstermacher</span></h1>
-            <p class="sub-headline" style="margin-left: 0.25em;">A pragmatic software developer for audacious projects.</p>
+            <p class="sub-headline" style="margin-left: 0.25em;">I build software for audacious projects, and for the people who use them.</p>
             <a class="btn bg-blue-3" href="/project">My Projects</a>
         </div>
     </div>
@@ -24,7 +24,7 @@ layout: default
     <div class="hero-right hero-bottom hero-content d-flex align-items-center pb-5 min-vh-50">
         <div>
             <h2 class="headline">From long runs to code sprints</h2>
-            <p>As a former runner, I relentlessly pursue my goals. My finish line isn't a medal, it's a solution. My experiments aren't for headlines, but a better tomorrow.  I want to fill the cracks in the world rather than widen them.</p>
+            <p>I used to run competitively. These days I chase solutions that work for real people in real places, not just demos that impress in conference rooms.</p>
             <div class="d-flex justify-content-around">
                 <a class="btn bg-purple-3" href="/about">About Me</a>
                 <a class="btn bg-red-3" href="/experiment">My Experiments</a>
@@ -36,44 +36,44 @@ layout: default
 <div class="bg-orange-1">
     <div class="row pt-5 pb-4 border-3 border-top border-black">
         <div class="col-12 offset-md-1 col-md-10 offset-lg-2 col-lg-8">
-            <p class="sub-headline">I like to craft sustainable solutions tailored to specific challenges. Explore my snippets and mini-projects that serve as components of sustainable solutions.</p>
+            <p class="sub-headline">I like building sustainable solutions for specific problems. Here are some of the components that can be combined, adapted, and maintained long after the initial build.</p>
         </div>
     </div>
 
     <div class="grid gx-3 gy-3 px-3 pb-5">
 
 {% capture panelContent %}
-I craft dynamic web experiences from the ground up using Python, PHP, and Java to sculpt robust backends.  I use ReactJS and AngularJS to build apps that work even when the wifi doesn't.
+I build web applications from the backend up using Python, PHP, Java for the foundation, ReactJS and AngularJS for interfaces that work even when the wifi doesn't.
 {% endcapture %}
     {% assign panelContent = panelContent | markdownify %}
     {% include components/panel.html title="Web/App Development" content=panelContent extraClassName="bg-red-3" %}
 
 {% capture panelContent %}
-I translate data into data-driven intelligence. Python helps me create wrangle complex datasets and create anomaly detectors and personalized recommendations systems, while ReactJS visualizes my creations.
+I turn messy datasets into something useful. Python for wrangling, anomaly detection, recommendation systems. ReactJS for making the results legible to humans.
 {% endcapture %}
     {% assign panelContent = panelContent | markdownify %}
     {% include components/panel.html title="Data Analysis" content=panelContent extraClassName="bg-green-2" %}
 
 {% capture panelContent %}
-I bring languages and visions to life – building and deploying Natural Language Processing and Computer Vision models used in real-world applications. My toolkit includes crafting tailored loss functions like hierarchical cross-entropy for nuanced learning and classification.
+I build and deploy NLP and computer vision models that run in production, not just notebooks. Custom loss functions like hierarchical cross-entropy when the problem needs nuance.
 {% endcapture %}
     {% assign panelContent = panelContent | markdownify %}
     {% include components/panel.html title="Machine Learning" content=panelContent extraClassName="bg-blue-4" %}
 
 {% capture panelContent %}
-I craft economic mechanisms that align individual actions with collective goals, like efficient markets or sustainable resource use. Think puzzles with purpose, building systems that guide behavior without coercion.
+I design systems where individual incentives align with collective goals, like markets, resource allocation, governance structures. Puzzles with purpose: guiding behavior without coercion.
 {% endcapture %}
     {% assign panelContent = panelContent | markdownify %}
     {% include components/panel.html title="Mechanism Design" content=panelContent extraClassName="bg-purple-2" %}
 
 {% capture panelContent %}
-Unraveling the tangled threads of resource allocation through operations research, I wield linear and combinatorial tools to sculpt streamlined, cost-optimal solutions.
+When resource allocation gets tangled, I untangle it. Linear optimization, combinatorial methods, cost-minimization. Finding efficient paths through complicated constraints.
 {% endcapture %}
     {% assign panelContent = panelContent | markdownify %}
     {% include components/panel.html title="Operations Research" content=panelContent extraClassName="bg-orange-2" %}
     
 {% capture panelContent %}
-I architect resilient, scalable systems using Docker orchestration, microservices via REST APIs, and Gitlab CI/CD pipelines for robust development - I build the foundation for smooth, high-traffic experiences.
+Docker orchestration, microservices, REST APIs, GitLab CI/CD, etc. I build the infrastructure that lets applications scale without collapsing. Foundations for smooth, high-traffic experiences.
 {% endcapture %}
     {% assign panelContent = panelContent | markdownify %}
     {% include components/panel.html title="System Architecture/Design" content=panelContent extraClassName="bg-pink-3" %}
@@ -84,7 +84,7 @@ I architect resilient, scalable systems using Docker orchestration, microservice
 <div class="bg-blue-1">
     <div class="row pt-5 pb-4 border-3 border-top border-black">
         <div class="col-12 offset-md-1 col-md-10 offset-lg-2 col-lg-8">
-            <p class="sub-headline">My blog offers a glimpse into my mind, where I explore messy, real-world problems problems and their solutions. I look into sustainable solutions, impact-driven design, and practical approaches that go beyond the next shiny trend.</p>
+            <p class="sub-headline">My blog is where I think out loud about messy, real-world problems. Sustainable solutions, impact-driven design, practical approaches that outlast the next shiny framework.</p>
         </div>
     </div>
     <div class="grid gx-3 gy-3 px-3 pb-5">
