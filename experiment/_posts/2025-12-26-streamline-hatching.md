@@ -10,17 +10,15 @@ introduction: A guide to streamline hatching, a technique for transforming image
 
 I've always wanted to be able to draw. I like the idea of taking an image in my mind and making it so everyone else can see what I see. And I like the creative aspect of it.  Being able to draw whatever I want, however I want.  But I can't draw. Not yet, at least.  I'm working on it though.  I try to doodle while I watch TV to build my confidence.  I try to sketch thing I'm bad at, like clothes, faces, people to get better at proportions.  But I struggle particularly with different styles of drawing.
 
-This is a guide to one particular technique for computational drawing: *streamline hatching*, an approach to the sketching technique for shading. By the end, you'll understand how to take a photograph or rendered image and transform it into something that looks like it was sketched by hand.  With strokes following the form of objects, density varying with tone, crosshatching building up in shadows, etc. More importantly, you'll understand *why* each piece of the pipeline exists and what happens when you change it.
+This is a guide to one particular technique called *streamline hatching* where *hatching* is a pen & paper approach for shading an image where strokes following the form of objects, density varies with tone, crosshatching building up in shadows, etc. More importantly, you'll understand *why* each piece of the pipeline exists and what happens when you change it.
 
 ## What We're Building Toward
 
-Before diving into the technical details, let's establish what we're actually trying to achieve.
-
-Hatching is a drawing technique where artists use parallel lines to create tone and texture. The direction of the strokes typically follows the form of what's being drawn: curving around a sphere, running along a cylinder, radiating from a corner. The spacing between strokes controls darkness: closer together for shadows, further apart for highlights.
+Hatching is a drawing technique where artists use parallel lines to create tone and texture. The direction of the strokes typically follows the form of what's being drawn, like curving around a sphere, running along a cylinder, radiating from a corner etc. The spacing between strokes controls darkness, so closer strokes appear darker which means a darker shade like a shadow, and further apart strokes for highlights.
 
 Cross-hatching adds a second layer of strokes at an angle to the first, building up darker tones in shadow regions.
 
-When done well, hatching reveals *what shape* something is as well as *how dark* it is. The strokes become a kind of visual grammar that our eyes parse automatically.
+When done well, hatching reveals *what shape* something is as well as *how dark* it is.
 
 Our computational goal is to replicate this. Given an input image, we want to:
 
@@ -29,7 +27,7 @@ Our computational goal is to replicate this. Given an input image, we want to:
 3. **Control density and placement** so that dark areas get more strokes than light areas
 4. **Optionally add cross-hatching** in the darkest regions
 
-The output should look like something a human might have drawn, not like a mechanical filter was applied.
+The output should look like something a human might have drawn.
 
 ## The Pipeline at a Glance
 
@@ -44,9 +42,7 @@ Here's the full pipeline we'll be building:
 7. Stroke Generation
 8. Rendering
 
-Each stage feeds into the next. We'll work through them one by one, but keep this overall flow in mind, as it explains why certain decisions are made at each step.
-
-Here's the working implementation. Try it with the preset shapes or upload your own image.  Experiment with the parameters and watch how the output changes. The rest of this post explains what's happening under the hood.
+Where each stage feeds into the next.  Here's the working implementation. Try it with the preset shapes or upload your own image.  Experiment with the parameters and watch how the output changes. The rest of this post explains what's happening under the hood.
 
 <p class="codepen" data-height="900" data-default-tab="result" data-slug-hash="emzmzdd" data-pen-title="Hatching - WebGPU" data-user="dfens" style="height: 300px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 2px solid; margin: 1em 0; padding: 1em;">
   <span>See the Pen <a href="https://codepen.io/dfens/pen/emzmzdd">
@@ -68,7 +64,7 @@ Think about what a human artist pays attention to when deciding where and how to
 - **Confidence**: How certain are we about the direction? (A flat, textureless wall gives us nothing to work with.)
 - **Tone**: How dark should this region be?
 
-Tone is easy. We look at the brightness of each pixel. The first three are harder. They require us to analyze the *local structure* of the image, not just individual pixel values.
+Tone is easy. We look at the brightness of each pixel. The first three are harder as they require that we analyze the *local structure* of the image instead of just the darkness/lightness of individual pixels.
 
 This is where the **structure tensor** comes in.
 
@@ -82,8 +78,21 @@ The gradient at a single pixel is noisy and unreliable. But if we look at a *nei
 
 Mathematically, we:
 
-1. Compute horizontal and vertical gradients (Gx and Gy) at each pixel using Sobel operators
-2. Form the tensor components: Jxx = Gx·Gx, Jxy = Gx·Gy, Jyy = Gy·Gy
+Here are the expressions in KaTeX form:
+
+1. Compute horizontal and vertical gradients ($G_x$ and $G_y$) at each pixel using [Sobel operators](https://en.wikipedia.org/wiki/Sobel_operator)
+2. Form the tensor components:
+   $$
+   J_{xx} = G_x \cdot G_x
+   $$
+   
+   $$
+   J_{xy} = G_x \cdot G_y
+   $$
+   
+   $$
+   J_{yy} = G_y \cdot G_y
+   $$
 3. Smooth these components with a Gaussian filter (this is the "neighborhood averaging")
 4. Analyze the resulting 2×2 matrix at each pixel
 
@@ -133,7 +142,6 @@ The implementation detects background regions using two criteria:
 
 Pixels matching both criteria are flagged. We can either avoid placing strokes there entirely, or let strokes pass through with reduced confidence.
 
----
 
 ## Part 2: Building the Flow Field
 
@@ -141,7 +149,7 @@ Pixels matching both criteria are flagged. We can either avoid placing strokes t
 
 The structure tensor gives us orientation and coherence at each pixel. But these values are noisy, and neighboring pixels might have slightly inconsistent orientations. If we traced strokes directly through this field, they'd be jittery and unnatural.
 
-The **Edge Tangent Flow (ETF)** refinement step smooths the orientation field while preserving (and even enhancing) edges. It's based on a technique from line drawing research (Kang et al., "Coherent Line Drawing").
+The **Edge Tangent Flow (ETF)** refinement step smooths the orientation field while preserving (and even enhancing) edges. It's based on a technique from line drawing research ([Kang et al., "Coherent Line Drawing"](https://cg.postech.ac.kr/papers/kang_npar07_hi.pdf)).
 
 The algorithm iteratively refines the field:
 
@@ -165,7 +173,7 @@ for (let iter = 0; iter < etfIterations; iter++) {
 }
 ```
 
-The key insights:
+The key parts of this approach are that it accounts for:
 - **Spatial weighting** creates smooth transitions
 - **Magnitude weighting** makes high-gradient regions (edges) more influential
 - **Direction alignment** prevents averaging across incompatible orientations
@@ -207,8 +215,6 @@ for each unreliable pixel {
   }
 }
 ```
-
----
 
 ## Part 3: Drawing the Strokes
 
@@ -297,8 +303,6 @@ The actual length of each stroke is determined by:
 
 Darker, high-coherence regions get longer strokes. Lighter, uncertain regions get shorter ones.
 
----
-
 ## Part 4: Cross-Hatching
 
 Cross-hatching adds strokes perpendicular to the primary direction in dark regions. This builds up tone and adds visual interest.
@@ -374,8 +378,6 @@ function strokesToSVG(strokes, width, height, style) {
 }
 ```
 
----
-
 ## Part 6: Putting It All Together
 
 ### The Parameter Space
@@ -438,8 +440,8 @@ The implementation includes several presets that configure these parameters for 
 The implementation supports both CPU and WebGPU backends. The core algorithms are the same; only the tensor operations differ.
 
 For CPU:
-- Structure tensor computation: `O(width × height × scales × kernel_size²)`
-- ETF refinement: `O(width × height × iterations × kernel_size²)`
+- Structure tensor computation: `O(width × height × scales × kernel_size^2)`
+- ETF refinement: `O(width × height × iterations × kernel_size^2)`
 - Stroke generation: `O(stroke_count × max_length)`
 
 For interactive use on typical images (500×500), CPU processing takes 1-3 seconds on a modern browser. WebGPU reduces this substantially for the tensor operations but has overhead for the stroke generation phase which remains serial.
