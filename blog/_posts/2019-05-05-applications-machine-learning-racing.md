@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "5 simple applications of Machine Learning for running"
+title:  "6 simple applications of Machine Learning for running"
 description: Writing machine learning models in Python's scikit-learn  for gathering insights into sports
 keywords: python,ai,scikit-learn,classifier,regression
 tags: math machine-learning python
@@ -1053,6 +1053,145 @@ src="https://res.cloudinary.com/ddf6a1kku/image/upload/c_scale,f_auto/entity_bic
 alt="">
 
 Based on our produced competitor clusters, the biclustering model clustered events into throwers, mid-distance and distances runners, sprinters, and two groups of multi-event competitors, one of which focuses on field events and sprint events, and another that participates in all types of events.
+
+{% include components/heading.html heading='Performance Similarity' level=3 %}
+
+A fundamental component of working with time series performances is being able to compare performances, and for that we need a distance measure.  This could be useful for identifying athletes with similar racing styles, finding historical performances that match a given race strategy, or recommending training partners based on how they run races rather than just their finishing times.
+
+A naive approach would use Euclidean distance between the split vectors of two performances. But that requires both performances to have the exact same number of splits taken at the exact same distances. In practice, splits are rarely so concistent.  People choose different split distances, and chip timing/timing mats may not capture every athlete at every checkpoint. Additionally, athletes may speed up or slow down at different points in a race while still running fundamentally similar strategies.
+
+[Dynamic Time Warping](https://en.wikipedia.org/wiki/Dynamic_time_warping) (DTW) addresses these issues by finding the optimal alignment between two sequences, even when they differ in length (number of points) or are shifted in time. DTW was originally developed for speech recognition, but it has applications in any domain where we need to compare temporal sequences that may be warped or misaligned.  Which is exactly what performance data is.
+
+$$ DTW(X, Y) = \min_{W} \sqrt{\sum_{(i,j) \in W} (x_i - y_j)^2} $$
+
+Where \\( W \\) is a warping path that aligns elements of sequence \\( X \\) to elements of sequence \\( Y \\).
+
+Let's consider a practical example of comparing the pacing strategies of two marathon runners. Runner A may have 5km splits, while Runner B has mile splits. Even if both runners ran negative splits (speeding up throughout the race), Euclidean distance would fail to capture this similarity because the split distances don't align. DTW handles this by warping one sequence to align with the other, finding the minimum distance alignment.
+
+{% highlight python %}
+from fastdtw import fastdtw
+from scipy.spatial.distance import euclidean
+import numpy as np
+
+def normalize_splits(splits, distances):
+    """
+    Convert splits to pace (distance/time) for fair comparison
+    across different split configurations.
+    """
+    paces = []
+    prev_distance = 0.0
+    prev_time = 0.0
+    for split, distance in zip(splits, distances):
+        segment_distance = distance - prev_distance
+        segment_time = split - prev_time
+        pace = segment_distance / segment_time  # speed in distance/time
+        paces.append(pace)
+        prev_distance = distance
+        prev_time = split
+    return paces
+
+# Runner A: 5km splits (times in seconds)
+runner_a_splits = [1080, 2175, 3285, 4410, 5550, 6705, 7875, 9060]  # ~18min/5km pace
+runner_a_distances = [5, 10, 15, 20, 25, 30, 35, 40]  # km
+
+# Runner B: mile splits (times in seconds)  
+runner_b_splits = [345, 696, 1053, 1416, 1785, 2160, 2541, 2928, 3321]  # ~5:45/mile pace
+runner_b_distances = [1.609, 3.219, 4.828, 6.437, 8.047, 9.656, 11.265, 12.875, 14.484]  # km (miles converted)
+
+# Normalize to paces for comparison
+paces_a = normalize_splits(runner_a_splits, runner_a_distances)
+paces_b = normalize_splits(runner_b_splits, runner_b_distances)
+
+# Calculate DTW distance
+distance, path = fastdtw(paces_a, paces_b, dist=euclidean)
+
+print('DTW Distance: %.4f' % distance)
+print('Alignment path: %s' % path)
+{% endhighlight %}
+
+The `path` variable contains `tuples` indicating which splits from each runner were aligned together. This alignment can reveal aspects of racing strategies.  Like if both runners had a strong finishing kick, the final splits would align even if one runner had more splits than the other.
+
+We can extend this approach to find the most similar historical performances to a given race:
+
+{% highlight python %}
+{% raw %}
+from fastdtw import fastdtw
+from scipy.spatial.distance import euclidean
+
+def find_similar_performances(target_paces, historical_performances, top_n=5):
+    """
+    Find the most similar historical performances to a target performance
+    using Dynamic Time Warping.
+    
+    Args:
+        target_paces (list): Normalized paces of the target performance
+        historical_performances (list): List of dicts with 'id', 'athlete', and 'paces'
+        top_n (int): Number of similar performances to return
+    
+    Returns:
+        list: Top N most similar performances with their DTW distances
+    """
+    similarities = []
+    for performance in historical_performances:
+        distance, path = fastdtw(target_paces, performance['paces'], dist=euclidean)
+        similarities.append({
+            'id': performance['id'],
+            'athlete': performance['athlete'],
+            'distance': distance,
+            'alignment': path
+        })
+    
+    # Sort by DTW distance (lower is more similar)
+    similarities.sort(key=lambda x: x['distance'])
+    return similarities[:top_n]
+
+# Example usage with marathon performances
+historical = [
+    {'id': 1, 'athlete': 'Athlete A', 'paces': [4.62, 4.65, 4.68, 4.71, 4.75]},
+    {'id': 2, 'athlete': 'Athlete B', 'paces': [4.80, 4.75, 4.70, 4.65, 4.60]},  # negative split
+    {'id': 3, 'athlete': 'Athlete C', 'paces': [4.70, 4.70, 4.70, 4.70, 4.70]},  # even split
+    {'id': 4, 'athlete': 'Athlete D', 'paces': [4.55, 4.60, 4.75, 4.85, 4.95]},  # positive split (fading)
+]
+
+# Find performances similar to a target negative split race
+target = [4.78, 4.73, 4.68, 4.63, 4.58]
+similar = find_similar_performances(target, historical, top_n=3)
+
+for perf in similar:
+    print('%s: DTW Distance = %.4f' % (perf['athlete'], perf['distance']))
+{% endraw %}
+{% endhighlight %}
+
+This technique has practical applications for race analysis:
+
+*  Finding similar strategies: Find performances using similar pacing strategies (regardless of overall finishing time)
+*  Find similar athletes: Match athletes who run routinely have race patterns, which could indicate compatible training styles
+*  Predict performances: If an athlete's early splits match an existing pattern, predict how the rest of the race might unfold
+*  Anomaly detection: Identify races where an athlete deviated significantly from their typical pattern
+
+The standard DTW algorithm has \\( O(nm) \\) time complexity where \\( n \\) and \\( m \\) are the lengths of the two sequences.  So adding another split to one of the performances used in the DTW calculated makes the calculation slowe For comparing a single performance against a large database of historical performances, this can become expensive. The `fastdtw` library implements an approximation algorithm that reduces complexity to \\( O(n) \\) while maintaining accuracy for most applications.  But for our use case, even the \\( O(nm) \\) implementation would be feasible in production.
+
+{% highlight python %}
+{% raw %}
+import time
+from fastdtw import fastdtw
+from scipy.spatial.distance import euclidean
+
+# Benchmark DTW on larger sequences
+large_sequence_a = [4.5 + (i * 0.01) for i in range(100)]  # 100 splits
+large_sequence_b = [4.6 + (i * 0.008) for i in range(120)]  # 120 splits
+
+start_time = time.time()
+distance, path = fastdtw(large_sequence_a, large_sequence_b, dist=euclidean)
+duration = time.time() - start_time
+
+print('DTW Distance: %.4f' % distance)
+print('Computation time: %.4f ms' % (duration * 1000))
+print('Alignment path length: %d' % len(path))
+{% endraw %}
+{% endhighlight %}
+
+DTW can also be combined with the clustering techniques I talked about earlier. Instead of using Euclidean distance as the metric for clustering performance embeddings, we can use DTW distance to cluster performances that have similar temporal patterns regardless of their exact split configurations. This would allow us to cluster marathon performances from different races with different checkpoint configurations, providing a more robust clustering across heterogeneous data sources.
 
 {% include components/heading.html heading='Conclusion' level=2 %}
 
