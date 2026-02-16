@@ -995,7 +995,7 @@ https://res.cloudinary.com/ddf6a1kku/image/upload/c_scale,f_auto,w_1400/entity_b
 src="https://res.cloudinary.com/ddf6a1kku/image/upload/c_scale,f_auto/entity_biclustering_raw_wide_tall_iq3opp"
 alt="">
 
-Our dataset contains entities who have competed in a wide range of events and scikit-learn's biclustering implementation was able to cluster ~475,000 athletes based on their events in 8 seconds on an 8-core CPU.  While the sklearn.clustering.biclustering.SpectralCoclustering model does not base its clusters on it's neighbors , I sorted the columns (events) in my data matrix by discipline (throws, jumps, sprinting, long-distance running) and, for running events, in ascending order of the distance of the race.  This does not have any impact on the output clusters, but does make the heatmap visualizing the data easier to read.
+Our dataset contains entities who have competed in a wide range of events and scikit-learn's biclustering implementation was able to cluster ~475,000 athletes based on their events in 8 seconds on an 8-core CPU.  While the `sklearn.clustering.biclustering.SpectralCoclustering` model does not base its clusters on it's neighbors , I sorted the columns (events) in my data matrix by discipline (throws, jumps, sprinting, long-distance running) and, for running events, in ascending order of the distance of the race.  This does not have any impact on the output clusters, but does make the heatmap visualizing the data easier to read.
 
 
 {% highlight python %}
