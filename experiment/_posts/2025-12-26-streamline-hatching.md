@@ -1,26 +1,26 @@
 ---
 layout: post
 title: "Streamline Hatching: A Programmer's Guide to Computational Drawing"
-description: A deep dive into computational hatching. Using structure tensors, edge tangent flow, and streamline integration to transform photographs into hand-drawn-looking illustrations.
+description: A shallow dive into computational hatching. Using structure tensors, edge tangent flow, and streamline integration to transform photographs into hand-drawn-looking illustrations.
 keywords: computational drawing, hatching, cross-hatching, structure tensor, edge tangent flow, streamline integration, non-photorealistic rendering, NPR, image stylization, generative art, canvas, svg, computer-vision
 tags: data math webgpu drawing svg
 
-introduction: A guide to streamline hatching, a technique for transforming images into something that looks hand-sketched.
+introduction: Streamline hatching is a technique for transforming images into something that looks hand-sketched using structural tensors.
 ---
 
 I've always wanted to be able to draw. I like the idea of taking an image in my mind and making it so everyone else can see what I see. And I like the creative aspect of it.  Being able to draw whatever I want, however I want.  But I can't draw. Not yet, at least.  I'm working on it though.  I try to doodle while I watch TV to build my confidence.  I try to sketch thing I'm bad at, like clothes, faces, people to get better at proportions.  But I struggle particularly with different styles of drawing.
 
 This is a guide to one particular technique called *streamline hatching* where *hatching* is a pen & paper approach for shading an image where strokes following the form of objects, density varies with tone, crosshatching building up in shadows, etc. More importantly, you'll understand *why* each piece of the pipeline exists and what happens when you change it.
 
-## What We're Building Toward
+{% include components/heading.html heading='What We\'re Building Toward' level=2 %}
 
 Hatching is a drawing technique where artists use parallel lines to create tone and texture. The direction of the strokes typically follows the form of what's being drawn, like curving around a sphere, running along a cylinder, radiating from a corner etc. The spacing between strokes controls darkness, so closer strokes appear darker which means a darker shade like a shadow, and further apart strokes for highlights.
 
 Cross-hatching adds a second layer of strokes at an angle to the first, building up darker tones in shadow regions.
 
-When done well, hatching reveals *what shape* something is as well as *how dark* it is.
+When done well, hatching reveals what shape something is as well as how dark it is.
 
-Our computational goal is to replicate this. Given an input image, we want to:
+Our goal is to replicate this. Given an input image, we want to:
 
 1. **Understand the directional structure** of the image.  where are the forms, and which way do they "flow"?
 2. **Generate strokes** that follow this structure
@@ -29,7 +29,7 @@ Our computational goal is to replicate this. Given an input image, we want to:
 
 The output should look like something a human might have drawn.
 
-## The Pipeline at a Glance
+{% include components/heading.html heading='The Pipeline at a Glance' level=2 %}
 
 Here's the full pipeline we'll be building:
 
@@ -53,9 +53,9 @@ Where each stage feeds into the next.  Here's the working implementation. Try it
 
 ---
 
-## Part 1: Reading the Image
+{% include components/heading.html heading='Part 1: Reading the Image' level=2 %}
 
-### What Information Do We Actually Need?
+{% include components/heading.html heading='What Information Do We Actually Need?' level=3 %}
 
 Think about what a human artist pays attention to when deciding where and how to place hatching strokes:
 
@@ -66,21 +66,17 @@ Think about what a human artist pays attention to when deciding where and how to
 
 Tone is easy. We look at the brightness of each pixel. The first three are harder as they require that we analyze the *local structure* of the image instead of just the darkness/lightness of individual pixels.
 
-This is where the **structure tensor** comes in.
+This is where the structure tensor comes in.
 
-### The Structure Tensor: Orientation from Gradients
+{% include components/heading.html heading='The Structure Tensor: Orientation from Gradients' level=3 %}
 
 The structure tensor is a mathematical tool from computer vision that answers a specific question: "What is the dominant orientation at this point in the image?"
 
 At any point in an image, we can compute the *gradient*. On an edge, the gradient points perpendicular to the edge. In a textured region, gradients point in various directions depending on the local pattern.
 
-The gradient at a single pixel is noisy and unreliable. But if we look at a *neighborhood* of gradients and ask "what's the overall trend?", we get something much more stable. That's what the structure tensor captures.
+The gradient at a single pixel is noisy and unreliable. But the trend of a neighborhood of gradient much more stable. That's what the structure tensor captures.
 
-Mathematically, we:
-
-Here are the expressions in KaTeX form:
-
-1. Compute horizontal and vertical gradients ($G_x$ and $G_y$) at each pixel using [Sobel operators](https://en.wikipedia.org/wiki/Sobel_operator)
+1. Compute horizontal and vertical gradients ( $G_x$ and $G_y$ ) at each pixel using [Sobel operators](https://en.wikipedia.org/wiki/Sobel_operator)
 2. Form the tensor components:
    $$
    J_{xx} = G_x \cdot G_x
@@ -101,13 +97,13 @@ The analysis of that matrix (via eigenvalue decomposition) gives us:
 - **Dominant orientation**: The direction perpendicular to the strongest gradient trend
 - **Coherence**: How "directional" the neighborhood is (high coherence = strong consistent orientation, low coherence = isotropic or noisy)
 
-If this sounds abstract, think of it this way: we're asking "if I were to draw a stroke through this pixel, which direction would feel most *natural* given the local image structure?"
+This is all to tell us the direction to draw a stroke in our final drawing.
 
-### Why Multiple Scales?
+{% include components/heading.html heading='Why Multiple Scales?' level=3 %}
 
-A single scale of analysis isn't enough. Consider an image with both fine texture (like fabric weave) and large-scale form (like the curve of a shoulder). A small analysis window captures the texture direction. A large window captures the form direction. Both might be valid depending on what kind of hatching you want.
+This sounds great, but a single structural tensor does not capture all the information we want, so we need to create multiple structural tensors at different scales to capture both details (like fabric weave) and large-scale form (like the curve of a shoulder). A small analysis window captures the texture direction. A large window captures the form direction. Both might be valid depending on what kind of hatching you want.
 
-The implementation uses an array of sigma values (e.g., `[1.0, 2.0, 4.0, 8.0]`) and computes the structure tensor at each scale. It then selects the "best" scale at each pixel based on:
+The implementation uses an array of `sigma` values (e.g., `[1.0, 2.0, 4.0, 8.0]`) and computes the structure tensor at each scale. It then selects the "best" scale at each pixel based on:
 
 - **Coherence**: Higher is better (stronger directional signal)
 - **Gradient magnitude**: We weight toward scales where there's actually something to measure
@@ -132,7 +128,7 @@ for (let scaleIdx = 0; scaleIdx < scales.length; scaleIdx++) {
 
 The result is an orientation field that adapts to local image content; following fine details where they exist, falling back to coarse structure where they don't.
 
-### Handling the Background
+{% include components/heading.html heading='Handling the Background' level=3 %}
 
 One important practical concern: what about regions with no structure at all? A pure white background has no gradients, so the structure tensor gives us nothing meaningful.
 
@@ -143,9 +139,9 @@ The implementation detects background regions using two criteria:
 Pixels matching both criteria are flagged. We can either avoid placing strokes there entirely, or let strokes pass through with reduced confidence.
 
 
-## Part 2: Building the Flow Field
+{% include components/heading.html heading='Part 2: Building the Flow Field' level=2 %}
 
-### From Structure Tensor to Edge Tangent Flow
+{% include components/heading.html heading='From Structure Tensor to Edge Tangent Flow' level=3 %}
 
 The structure tensor gives us orientation and coherence at each pixel. But these values are noisy, and neighboring pixels might have slightly inconsistent orientations. If we traced strokes directly through this field, they'd be jittery and unnatural.
 
@@ -181,7 +177,7 @@ The key parts of this approach are that it accounts for:
 
 After a few iterations (typically 3-5), the field becomes much smoother while still respecting edges and contours.
 
-### Propagating Direction into Flat Regions
+{% include components/heading.html heading='Propagating Direction into Flat Regions' level=3 %}
 
 Even with ETF refinement, we still have a problem: flat, textureless regions have undefined or unreliable orientations. The structure tensor gave us "no signal," and no amount of smoothing creates signal from nothing.
 
@@ -216,9 +212,9 @@ for each unreliable pixel {
 }
 ```
 
-## Part 3: Drawing the Strokes
+{% include components/heading.html heading='Part 3: Drawing the Strokes' level=2 %}
 
-### Streamline Integration
+{% include components/heading.html heading='Streamline Integration' level=3 %}
 
 We now have a smooth, complete flow field. The next step is tracing curves through it, creating our hatching strokes.
 
@@ -256,7 +252,7 @@ function integrateStreamline(etf, startX, startY, direction, maxSteps, stepSize)
 
 Each stroke is traced in both directions from its seed point (forward and backward), then concatenated into a single path.
 
-### Seed Placement: The Art of "Not Too Many, Not Too Few"
+{% include components/heading.html heading='Seed Placement: The Art of "Not Too Many, Not Too Few"' level=3 %}
 
 Where we start our streamlines matters enormously. Too few strokes and the image is sparse. Too many and it becomes a dense mess. Uniform random placement produces clumpy, uneven coverage.
 
@@ -286,7 +282,7 @@ function addCoverage(points, strokeWidth) {
 
 When evaluating a candidate, we check if the coverage at that location exceeds a threshold. The threshold varies with brightness; dark areas tolerate higher coverage (more overlapping strokes).
 
-### Stroke Length and Parameters
+{% include components/heading.html heading='Stroke Length and Parameters' level=3 %}
 
 Several parameters control the character of individual strokes:
 
@@ -303,7 +299,7 @@ The actual length of each stroke is determined by:
 
 Darker, high-coherence regions get longer strokes. Lighter, uncertain regions get shorter ones.
 
-## Part 4: Cross-Hatching
+{% include components/heading.html heading='Part 4: Cross-Hatching' level=2 %}
 
 Cross-hatching adds strokes perpendicular to the primary direction in dark regions. This builds up tone and adds visual interest.
 
@@ -330,13 +326,11 @@ for (let i = 0; i < width * height; i++) {
 
 Cross-hatch strokes are typically shorter and fewer than primary strokes (about 40% as many in the default configuration).
 
----
-
-## Part 5: Rendering and Output
+{% include components/heading.html heading='Part 5: Rendering and Output' level=2 %}
 
 The final step is rendering strokes to a canvas or exporting to SVG.
 
-### Canvas Rendering
+{% include components/heading.html heading='Canvas Rendering' level=3 %}
 
 For interactive display, strokes are drawn to an HTML canvas:
 
@@ -360,7 +354,7 @@ for (const stroke of strokes) {
 
 The stroke opacity varies with the darkness at the seed point.  Strokes in shadow regions are more opaque than those in highlights.
 
-### SVG Export
+{% include components/heading.html heading='SVG Export' level=3 %}
 
 For resolution-independent output, strokes can be exported as SVG paths:
 
@@ -378,9 +372,9 @@ function strokesToSVG(strokes, width, height, style) {
 }
 ```
 
-## Part 6: Putting It All Together
+{% include components/heading.html heading='Part 6: Putting It All Together' level=2 %}
 
-### The Parameter Space
+{% include components/heading.html heading='The Parameter Space' level=3 %}
 
 The full system has many parameters. Here's how they cluster:
 
@@ -412,7 +406,7 @@ The full system has many parameters. Here's how they cluster:
 - `crossHatch`: Enable perpendicular strokes
 - `crossHatchThreshold`: Darkness level for cross-hatching
 
-### Presets as Starting Points
+{% include components/heading.html heading='Presets as Starting Points' level=3 %}
 
 The implementation includes several presets that configure these parameters for different effects:
 
@@ -435,7 +429,7 @@ The implementation includes several presets that configure these parameters for 
 - Single scale (coarse)
 - High propagation to fill flat regions
 
-### Computational Considerations
+{% include components/heading.html heading='Computational Considerations' level=3 %}
 
 The implementation supports both CPU and WebGPU backends. The core algorithms are the same; only the tensor operations differ.
 
@@ -448,7 +442,7 @@ For interactive use on typical images (500×500), CPU processing takes 1-3 secon
 
 ---
 
-## Where to Go From Here
+{% include components/heading.html heading='Where to Go From Here' level=2 %}
 
 This implementation covers the fundamentals, but there's plenty of room for extension:
 
@@ -466,7 +460,7 @@ The technique generalizes well. Using image structure to guide stroke direction 
 
 ---
 
-## Further Reading
+{% include components/heading.html heading='Further Reading' level=2 %}
 
 For those who want to dive deeper into the underlying techniques:
 
