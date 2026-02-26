@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Streamline Hatching: A Programmer's Guide to Computational Drawing"
+title: "Streamline Hatching: A Programmer's Attempt at Computational Drawing"
 description: Sharing an attempt at computational hatching. Using structure tensors, edge tangent flow, and streamline integration to transform photographs into hand-drawn-looking illustrations.
 keywords: computational drawing, hatching, cross-hatching, structure tensor, edge tangent flow, streamline integration, non-photorealistic rendering, NPR, image stylization, generative art, canvas, svg, computer-vision
 tags: data math webgpu drawing svg
