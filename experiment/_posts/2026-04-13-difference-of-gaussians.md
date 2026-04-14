@@ -1,0 +1,884 @@
+---
+layout: post
+title: "XDoG: Computation of Aesthetically Pleasing Lines"
+description: A deeper dive into modern approaches for generating aesthetically pleasing lines based on difference-of-Gaussians (DoG) edge detections.
+keywords: computational drawing, structure tensor, non-photorealistic rendering, image stylization, generative art, computer-vision
+tags: data math webgpu webgl drawing
+
+introduction: A better approach for changing images to aesthetically pleasing drawings
+---
+As I said in a previous post, I am learning to draw. Drawing by hand is going pretty well, but learning to draw on a computer is proving more difficult. I understand what layers are and what masks are, but I am still learning to plan out my drawing in terms of layers and masks.  I started with sketching, and still struggle with color and composition.
+
+For that reason, I decided to take what I learned in my last post about hatching to see if I could use structural tensors to create more robust approach for turning images into decent sketches.
+
+Below is an interactive demo of X-DoG/F-DoG (without extensions) for you to use.  It has WebGL and WebGPU support (as a learning opportunity) so it's very fast, even on large images.  I have built some extensions, like multi-scale tensor/detail extraction, and color retention but they aren't ready to be published yet.
+
+If you want to read about the algorithm itself, you can read the original
+[XDoG: An eXtended difference-of-Gaussians compendium including advanced image stylization](https://users.cs.northwestern.edu/~sco590/winnemoeller-cag2012.pdf) paper.
+
+<head>
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --accent-color: black;
+            --accent-dim: gray;
+            --surface-1: rgba(30, 41, 59, 0.7);
+            --surface-2: rgba(51, 65, 85, 0.5);
+        }
+        
+        body {
+            min-height: 100vh;
+        }
+        
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .accent-text {
+            color: var(--accent-color);
+        }
+        
+        .navbar {
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .navbar-brand {
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+        
+        .card {
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 1rem;
+        }
+        
+        .card-header {
+            background: transparent;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            font-weight: 500;
+        }
+        
+        /* Drop Zone */
+        .drop-zone {
+            border: 2px dashed rgba(110, 110, 110, 0.3);
+            border-radius: 1rem;
+            padding: 3rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .drop-zone:hover,
+        .drop-zone.drag-over {
+            border-color: var(--accent-color);
+        }
+        
+        .drop-zone-icon {
+            font-size: 3rem;
+            color: var(--accent-color);
+            opacity: 0.6;
+        }
+        
+        /* Image boxes */
+        .image-container {
+            position: relative;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            aspect-ratio: 4/3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .image-container img,
+        .image-container canvas {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .image-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 0.5rem 1rem;
+            background: black;
+            font-size: 0.8rem;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        /* Controls */
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: black;
+            margin-bottom: 0.35rem;
+        }
+        
+        .form-range {
+            height: 0.5rem;
+        }
+        
+        .form-range::-webkit-slider-thumb {
+            background: black;
+        }
+        
+        .param-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--accent-color);
+            min-width: 4rem;
+            text-align: right;
+        }
+        
+        /* Preset buttons */
+        .preset-btn {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.75rem;
+            border: 1px solid black;
+            background: transparent;
+            color: black;
+            transition: all 0.2s ease;
+        }
+        
+        .preset-btn:hover {
+            color: var(--accent-color);
+            background: rgba(110, 231, 183, 0.1);
+        }
+        
+        .preset-btn.active {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+        
+        /* Mode toggle */
+        .mode-toggle .btn-check:checked + .btn {
+            background: rgba(110, 231, 183, 0.2);
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+        
+        .mode-toggle .btn {
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+        
+        /* Accordion customization */
+        .accordion-button {
+            background: transparent;
+            color: black
+            font-weight: 500;
+            padding: 0.75rem 1rem;
+        }
+        
+        .accordion-button:not(.collapsed) {
+            color: var(--accent-color);
+        }
+        
+        .accordion-button::after {
+            filter: invert(1);
+        }
+        
+        /* Processing spinner */
+        .processing-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            z-index: 10;
+            border-radius: 0.75rem;
+        }
+        
+        .processing-overlay.d-none {
+            display: none !important;
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Section titles */
+        .section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #64748b;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        /* FDoG params panel */
+        .fdog-params {
+            transition: all 0.3s ease;
+        }
+        
+        .fdog-params.collapsed {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        /* Info tooltip icon */
+        .info-icon {
+            color: #64748b;
+            cursor: help;
+            font-size: 0.85rem;
+        }
+        
+        .info-icon:hover {
+            color: var(--accent-color);
+        }
+    </style>
+</head>
+<div class="py-4">
+    <div class="row g-4">
+        <!-- Left Panel - Images -->
+        <div class="col-12 col-md-8">
+            <div class="card h-100">
+                <div class="card-body">
+                    <!-- Drop Zone -->
+                    <div class="drop-zone mb-4" id="dropZone">
+                        <div class="drop-zone-icon mb-2">
+                            <i class="bi bi-cloud-arrow-up"></i>
+                        </div>
+                        <p class="mb-1 text-light">Drop an image here or click to upload</p>
+                        <small class="text-secondary">Supports JPG, PNG, WebP</small>
+                        <input type="file" id="fileInput" accept="image/*" hidden>
+                    </div>
+                    
+                    <!-- Image Comparison -->
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <div class="image-container">
+                                <img id="originalImage" src="" alt="Original" class="d-none">
+                                <div class="text-secondary" id="originalPlaceholder">
+                                    <i class="bi bi-image fs-1 opacity-25"></i>
+                                </div>
+                                <div class="image-label">Original</div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="image-container">
+                                <canvas id="resultCanvas"></canvas>
+                                <div class="processing-overlay d-none" id="processingOverlay">
+                                    <div class="spinner-border text-light" role="status">
+                                        <span class="visually-hidden">Processing...</span>
+                                    </div>
+                                    <span class="text-light">Processing...</span>
+                                </div>
+                                <div class="image-label">Result</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="d-flex gap-2 mt-3">
+                        <button class="btn border border-2 border-black flex-grow-1" id="processBtn" disabled>
+                            <i class="bi bi-magic me-2"></i>Generate Line Drawing
+                        </button>
+                        <button class="btn border border-2 border-black" id="downloadBtn" disabled title="Download Result">
+                            <i class="bi bi-download"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Panel - Controls -->
+        <div class="col-12 col-md-4">
+            <div class="card">
+                <div class="card-body" style="max-height: calc(100vh - 140px); overflow-y: auto;">
+                    
+                    <!-- Mode Selection -->
+                    <div class="section-title">Processing Mode</div>
+                    <div class="btn-group mode-toggle w-100 mb-4" role="group">
+                        <input type="radio" class="btn-check" name="mode" id="modeXDoG" value="xdog" checked>
+                        <label class="btn border border-2 border-black" for="modeXDoG">
+                            <i class="bi bi-lightning me-1"></i> XDoG
+                        </label>
+                        <input type="radio" class="btn-check" name="mode" id="modeFDoG" value="fdog">
+                        <label class="btn border border-2 border-black ms-2" for="modeFDoG">
+                            <i class="bi bi-bezier2 me-1"></i> FDoG
+                        </label>
+                    </div>
+                    
+                    <!-- XDoG Presets -->
+                    <div id="xdogPresets">
+                        <div class="section-title">Style Presets</div>
+                        <div class="d-flex flex-wrap gap-2 mb-4">
+                            <button class="btn preset-btn active" data-preset="threshold" data-mode="xdog">
+                                ✒️ Line Art
+                            </button>
+                            <button class="btn preset-btn" data-preset="pencilShading" data-mode="xdog">
+                                ✏️ Pencil
+                            </button>
+                            <button class="btn preset-btn" data-preset="pastel" data-mode="xdog">
+                                🎨 Pastel
+                            </button>
+                            <button class="btn preset-btn" data-preset="charcoal" data-mode="xdog">
+                                🖤 Charcoal
+                            </button>
+                            <button class="btn preset-btn" data-preset="woodcut" data-mode="xdog">
+                                🪵 Woodcut
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- FDoG Presets -->
+                    <div id="fdogPresets" class="d-none">
+                        <div class="section-title">FDoG Style Presets</div>
+                        <div class="d-flex flex-wrap gap-2 mb-4">
+                            <button class="btn preset-btn active" data-preset="standard" data-mode="fdog">
+                                📐 Standard
+                            </button>
+                            <button class="btn preset-btn" data-preset="pastel" data-mode="fdog">
+                                🎨 Pastel
+                            </button>
+                            <button class="btn preset-btn" data-preset="woodcut" data-mode="fdog">
+                                🪵 Woodcut
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Core DoG Parameters -->
+                    <div class="accordion" id="paramsAccordion">
+                        <div class="accordion-item bg-transparent border-0">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#coreParams">
+                                    Core Parameters
+                                </button>
+                            </h2>
+                            <div id="coreParams" class="accordion-collapse collapse show" data-bs-parent="#paramsAccordion">
+                                <div class="accordion-body">
+                                    <!-- Sigma -->
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <label class="form-label mb-0">
+                                                σ (Sigma) - Edge Scale
+                                                <i class="bi bi-info-circle info-icon ms-1" 
+                                                    data-bs-toggle="tooltip" 
+                                                    title="Controls the scale of detected edges. Larger values detect coarser edges."></i>
+                                            </label>
+                                            <span class="param-value" id="sigmaValue">1.4</span>
+                                        </div>
+                                        <input type="range" class="form-range" id="sigma" min="0.3" max="8" step="0.1" value="1.4">
+                                    </div>
+                                    
+                                    <!-- K -->
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <label class="form-label mb-0">
+                                                k - Blur Ratio
+                                                <i class="bi bi-info-circle info-icon ms-1" 
+                                                    data-bs-toggle="tooltip" 
+                                                    title="Ratio between the two Gaussian blurs. 1.6 is recommended."></i>
+                                            </label>
+                                            <span class="param-value" id="kValue">1.6</span>
+                                        </div>
+                                        <input type="range" class="form-range" id="k" min="1.1" max="3" step="0.1" value="1.6">
+                                    </div>
+                                    
+                                    <!-- P (sharpening strength) -->
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <label class="form-label mb-0">
+                                                p - Sharpening Strength
+                                                <i class="bi bi-info-circle info-icon ms-1" 
+                                                    data-bs-toggle="tooltip" 
+                                                    title="Controls edge emphasis. ~20 for normal, ~100+ for woodcut style."></i>
+                                            </label>
+                                            <span class="param-value" id="pValue">20</span>
+                                        </div>
+                                        <input type="range" class="form-range" id="p" min="0" max="150" step="1" value="20">
+                                    </div>
+                                    
+                                    <!-- Epsilon -->
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <label class="form-label mb-0">
+                                                ε (Epsilon) - Threshold
+                                                <i class="bi bi-info-circle info-icon ms-1" 
+                                                    data-bs-toggle="tooltip" 
+                                                    title="Values above this become white. Range 0-1 for normalized images."></i>
+                                            </label>
+                                            <span class="param-value" id="epsilonValue">0.78</span>
+                                        </div>
+                                        <input type="range" class="form-range" id="epsilon" min="0" max="1" step="0.01" value="0.78">
+                                    </div>
+                                    
+                                    <!-- Phi -->
+                                    <div class="mb-0">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <label class="form-label mb-0">
+                                                φ (Phi) - Threshold Sharpness
+                                                <i class="bi bi-info-circle info-icon ms-1" 
+                                                    data-bs-toggle="tooltip" 
+                                                    title="Controls transition sharpness. Low values for soft gradients, high for hard edges."></i>
+                                            </label>
+                                            <span class="param-value" id="phiValue">100</span>
+                                        </div>
+                                        <input type="range" class="form-range" id="phi" min="0.01" max="200" step="0.01" value="100">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- FDoG-Specific Parameters -->
+                        <div class="accordion-item bg-transparent border-0 fdog-params collapsed" id="fdogParamsSection">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#fdogParams">
+                                    FDoG Flow Parameters
+                                </button>
+                            </h2>
+                            <div id="fdogParams" class="accordion-collapse collapse" data-bs-parent="#paramsAccordion">
+                                <div class="accordion-body">
+                                    <!-- SigmaC -->
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <label class="form-label mb-0">
+                                                σc - Structure Tensor Smoothing
+                                                <i class="bi bi-info-circle info-icon ms-1" 
+                                                    data-bs-toggle="tooltip" 
+                                                    title="Controls ETF smoothness. Small values capture fine edges, large values create smoother flow."></i>
+                                            </label>
+                                            <span class="param-value" id="sigmaCValue">2.28</span>
+                                        </div>
+                                        <input type="range" class="form-range" id="sigmaC" min="0.1" max="8" step="0.1" value="2.28">
+                                    </div>
+                                    
+                                    <!-- SigmaM -->
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <label class="form-label mb-0">
+                                                σm - Flow-Aligned Smoothing
+                                                <i class="bi bi-info-circle info-icon ms-1" 
+                                                    data-bs-toggle="tooltip" 
+                                                    title="Controls line coherence. Larger values create longer, smoother lines."></i>
+                                            </label>
+                                            <span class="param-value" id="sigmaMValue">4.4</span>
+                                        </div>
+                                        <input type="range" class="form-range" id="sigmaM" min="0" max="25" step="0.1" value="4.4">
+                                    </div>
+                                    
+                                    <!-- SigmaA -->
+                                    <div class="mb-0">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <label class="form-label mb-0">
+                                                σa - Anti-Aliasing
+                                                <i class="bi bi-info-circle info-icon ms-1" 
+                                                    data-bs-toggle="tooltip" 
+                                                    title="Post-processing smoothing along ETF. 0 disables, 0.5-2 typical."></i>
+                                            </label>
+                                            <span class="param-value" id="sigmaAValue">1.0</span>
+                                        </div>
+                                        <input type="range" class="form-range" id="sigmaA" min="0" max="10" step="0.1" value="1.0">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Preprocessing -->
+                        <div class="accordion-item bg-transparent border-0">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#preprocessParams">
+                                    Preprocessing
+                                </button>
+                            </h2>
+                            <div id="preprocessParams" class="accordion-collapse collapse" data-bs-parent="#paramsAccordion">
+                                <div class="accordion-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">Preprocessing Mode</label>
+                                        <select class="form-select form-select-sm" id="preprocessMode">
+                                            <option value="none">None</option>
+                                            <option value="light">Light (clean images)</option>
+                                            <option value="standard" selected>Standard (most photos)</option>
+                                            <option value="heavy">Heavy (textured images)</option>
+                                            <option value="nature">Nature (landscapes)</option>
+                                            <option value="artistic">Artistic (painterly)</option>
+                                        </select>
+                                    </div>
+                                    <small class="text-secondary">
+                                        Preprocessing smooths textures while preserving edges, 
+                                        reducing noise in the final result.
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Info -->
+                    <div class="mt-4 p-3 rounded" style="background: rgba(110, 231, 183, 0.05); border: 1px solid rgba(110, 231, 183, 0.1);">
+                        <h6 class="accent-text mb-2">
+                            <i class="bi bi-lightbulb me-1"></i> Tips
+                        </h6>
+                        <small class="text-secondary d-block mb-2">
+                            <strong class="text-light">XDoG</strong> uses isotropic Gaussian blur - fast and great for most images.
+                        </small>
+                        <small class="text-secondary d-block">
+                            <strong class="text-light">FDoG</strong> uses flow-guided blur along edge tangents for smoother, 
+                            more coherent lines. Best for portraits and subjects where line continuity matters.
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+<script type="module">
+    import { 
+        XDoG,
+        FDoG,
+        STYLE_PRESETS,
+        FDOG_STYLE_PRESETS,
+        imageDataToGrayscale, 
+        grayscaleToImageData,
+        PreprocessingPresetsWebGL,
+        tauToP
+    } from '/assets/js/libs/homemade/xdog/index.js';
+
+    // State
+    let currentMode = 'xdog';
+    let loadedImage = null;
+
+    // DOM Elements
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const originalImage = document.getElementById('originalImage');
+    const originalPlaceholder = document.getElementById('originalPlaceholder');
+    const resultCanvas = document.getElementById('resultCanvas');
+    const processBtn = document.getElementById('processBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const processingOverlay = document.getElementById('processingOverlay');
+    const xdogPresets = document.getElementById('xdogPresets');
+    const fdogPresets = document.getElementById('fdogPresets');
+    const fdogParamsSection = document.getElementById('fdogParamsSection');
+    const preprocessMode = document.getElementById('preprocessMode');
+
+    // Core parameter sliders
+    const sliders = {
+        sigma: document.getElementById('sigma'),
+        k: document.getElementById('k'),
+        p: document.getElementById('p'),
+        epsilon: document.getElementById('epsilon'),
+        phi: document.getElementById('phi'),
+    };
+
+    // FDoG-specific sliders
+    const fdogSliders = {
+        sigmaC: document.getElementById('sigmaC'),
+        sigmaM: document.getElementById('sigmaM'),
+        sigmaA: document.getElementById('sigmaA'),
+    };
+
+    // Initialize Bootstrap tooltips
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(el => new bootstrap.Tooltip(el));
+
+    // Helper to wait for image load
+    function waitForImage(img) {
+        return new Promise((resolve, reject) => {
+            if (img.complete && img.naturalWidth > 0) {
+                resolve(img);
+            } else {
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+            }
+        });
+    }
+
+    // Update slider value displays
+    function updateSliderDisplays() {
+        document.getElementById('sigmaValue').textContent = parseFloat(sliders.sigma.value).toFixed(1);
+        document.getElementById('kValue').textContent = parseFloat(sliders.k.value).toFixed(1);
+        document.getElementById('pValue').textContent = sliders.p.value;
+        document.getElementById('epsilonValue').textContent = parseFloat(sliders.epsilon.value).toFixed(2);
+        document.getElementById('phiValue').textContent = parseFloat(sliders.phi.value).toFixed(1);
+        
+        document.getElementById('sigmaCValue').textContent = parseFloat(fdogSliders.sigmaC.value).toFixed(2);
+        document.getElementById('sigmaMValue').textContent = parseFloat(fdogSliders.sigmaM.value).toFixed(1);
+        document.getElementById('sigmaAValue').textContent = parseFloat(fdogSliders.sigmaA.value).toFixed(1);
+    }
+
+    // Apply XDoG preset
+    function applyXDoGPreset(presetName) {
+        const preset = STYLE_PRESETS[presetName];
+        if (!preset) return;
+
+        sliders.sigma.value = preset.sigma;
+        sliders.k.value = preset.k;
+        sliders.p.value = preset.p;
+        sliders.epsilon.value = preset.epsilon;
+        sliders.phi.value = preset.phi;
+
+        updateSliderDisplays();
+    }
+
+    // Apply FDoG preset
+    function applyFDoGPreset(presetName) {
+        const preset = FDOG_STYLE_PRESETS[presetName];
+        if (!preset) return;
+
+        sliders.sigma.value = preset.sigma;
+        sliders.k.value = preset.k;
+        sliders.p.value = preset.p;
+        sliders.epsilon.value = preset.epsilon;
+        sliders.phi.value = preset.phi;
+        
+        fdogSliders.sigmaC.value = preset.sigmaC;
+        fdogSliders.sigmaM.value = preset.sigmaM;
+        fdogSliders.sigmaA.value = preset.sigmaA;
+
+        updateSliderDisplays();
+    }
+
+    // Get current parameters from sliders
+    function getParams() {
+        const params = {
+            sigma: parseFloat(sliders.sigma.value),
+            k: parseFloat(sliders.k.value),
+            p: parseFloat(sliders.p.value),
+            epsilon: parseFloat(sliders.epsilon.value),
+            phi: parseFloat(sliders.phi.value),
+        };
+        
+        if (currentMode === 'fdog') {
+            params.sigmaC = parseFloat(fdogSliders.sigmaC.value);
+            params.sigmaM = parseFloat(fdogSliders.sigmaM.value);
+            params.sigmaA = parseFloat(fdogSliders.sigmaA.value);
+        }
+        
+        return params;
+    }
+
+    // Apply preprocessing
+    function applyPreprocessing(grayscale) {
+        const mode = preprocessMode.value;
+        if (mode === 'none') return grayscale;
+        
+        const preprocessFn = PreprocessingPresetsWebGL[mode];
+        if (preprocessFn) {
+            return preprocessFn(grayscale);
+        }
+        return grayscale;
+    }
+
+    // Process image
+    async function processImage() {
+        if (!loadedImage) return;
+
+        processBtn.disabled = true;
+        processingOverlay.classList.remove('d-none');
+
+        // Small delay to let UI update
+        await new Promise(r => setTimeout(r, 50));
+
+        try {
+            const params = getParams();
+            
+            // Create canvas to get image data
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCanvas.width = loadedImage.naturalWidth;
+            tempCanvas.height = loadedImage.naturalHeight;
+            tempCtx.drawImage(loadedImage, 0, 0);
+            
+            const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+            let grayscale = imageDataToGrayscale(imageData);
+            
+            // Apply preprocessing
+            grayscale = applyPreprocessing(grayscale);
+
+            let result;
+            if (currentMode === 'xdog') {
+                const xdog = new XDoG(params);
+                result = await xdog.process(grayscale);
+            } else {
+                const fdog = new FDoG(params);
+                result = await fdog.process(grayscale);
+            }
+
+            const outputImageData = grayscaleToImageData(result);
+
+            // Display result
+            resultCanvas.width = outputImageData.width;
+            resultCanvas.height = outputImageData.height;
+            const ctx = resultCanvas.getContext('2d');
+            ctx.putImageData(outputImageData, 0, 0);
+
+            downloadBtn.disabled = false;
+        } catch (error) {
+            console.error('Processing error:', error);
+            alert('Error processing image: ' + error.message);
+        } finally {
+            processBtn.disabled = false;
+            processingOverlay.classList.add('d-none');
+        }
+    }
+
+    // Handle file selection
+    function handleFile(file) {
+        if (!file.type.startsWith('image/')) {
+            alert('Please select an image file');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            originalImage.src = e.target.result;
+            await waitForImage(originalImage);
+            originalImage.classList.remove('d-none');
+            originalPlaceholder.classList.add('d-none');
+            loadedImage = originalImage;
+            processBtn.disabled = false;
+            
+            // Auto-process
+            processImage();
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // Toggle mode UI
+    function updateModeUI() {
+        if (currentMode === 'xdog') {
+            xdogPresets.classList.remove('d-none');
+            fdogPresets.classList.add('d-none');
+            fdogParamsSection.classList.add('collapsed');
+        } else {
+            xdogPresets.classList.add('d-none');
+            fdogPresets.classList.remove('d-none');
+            fdogParamsSection.classList.remove('collapsed');
+        }
+    }
+
+    // Event Listeners
+    dropZone.addEventListener('click', () => fileInput.click());
+    
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('drag-over');
+    });
+    
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('drag-over');
+    });
+    
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        const file = e.dataTransfer.files[0];
+        if (file) handleFile(file);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) handleFile(file);
+    });
+
+    // Mode toggle
+    document.querySelectorAll('input[name="mode"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            currentMode = e.target.value;
+            updateModeUI();
+            
+            // Apply default preset for the mode
+            if (currentMode === 'xdog') {
+                applyXDoGPreset('threshold');
+                document.querySelectorAll('#xdogPresets .preset-btn').forEach(b => b.classList.remove('active'));
+                document.querySelector('#xdogPresets .preset-btn[data-preset="threshold"]').classList.add('active');
+            } else {
+                applyFDoGPreset('standard');
+                document.querySelectorAll('#fdogPresets .preset-btn').forEach(b => b.classList.remove('active'));
+                document.querySelector('#fdogPresets .preset-btn[data-preset="standard"]').classList.add('active');
+            }
+            
+            if (loadedImage) processImage();
+        });
+    });
+
+    // XDoG preset buttons
+    document.querySelectorAll('#xdogPresets .preset-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('#xdogPresets .preset-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            applyXDoGPreset(btn.dataset.preset);
+            if (loadedImage) processImage();
+        });
+    });
+
+    // FDoG preset buttons
+    document.querySelectorAll('#fdogPresets .preset-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('#fdogPresets .preset-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            applyFDoGPreset(btn.dataset.preset);
+            if (loadedImage) processImage();
+        });
+    });
+
+    // Core sliders
+    Object.values(sliders).forEach(slider => {
+        slider.addEventListener('input', updateSliderDisplays);
+        slider.addEventListener('change', () => {
+            if (loadedImage) processImage();
+        });
+    });
+
+    // FDoG sliders
+    Object.values(fdogSliders).forEach(slider => {
+        slider.addEventListener('input', updateSliderDisplays);
+        slider.addEventListener('change', () => {
+            if (loadedImage) processImage();
+        });
+    });
+
+    // Preprocessing mode change
+    preprocessMode.addEventListener('change', () => {
+        if (loadedImage) processImage();
+    });
+
+    processBtn.addEventListener('click', processImage);
+
+    downloadBtn.addEventListener('click', () => {
+        const link = document.createElement('a');
+        link.download = `line-drawing-${currentMode}.png`;
+        link.href = resultCanvas.toDataURL('image/png');
+        link.click();
+    });
+
+    // Initialize
+    updateSliderDisplays();
+    updateModeUI();
+    applyXDoGPreset('threshold');
+</script>
