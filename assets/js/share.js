@@ -30,6 +30,13 @@ function sharePage() {
         text: text
     })
     .then(function () {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+            'event': 'share',
+            'method': 'Web Share API',
+            'content_type': 'page',
+            'item_id': url
+        });
         return console.log('Successful share');
     })
     .catch(function (error) {
