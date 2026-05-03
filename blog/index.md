@@ -8,8 +8,8 @@ layout: default
     </div>
     <div class="hero-right hero-bottom hero-content d-flex align-items-center min-vh-50">
         <div class="mt-5 mb-3">
-            <h1 class="headline text-center">Unpolished Ideas & Pioneering Code: Unplugging the Filter, Plugging in the Curiosity.</h1>
-            <p class="tagline mt-4">My blog is a messy desk, littered with code snippets, brain dumps, and the occasional half-baked theory. Here's where I dump the bubbling brew of ideas, code snippets, and the occasional rant about a library's weird quirks. Don't expect polished prose, expect raw curiosity with an occasional intellectual scorch mark.</p>
+            <h1 class="headline text-center">Unpolished Ideas & Pioneering Code</h1>
+            <p class="tagline mt-4">My blog is a messy desk, littered with code snippets, brain dumps, and the occasional half-baked theory. Here's where I dump the  ideas, code snippets, and the occasional rant about a library's weird quirks. Don't expect polished prose, expect raw curiosity with an occasional scorch mark.</p>
         </div>
     </div>
 </div>

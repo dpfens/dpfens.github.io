@@ -9,9 +9,8 @@ layout: default
     <div class="hero-right hero-bottom hero-content d-flex align-items-center min-vh-50">
         <div class="mt-5 mb-3">
             <h1 class="headline text-center">Simmering Ideas, Not Prepackaged Solutions.</h1>
-            <p class="sub-headline" style="margin-left: 0.25em;">These experiments are my messy playground, not polished products. Dive in, tinker, and maybe uncover a gem amongst the sandcastles.</p>
-            <p>This is the messy backstage of a curious coder. Dive into experiments in progress, untamed ideas, and code that might just change the game (or accidentally set your cat on fire).</p>
-            <p>Think of it like a science fair after dark. Some experiments might blow your mind, others might blow up in your face. That's the beauty of exploration, the thrill of seeing where curiosity leads. So, put on your lab coat (or pajamas, no judgment), and take a peek behind the curtain. You might just stumble upon a diamond in the rough, or at least a good laugh at my expense.</p>
+            <p class="sub-headline" style="margin-left: 0.25em;">These experiments are my messy playground, not polished products.</p>
+            <p>It's basically like what I imagine the basement of a science fair to be like.  Some experiments might be intriguing, others might not. That's just part of seeing where curiosity leads. You might find something cool, or at least a good laugh at my expense.</p>
         </div>
     </div>
 </div>

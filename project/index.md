@@ -10,7 +10,7 @@ layout: default
     <div class="hero-right hero-bottom hero-content d-flex align-items-center min-vh-50">
         <div class="mt-5 mb-3">
             <h1 class="headline text-center">Scarred & Polished Portfolio</h1>
-            <p class="tagline mt-4">From personal passions to professional projects, these are the creations that got me tinkering, learning, and (hopefully) making a dent in the world. See below for the fruits of my labor, polished and not-so-polished alike.</p>
+            <p class="tagline mt-4">From personal passions to professional projects, these are the creations that got me tinkering, learning, and (hopefully) making a dent in the world.</p>
         </div>
     </div>
 </div>
