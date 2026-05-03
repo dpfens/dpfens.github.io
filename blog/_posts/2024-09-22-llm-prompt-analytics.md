@@ -6,18 +6,11 @@ keywords: prompt analytics, LLM, user privacy, data protection, machine learning
 tags: llm data
 ---
 
-
-In the rapidly evolving landscape of large language models (LLMs), understanding how users interact with these AI systems is crucial for improvement and optimization. However, this need for insight often collides with the equally important requirement of protecting user privacy. This blog post explores an innovative approach to implementing prompt analytics that strikes a balance between these competing demands.
-
-I'll introduce a method that tracks the orthogonal components of user prompts, allowing us to gain valuable insights into LLM usage patterns without compromising the specific details of individual queries. By analyzing combinations of these components, we can build a comprehensive picture of user behavior and LLM performance while maintaining a strong commitment to privacy protection.
-
-This technique offers a promising solution for organizations looking to refine their LLM implementations without infringing on user trust. Throughout this post, I'll explore the conceptual framework, implementation strategies, and potential applications of this privacy-preserving analytics approach.
+LLMs have been evolving rapidly.  It's important to organizations that run these LLMs learn how their users use them, which can conflict with user privacy especially if they enter private/personal information into them.  This post explores an approach for giving actionable information on how people use conversational LLMs without violating their privacy.
 
 {% include components/heading.html heading='Respecting User Privacy' level=2 %}
 
-While embeddings have become a popular and powerful tool for analyzing text data, including user prompts, they come with significant privacy implications that warrant careful consideration. Embeddings capture the semantic essence of text, often in ways that can inadvertently reveal more information than intended.
-
-The use of embeddings for prompt analysis might seem like an obvious choice due to their effectiveness in capturing semantic relationships and their widespread adoption in natural language processing. However, this approach can be invasive, potentially exposing sensitive information about end-users. Embeddings can encode personal details, writing styles, or specific knowledge that, when analyzed in aggregate, could lead to the identification of individuals or the disclosure of private information.
+While embeddings have become a popular and powerful tool for analyzing text data, including user prompts, they come with significant privacy implications that warrant careful consideration. Embeddings capture the semantic essence of text, often in ways that can inadvertently reveal more information than intended. Embeddings can encode personal details, writing styles, or specific knowledge that, when analyzed in aggregate, could lead to the identification of individuals or the disclosure of private information.
 
 For instance, embeddings of prompts related to medical conditions, financial situations, or personal relationships could, even unintentionally, create a detailed profile of a user's life circumstances. In corporate environments, embeddings might capture proprietary information or strategic plans embedded within prompts. The risk of such unintended disclosures is particularly concerning given the often personal or sensitive nature of interactions with AI assistants.
 
@@ -25,9 +18,11 @@ Moreover, the high-dimensional nature of embeddings means they can capture subtl
 
 Given these concerns, it's crucial to adopt an approach that explicitly respects the privacy of end-users while still providing valuable insights for system improvement and user experience enhancement. This is where the analysis of orthogonal components comes into play. By focusing on abstract, high-level characteristics of prompts rather than their specific content, we can gain useful analytical insights while maintaining a strong commitment to user privacy.
 
-The orthogonal component approach allows us to understand user behavior and LLM performance without delving into the potentially sensitive details of individual prompts. It provides a framework for analysis that is inherently more privacy-preserving, as it captures the nature of the interaction rather than the content itself. This method aligns with the principles of data minimization and purpose limitation, key tenets of privacy-by-design approaches in technology development.
+In this scenario, we can think of orthogonal components as dimensions of interaction we are curious about, which do not influence each other.  For example, the ambiguity of a prompt and the purpose of an LLM prompt can change independently.  One can write a prompt with the same purpose with varying degrees of ambiguity.  Changing the ambiguity of a prompt does not effect the purpose of the prompt, and vice versa.
 
-In the following sections, I'll explore how this privacy-respecting method can be implemented effectively, providing robust analytics capabilities without compromising the trust and confidentiality that users expect when interacting with AI systems.
+The orthogonal component approach allows us to do a few things.  We can add more dimensions and values within each dimension without invalidating our existing data, and every new dimension/value can provide context across all the other dimensions.  And it provides a framework for analysis that is inherently more privacy-preserving, as it captures the nature of the interaction rather than the content itself.
+
+In the following sections, I'll explore how this privacy-respecting method can be implemented effectively, providing robust analytics capabilities without compromising the trust and confidentiality that users expect when interacting with LLMs.
 
 {% include components/heading.html heading='Orthogonal Components' level=2 %}
 
@@ -93,7 +88,7 @@ Implementing a system to analyze prompts based on orthogonal components requires
 
 As noted, training a dedicated model to classify prompts based on the orthogonal components would indeed be a resource-intensive process. The extensive data labeling, cleaning, and refinement required for such an approach could make it prohibitively expensive and time-consuming for many organizations. This method, while potentially very accurate, may not be feasible for teams working with limited budgets or tight timelines.
 
-The alternative approach of using the LLM itself to classify user prompts is more promising, especially when considering the capabilities of advanced models like those offered by OpenAI. The concern about doubling the token usage (and thus the cost) by submitting each prompt twice is valid. However, as suggested, OpenAI's custom schema responses provide an elegant solution to this problem.
+The alternative approach of using the LLM itself to classify user prompts is more promising, especially when considering the capabilities of advanced models like those offered by OpenAI and Anthropic. The concern about doubling the token usage (and thus the cost) by submitting each prompt twice is valid. However, as suggested, OpenAI's Structured Output responses provide an easy solution to this problem.
 
 Custom schema responses allow us to define a specific output format that the LLM should follow. By carefully crafting this schema, we can instruct the LLM to not only provide the requested response to the user's prompt but also to classify the prompt according to our orthogonal components. This approach effectively kills two birds with one stone, obtaining both the user's desired output and our analytical data in a single API call.
 
@@ -103,7 +98,7 @@ To implement this, we would need to design a JSON schema that includes fields fo
 {
   "response": "string",
   "components": {
-    "intent": "string",
+    "intent": ["string"],
     "complexity": "integer",
     "ambiguity": "integer",
     "scope": "string",
@@ -123,7 +118,7 @@ With this schema in place, we would then modify our API calls to the LLM to requ
 
 One challenge with this approach is ensuring that the LLM's classification is consistent and accurate. To address this, we might need to provide clear guidelines or examples for each component as part of our system prompt. We could also implement a calibration process, where we periodically submit known prompts and compare the LLM's classifications to predetermined benchmarks.
 
-On the backend, we would need to set up a system to store and analyze the classification data. This could involve a database to record the orthogonal component values for each prompt, along with analytics tools to identify patterns and trends over time. It's crucial to ensure that this system is designed with privacy in mind, storing only the component classifications without any of the original prompt text.
+On the backend, we would need to set up a system to store and analyze the classification data. This could involve a database to record the orthogonal component values for each prompt, along with analytics tools to identify patterns and trends over time.  This could be stored efficiently in a set of normalized SQL tables. The key is storing only the component classifications without any of the original prompt text.  This sort of access could be controlled by providing external teams with permissioned `VIEWS` that exclude embeddings and original text.
 
 To further enhance privacy, we could implement additional safeguards such as data aggregation and anonymization techniques. For instance, we might only analyze data in batches of a certain size, or use differential privacy methods to add controlled noise to the data, making it impossible to reverse-engineer individual prompts from the stored classifications.
 
@@ -135,63 +130,61 @@ It's important to note that while this implementation strategy is efficient in t
 
 Analyzing the orthogonal components of user prompts over time can reveal fascinating trends and patterns in LLM usage. This analysis could provide valuable insights into user behavior, evolving needs, and the overall effectiveness of the LLM. Let's explore some potential avenues for analysis and the trends they might uncover.
 
-### Sequence Analysis
+{% include components/heading.html heading='Sequence Analysis' level=3 %}
 By examining sequences of orthogonal component combinations, we could identify common user journeys or task flows. For instance, we might observe that users often start with low-complexity, high-ambiguity prompts in a particular domain, gradually increasing in specificity and complexity as they refine their queries. This could indicate a learning curve as users become more familiar with the LLM's capabilities.
 
-### Temporal Patterns
+{% include components/heading.html heading='Temporal Patterns' level=3 %}
 Analyzing how component combinations change over time (e.g., daily, weekly, or seasonally) could reveal interesting usage patterns. We might find that creativity and abstraction levels peak during certain times of day, possibly correlating with when users are engaged in brainstorming or creative tasks. Conversely, we might see a trend towards high-specificity, low-ambiguity prompts during typical working hours, suggesting task-oriented usage.
 
-## Domain Clustering
+{% include components/heading.html heading='Domain Clustering' level=3 %}
 By clustering prompts based on their domain component, we could identify which subject areas are most popular among users. This analysis might reveal unexpected connections between domains, such as users frequently transitioning between seemingly unrelated fields. Such insights could inform interdisciplinary applications of the LLM.
 
-### Cognitive Progression
+{% include components/heading.html heading='Cognitive Progression' level=3 %}
 Tracking the cognitive level component over time for individual users or user groups could show how interaction with the LLM impacts cognitive engagement. We might observe a trend towards higher cognitive levels as users become more adept at formulating complex queries, indicating that the LLM is effectively supporting intellectual growth.
 
-### Persona Evolution
+{% include components/heading.html heading='Persona Evolution' level=3 %}
 By analyzing how the persona component changes across user sessions, we could gain insights into how users perceive and interact with AI. A trend towards more frequent use of specific personas might suggest that users are becoming more comfortable with role-playing scenarios or are finding particular personas especially helpful for certain tasks.
 
-### Ambiguity and Specificity Correlation
+{% include components/heading.html heading='Ambiguity and Specificity Correlation' level=3 %}
 Examining the relationship between ambiguity and specificity over time could reveal how users learn to formulate more effective prompts. We might see a general trend towards lower ambiguity and higher specificity as users become more experienced, potentially indicating improved communication between humans and AI.
 
-### Creativity Cycles
+{% include components/heading.html heading='Creativity Cycles' level=3 %}
 Analyzing the creativity component across user bases could uncover cycles or triggers for creative use of the LLM. This might reveal specific combinations of other components that tend to precede or accompany high-creativity prompts, offering insights into the conditions that foster innovative thinking.
 
-### Tone Adaptation
+{% include components/heading.html heading='Tone Adaptation' level=3 %}
 Tracking changes in the tone component could show how users adapt their communication style with the LLM over time. We might observe users converging on particular tones that they find most effective, or adapting their tone based on the complexity or domain of their queries.
 
-By analyzing these trends and patterns, organizations could gain a deeper understanding of how their LLM is being used and how user behavior evolves over time. This information could drive decisions about model updates, feature development, and user education initiatives. For example, if analysis reveals that users struggle to reduce ambiguity in certain domains, this could prompt the development of more targeted help features or refinements to the LLM's ability to handle ambiguous queries in those areas.
-
-Moreover, these insights could inform broader strategies in AI development and human-AI interaction. Understanding how users naturally progress in their use of LLMs could help in designing more intuitive interfaces or in developing AI systems that better adapt to individual user's growing capabilities and changing needs.
+By analyzing these trends and patterns, organizations could gain a deeper understanding of how the user's approach to using the LLM changes over time. This information could drive decisions about model updates, feature development, and user education initiatives. For example, if analysis reveals that users struggle to reduce ambiguity in certain domains, this could prompt the development of more targeted help features or refinements to the LLM's ability to handle ambiguous queries in those areas.
 
 {% include components/heading.html heading='Wisdom of the Crowd' level=3 %}
 
 We can extend our focus to compare trajectories across user conversations and between different users. This comparative analysis opens up new possibilities for clustering, similarity measurement, and pattern recognition on a broader scale.
 
-### Cross-Conversation Analysis
+{% include components/heading.html heading='Cross-Conversation Analysis' level=3 %}
 By examining the trajectories of orthogonal component combinations across multiple conversations for a single user, we can identify consistent patterns in their LLM interaction style. For instance, we might discover that a user typically begins conversations with high-ambiguity, low-specificity prompts, gradually increasing in complexity and specificity as the conversation progresses. This could indicate a preference for exploratory dialogue followed by focused inquiry.
 
-### User Similarity Clustering
+{% include components/heading.html heading='User Similarity Clustering' level=3 %}
 Comparing these conversation trajectories between users allows us to cluster individuals with similar interaction patterns. We could employ techniques like Dynamic Time Warping (DTW) to measure the similarity between conversation sequences, accounting for variations in conversation length and pacing. This clustering could reveal distinct user archetypes, such as "Methodical Researchers" who consistently progress from broad to narrow queries, or "Creative Explorers" who maintain high levels of ambiguity and creativity throughout their interactions.
 
-### Divergence Analysis
+{% include components/heading.html heading='Divergence Analysis' level=3 %}
 By measuring how quickly user trajectories diverge from one another, we can gain insights into the diversity of user needs and interaction styles. Rapid divergence might indicate a user base with varied expertise levels or diverse use cases, while slower divergence could suggest more homogeneous user behavior. This information could be valuable for tailoring the LLM's capabilities to support a wide range of interaction styles or for identifying underserved user segments.
 
-### Temporal Cohort Comparison
+{% include components/heading.html heading='Temporal Cohort Comparison' level=3 %}
 Grouping users into cohorts based on when they first started using the LLM allows us to compare trajectory evolution over time. We might find that newer users show more erratic patterns in their orthogonal component combinations, while long-term users demonstrate more stable and efficient trajectories. This could provide insights into the learning curve associated with LLM use and inform onboarding strategies.
 
-### Cross-Domain Transfer
+{% include components/heading.html heading='Cross-Domain Transfer' level=3 %}
 Analyzing how users' trajectories change when they switch between domains can reveal interesting patterns of knowledge transfer. We might observe that users who exhibit high complexity and low ambiguity in one domain quickly achieve similar levels in new domains, suggesting effective cross-domain learning. Conversely, consistent drops in complexity when switching domains could indicate areas where additional user support is needed.
 
-### Collaborative Pattern Analysis
+{% include components/heading.html heading='Collaborative Pattern Analysis' level=3 %}
 For LLMs used in collaborative settings, we can analyze how the trajectories of multiple users interacting on the same project align or diverge. This could uncover effective collaboration patterns, such as complementary query styles that lead to more comprehensive project outcomes.
 
-### Anomaly Detection
+{% include components/heading.html heading='Anomaly Detection' level=3 %}
 By establishing baseline trajectories for different user types, we can implement anomaly detection to identify unusual interaction patterns. This could be useful for detecting potential misuse of the LLM, identifying users who might benefit from additional support, or discovering innovative use cases that deviate from the norm.
 
-### Predictive Modeling
+{% include components/heading.html heading='Predictive Modeling' level=3 %}
 Using historical trajectory data, we can build predictive models to anticipate future user needs based on the early stages of their conversation trajectories. This could enable proactive adjustments to the LLM's behavior or the suggestion of relevant resources to support the user's likely trajectory.
 
-By leveraging these comparative analyses, organizations can gain a much richer understanding of their user base and how individuals interact with their LLM over time. This deep insight can drive personalization strategies, inform product development decisions, and ultimately lead to more effective and user-centric AI systems. Moreover, it opens up possibilities for adaptive LLMs that can recognize and respond to individual user trajectories, providing increasingly tailored and effective support as conversations progress.
+By leveraging these comparative analyses, teams/organizations can better understand their user base and how individuals interact with their LLM over time. This can personalization strategies, inform product development, and ultimately lead to more effective and user-centric systems. It also opens up possibilities for adaptive LLMs that can recognize and respond to individual user trajectories, providing increasingly tailored and effective support as conversations progress. 
 
 {% include components/heading.html heading='Next Steps' level=2 %}
 
@@ -206,4 +199,4 @@ The field of LLM analytics is rapidly evolving, and the approach we've discussed
 7. **Cross-Platform Behavior Analysis**: As LLMs become more ubiquitous, analytics might expand to track how users interact differently with various LLM implementations across different platforms or use cases.
 8. **Predictive Analytics for LLM Interactions**: Advanced systems might use historical data to predict future user behaviors or needs, allowing for proactive improvements to LLM capabilities or user interfaces.
 
-These potential advancements in LLM analytics promise to deepen our understanding of how humans interact with AI systems, driving improvements in LLM technology while maintaining a strong commitment to user privacy. As always, ethical considerations and transparency will be crucial as these technologies continue to develop and mature.
+These potential advancements in LLM analytics could deepen our understanding of how humans interact with AI systems, driving improvements in LLM technology while maintaining the trust of end-users. As with any technology that is not yet mature, ethical considerations and transparency are crucial.
