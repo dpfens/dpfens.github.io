@@ -184,7 +184,7 @@ By establishing baseline trajectories for different user types, we can implement
 {% include components/heading.html heading='Predictive Modeling' level=3 %}
 Using historical trajectory data, we can build predictive models to anticipate future user needs based on the early stages of their conversation trajectories. This could enable proactive adjustments to the LLM's behavior or the suggestion of relevant resources to support the user's likely trajectory.
 
-By leveraging these comparative analyses, teams/organizations can better understand their user base and how individuals interact with their LLM over time. This can personalization strategies, inform product development, and ultimately lead to more effective and user-centric systems. It also opens up possibilities for adaptive LLMs that can recognize and respond to individual user trajectories, providing increasingly tailored and effective support as conversations progress. 
+By leveraging these comparative analyses, teams/organizations can better understand their user base and how individuals interact with their LLM over time. This can contribute to live personalization strategies and inform feature development.
 
 {% include components/heading.html heading='Next Steps' level=2 %}
 
