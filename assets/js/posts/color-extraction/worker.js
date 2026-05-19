@@ -127,7 +127,7 @@ function deltaE2000(labA, labB, options) {
      * */
     const kc = Math.min(
             Math.max(
-                options.kl || 1.0,
+                options.kc || 1.0,
                 0.0),
             2.0
         );
@@ -138,7 +138,7 @@ function deltaE2000(labA, labB, options) {
      * */
     const kh = Math.min(
             Math.max(
-                options.kl || 1.0,
+                options.kh || 1.0,
                 0.0),
             2.0
         );

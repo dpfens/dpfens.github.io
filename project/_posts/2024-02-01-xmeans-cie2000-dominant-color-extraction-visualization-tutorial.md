@@ -569,164 +569,164 @@ Using the CIE2000 color distance metric offers several advantages for color comp
 
 
 {% highlight javascript linenos %}function deltaE2000(labA, labB, options) {
-            /*
-            * CIE2000 equation for quantifying perceptual distance between colors.
-            * For a very high-level explanation, see https://sensing.konicaminolta.us/us/blog/identifying-color-differences-using-l-a-b-or-l-c-h-coordinates/
-            * or for a more mathematical approach: https://zschuessler.github.io/DeltaE/learn/
-            * Implementation based on equations from http://www.brucelindbloom.com/index.html?Eqn_DeltaE_CIE2000.html 
-            * 
-            * Thresholds
-            * 0: No perceivable difference between the colors.
-            * 0-1: Very slight difference, likely imperceptible to most observers.
-            * 1-2: Slight difference, noticeable to trained observers or under careful examination.
-            * 2-3.5: Distinct difference, noticeable to most observers.
-            * 3.5-5: Significant difference, readily apparent to all observers.
-            * Above 5: Very large difference, colors are clearly distinct.
+    /*
+    * CIE2000 equation for quantifying perceptual distance between colors.
+    * For a very high-level explanation, see https://sensing.konicaminolta.us/us/blog/identifying-color-differences-using-l-a-b-or-l-c-h-coordinates/
+    * or for a more mathematical approach: https://zschuessler.github.io/DeltaE/learn/
+    * Implementation based on equations from http://www.brucelindbloom.com/index.html?Eqn_DeltaE_CIE2000.html 
+    * 
+    * Thresholds
+    * 0: No perceivable difference between the colors.
+    * 0-1: Very slight difference, likely imperceptible to most observers.
+    * 1-2: Slight difference, noticeable to trained observers or under careful examination.
+    * 2-3.5: Distinct difference, noticeable to most observers.
+    * 3.5-5: Significant difference, readily apparent to all observers.
+    * Above 5: Very large difference, colors are clearly distinct.
 
-            * Limits
-            * 0: Completely identical
-            * 100:  Completely different
-            * 
-            * Weighting factors
-            * kL (lightness weighting factor): Controls the influence of lightness differences on the overall Delta E 2000 value.
-            * kC (chroma weighting factor): Controls the influence of chroma differences.
-            * kH (hue weighting factor): Controls the influence of hue differences.
-            * 
-            * Higher values of a given factor emphasize that aspect of the color.  Each ranges from 0 to 2, and default to 1.
-            */
+    * Limits
+    * 0: Completely identical
+    * 100:  Completely different
+    * 
+    * Weighting factors
+    * kL (lightness weighting factor): Controls the influence of lightness differences on the overall Delta E 2000 value.
+    * kC (chroma weighting factor): Controls the influence of chroma differences.
+    * kH (hue weighting factor): Controls the influence of hue differences.
+    * 
+    * Higher values of a given factor emphasize that aspect of the color.  Each ranges from 0 to 2, and default to 1.
+    */
 
-            const l1 = labA[0],
-                a1 = labA[1],
-                b1 = labA[2],
-                l2 = labB[0],
-                a2 = labB[1],
-                b2 = labB[2];
+    const l1 = labA[0],
+        a1 = labA[1],
+        b1 = labA[2],
+        l2 = labB[0],
+        a2 = labB[1],
+        b2 = labB[2];
 
-            // missing utility functions added to Math Object
-            Math.rad2deg = function(rad) {
-                return 360 * rad / (2 * Math.PI);
-            };
-            Math.deg2rad = function(deg) {
-                return (2 * Math.PI * deg) / 360;
-            };
-            
-            const avgL = (l1 + l2) / 2;
-            const c1 = Math.sqrt(Math.pow(a1, 2) + Math.pow(b1, 2));
-            const c2 = Math.sqrt(Math.pow(a2, 2) + Math.pow(b2, 2));
-            const avgC = (c1 + c2) / 2;
-            const g = (1 - Math.sqrt(Math.pow(avgC, 7) / (Math.pow(avgC, 7) + Math.pow(25, 7)))) / 2;
-
-            const a1p = a1 * (1 + g);
-            const a2p = a2 * (1 + g);
-
-            const c1p = Math.sqrt(Math.pow(a1p, 2) + Math.pow(b1, 2));
-            const c2p = Math.sqrt(Math.pow(a2p, 2) + Math.pow(b2, 2));
-
-            const avgCp = (c1p + c2p) / 2;
-
-            let h1p = Math.rad2deg(Math.atan2(b1, a1p));
-            if (h1p < 0) {
-                h1p = h1p + 360;
-            }
-
-            let h2p = Math.rad2deg(Math.atan2(b2, a2p));
-            if (h2p < 0) {
-                h2p = h2p + 360;
-            }
-
-            const avghp = Math.abs(h1p - h2p) > 180 ? (h1p + h2p + 360) / 2 : (h1p + h2p) / 2;
-
-            const t = 1 - 0.17 * Math.cos(Math.deg2rad(avghp - 30)) + 0.24 * Math.cos(Math.deg2rad(2 * avghp)) + 0.32 * Math.cos(Math.deg2rad(3 * avghp + 6)) - 0.2 * Math.cos(Math.deg2rad(4 * avghp - 63));
-
-            let deltahp = h2p - h1p;
-            if (Math.abs(deltahp) > 180) {
-                if (h2p <= h1p) {
-                    deltahp += 360;
-                } else {
-                    deltahp -= 360;
-                }
-            }
-
-            const deltalp = l2 - l1;
-            const deltacp = c2p - c1p;
-
-            deltahp = 2 * Math.sqrt(c1p * c2p) * Math.sin(Math.deg2rad(deltahp) / 2);
-
-            const sl = 1 + ((0.015 * Math.pow(avgL - 50, 2)) / Math.sqrt(20 + Math.pow(avgL - 50, 2)));
-            const sc = 1 + 0.045 * avgCp;
-            const sh = 1 + 0.015 * avgCp * t;
-
-            const deltaro = 30 * Math.exp(-(Math.pow((avghp - 275) / 25, 2)));
-            const rc = 2 * Math.sqrt(Math.pow(avgCp, 7) / (Math.pow(avgCp, 7) + Math.pow(25, 7)));
-            const rt = -rc * Math.sin(2 * Math.deg2rad(deltaro));
-
-            options = options || {};
+    // missing utility functions added to Math Object
+    Math.rad2deg = function(rad) {
+        return 360 * rad / (2 * Math.PI);
+    };
+    Math.deg2rad = function(deg) {
+        return (2 * Math.PI * deg) / 360;
+    };
     
-            /*
-             * kl (lightness) weighting factor ( 0.0 <= kC <= 2.0)
-             * Increasing kL amplifies the importance of lightness differences.
-             * This can be useful for applications where subtle lightness variations are crucial, like in textile or paint industries.
-             * Conversely, lowering kL downplays lightness changes, which might be beneficial for web design where screen brightness can affect perceived lightness. 
-             * */
-            const kl = Math.min(
-                    Math.max(
-                        options.kl || 1.0,
-                        0.0),
-                    2.0
-                );
-            /*
-             * kC (chroma) weighting factor ( 0.0 <= kC <= 2.0)
-             * Adjusting kC modifies the influence of chroma (color saturation) in the calculation.
-             * Raising kC highlights chroma differences, making vibrant colors stand out more.
-             * Lowering it reduces the impact of chroma variations, potentially minimizing the appearance of color shifts due to factors like lighting or viewing angle. 
-             * */
-            const kc = Math.min(
-                    Math.max(
-                        options.kl || 1.0,
-                        0.0),
-                    2.0
-                );
-            /*
-             * kH (hue) weighting factor ( 0.0 <= kC <= 2.0)
-             * Modifying kH alters the emphasis on hue (color tint) differences.Modifying kH alters the emphasis on hue (color tint) differences.
-             * This is rarely used in practical applications due to the complexity of hue calculations and its potentially limited impact on perceived color changes in most contexts.
-             * */
-            const kh = Math.min(
-                    Math.max(
-                        options.kl || 1.0,
-                        0.0),
-                    2.0
-                );
+    const avgL = (l1 + l2) / 2;
+    const c1 = Math.sqrt(Math.pow(a1, 2) + Math.pow(b1, 2));
+    const c2 = Math.sqrt(Math.pow(a2, 2) + Math.pow(b2, 2));
+    const avgC = (c1 + c2) / 2;
+    const g = (1 - Math.sqrt(Math.pow(avgC, 7) / (Math.pow(avgC, 7) + Math.pow(25, 7)))) / 2;
 
-            const deltaE = Math.sqrt(Math.pow(deltalp / (kl * sl), 2) + Math.pow(deltacp / (kc * sc), 2) + Math.pow(deltahp / (kh * sh), 2) + rt * (deltacp / (kc * sc)) * (deltahp / (kh * sh)));
-            return deltaE;
+    const a1p = a1 * (1 + g);
+    const a2p = a2 * (1 + g);
+
+    const c1p = Math.sqrt(Math.pow(a1p, 2) + Math.pow(b1, 2));
+    const c2p = Math.sqrt(Math.pow(a2p, 2) + Math.pow(b2, 2));
+
+    const avgCp = (c1p + c2p) / 2;
+
+    let h1p = Math.rad2deg(Math.atan2(b1, a1p));
+    if (h1p < 0) {
+        h1p = h1p + 360;
+    }
+
+    let h2p = Math.rad2deg(Math.atan2(b2, a2p));
+    if (h2p < 0) {
+        h2p = h2p + 360;
+    }
+
+    const avghp = Math.abs(h1p - h2p) > 180 ? (h1p + h2p + 360) / 2 : (h1p + h2p) / 2;
+
+    const t = 1 - 0.17 * Math.cos(Math.deg2rad(avghp - 30)) + 0.24 * Math.cos(Math.deg2rad(2 * avghp)) + 0.32 * Math.cos(Math.deg2rad(3 * avghp + 6)) - 0.2 * Math.cos(Math.deg2rad(4 * avghp - 63));
+
+    let deltahp = h2p - h1p;
+    if (Math.abs(deltahp) > 180) {
+        if (h2p <= h1p) {
+            deltahp += 360;
+        } else {
+            deltahp -= 360;
         }
-        deltaE2000.MIN = 0.0;
-        deltaE2000.MAX = 100.0;
+    }
 
-        /**
-         * Just Noticeable Difference threshold.
-         * Represents the smallest color difference that a typical observer can perceive under specific viewing conditions.
-         * For Delta E 2000, a JND value of around 1 is generally accepted. This means a Delta E 2000 difference of 1 or
-         * less is often considered imperceptible to most people.
-         */
-        deltaE2000.JND = 1.0;
-        /**
-         * Barely Noticeable Difference threshold.
-         * The color difference is barely perceptible. Only experienced observers under favorable viewing conditions may be able to
-         * detect the difference.
-         */
-        deltaE2000.BND = 2.0;
-        /**
-         * Noticeable Difference threshold.
-         * The color difference is noticeable but still considered acceptable in many applications. It represents a good color match.
-         */
-        deltaE2000.ND = 3.5;
-        /**
-         * Apparent Difference threshold.
-         * The color difference is becoming more apparent and may be unacceptable in certain applications requiring precise color matching.
-         */
-        deltaE2000.AD = 5.0;{% endhighlight %}
+    const deltalp = l2 - l1;
+    const deltacp = c2p - c1p;
+
+    deltahp = 2 * Math.sqrt(c1p * c2p) * Math.sin(Math.deg2rad(deltahp) / 2);
+
+    const sl = 1 + ((0.015 * Math.pow(avgL - 50, 2)) / Math.sqrt(20 + Math.pow(avgL - 50, 2)));
+    const sc = 1 + 0.045 * avgCp;
+    const sh = 1 + 0.015 * avgCp * t;
+
+    const deltaro = 30 * Math.exp(-(Math.pow((avghp - 275) / 25, 2)));
+    const rc = 2 * Math.sqrt(Math.pow(avgCp, 7) / (Math.pow(avgCp, 7) + Math.pow(25, 7)));
+    const rt = -rc * Math.sin(2 * Math.deg2rad(deltaro));
+
+    options = options || {};
+
+    /*
+        * kl (lightness) weighting factor ( 0.0 <= kC <= 2.0)
+        * Increasing kL amplifies the importance of lightness differences.
+        * This can be useful for applications where subtle lightness variations are crucial, like in textile or paint industries.
+        * Conversely, lowering kL downplays lightness changes, which might be beneficial for web design where screen brightness can affect perceived lightness. 
+        * */
+    const kl = Math.min(
+            Math.max(
+                options.kl || 1.0,
+                0.0),
+            2.0
+        );
+    /*
+        * kC (chroma) weighting factor ( 0.0 <= kC <= 2.0)
+        * Adjusting kC modifies the influence of chroma (color saturation) in the calculation.
+        * Raising kC highlights chroma differences, making vibrant colors stand out more.
+        * Lowering it reduces the impact of chroma variations, potentially minimizing the appearance of color shifts due to factors like lighting or viewing angle. 
+        * */
+    const kc = Math.min(
+            Math.max(
+                options.kC || 1.0,
+                0.0),
+            2.0
+        );
+    /*
+        * kH (hue) weighting factor ( 0.0 <= kC <= 2.0)
+        * Modifying kH alters the emphasis on hue (color tint) differences.Modifying kH alters the emphasis on hue (color tint) differences.
+        * This is rarely used in practical applications due to the complexity of hue calculations and its potentially limited impact on perceived color changes in most contexts.
+        * */
+    const kh = Math.min(
+            Math.max(
+                options.kH || 1.0,
+                0.0),
+            2.0
+        );
+
+    const deltaE = Math.sqrt(Math.pow(deltalp / (kl * sl), 2) + Math.pow(deltacp / (kc * sc), 2) + Math.pow(deltahp / (kh * sh), 2) + rt * (deltacp / (kc * sc)) * (deltahp / (kh * sh)));
+    return deltaE;
+}
+deltaE2000.MIN = 0.0;
+deltaE2000.MAX = 100.0;
+
+/**
+    * Just Noticeable Difference threshold.
+    * Represents the smallest color difference that a typical observer can perceive under specific viewing conditions.
+    * For Delta E 2000, a JND value of around 1 is generally accepted. This means a Delta E 2000 difference of 1 or
+    * less is often considered imperceptible to most people.
+    */
+deltaE2000.JND = 1.0;
+/**
+    * Barely Noticeable Difference threshold.
+    * The color difference is barely perceptible. Only experienced observers under favorable viewing conditions may be able to
+    * detect the difference.
+    */
+deltaE2000.BND = 2.0;
+/**
+    * Noticeable Difference threshold.
+    * The color difference is noticeable but still considered acceptable in many applications. It represents a good color match.
+    */
+deltaE2000.ND = 3.5;
+/**
+    * Apparent Difference threshold.
+    * The color difference is becoming more apparent and may be unacceptable in certain applications requiring precise color matching.
+    */
+deltaE2000.AD = 5.0;{% endhighlight %}
     
 In this code, the `deltaE2000` function takes two `LAB` colors as input and computes the CIE2000 color distance between them. The implementation follows the steps outlined in the CIE2000 formula, including the calculation of various intermediate values and corrections.
 
