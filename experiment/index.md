@@ -8,9 +8,12 @@ layout: default
     </div>
     <div class="hero-right hero-bottom hero-content d-flex align-items-center min-vh-50">
         <div class="mt-5 mb-3">
-            <h1 class="headline text-center">Simmering Ideas, Not Prepackaged Solutions.</h1>
+            <h1 class="headline text-center">Experiments</h1>
             <p class="sub-headline" style="margin-left: 0.25em;">These experiments are my messy playground, not polished products.</p>
-            <p>It's basically like what I imagine the basement of a science fair to be like.  Some experiments might be intriguing, others might not. That's just part of seeing where curiosity leads. You might find something cool, or at least a good laugh at my expense.</p>
+            <p>The blog is where I write things up once I think I understand them. This is where things go before that. Some experiments became posts, some didn't, and some are still going.</p>
+            <p>These tend to be written in roughly the order I worked through them, which isn't always the order that would make sense in retrospect. There usually isn't a linear path through these topics. The canonical starting point of of these topics connects to everything else in too many directions to lay out as a sequence, and reaching the interesting part often means following a related piece of math for a while before doubling back. I group things logically after the fact when I can.</p>
+            <p>Most are interactive in some form, because there are ideas you can't develop a feel for without moving the parameters yourself. That's the line between an experiment and a post: when prose alone won't transmit the thing, it goes here.</p>
+            <p>Treat the section like someone's garage. Useful things and half-finished things sitting next to each other, some of it dusty, most of it still where I left it.</p>
         </div>
     </div>
 </div>
