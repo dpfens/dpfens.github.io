@@ -834,22 +834,22 @@ Clustering evaluation can also guide the selection of appropriate parameters for
 {% include components/heading.html heading='Centroid distance and Intracluster distance' level=5 %}
 
 {% highlight javascript %}
-    meanDistanceBetweenCentroids(clusters) {
-        const output = new Array(clusters.length).fill(0),
-            centroids = clusters.map(function(cluster) { return cluster.centroid; });
-        for (var i = 0; i < clusters.length; i++) {
-            output[i] = this._avgDistanceToPoints(clusters[i].centroid, centroids);
-        }
-        return output;
+meanDistanceBetweenCentroids(clusters) {
+    const output = new Array(clusters.length).fill(0),
+        centroids = clusters.map(function(cluster) { return cluster.centroid; });
+    for (var i = 0; i < clusters.length; i++) {
+        output[i] = this._avgDistanceToPoints(clusters[i].centroid, centroids);
     }
+    return output;
+}
 
-    meanDistanceWithinClusters(clusters) {
-        const output = new Array(clusters.length).fill(0);
-        for (var i = 0; i < clusters.length; i++) {
-            output[i] = this._avgDistanceToPoints(clusters[i].centroid, clusters[i].points);
-        }
-        return output;
-    }{% endhighlight %}
+meanDistanceWithinClusters(clusters) {
+    const output = new Array(clusters.length).fill(0);
+    for (var i = 0; i < clusters.length; i++) {
+        output[i] = this._avgDistanceToPoints(clusters[i].centroid, clusters[i].points);
+    }
+    return output;
+}{% endhighlight %}
 
 {% include components/heading.html heading='Silhouette Coefficient' level=5 %}
 
@@ -858,65 +858,64 @@ The [Silhouette Coefficient](https://en.wikipedia.org/wiki/Silhouette_(clusterin
 A value close to 1 indicates that the color data point is well-matched to its assigned cluster and poorly matched to neighboring clusters, suggesting a good clustering result.  A value close to 0 suggests that the color data point is on the border between two clusters.  A negative value indicates that the color data point may have been assigned to the wrong cluster, as it is closer to points in a neighboring cluster.
 
 {% highlight javascript linenos %}/**
-    /**
-     * Calculates the Silhouette coefficient for all points in a given clustering result.
-     *
-     * The Silhouette coefficient is a widely used metric for evaluating the quality of clustering.
-     * It measures how well data points are assigned to their clusters by considering both the intra-cluster
-     * distance (distance between points within the same cluster) and the inter-cluster distance
-     * (distance between points in different clusters).
-     *
-     * @param {Array<Array<number>>} dataset - The dataset used for clustering.
-     * @param {Array<object>} clusters - Array of cluster labels for each data point.
-     *
-     * @returns {Array} The Silhouette coefficient  for each cluster.
-    */
-    silhouetteCoefficient(dataset, clusters) {
-        const numSamples = dataset.length;
-        const numClusters = clusters.length;
-        const silhouetteScores = new Array(numSamples).fill(0);
-    
-        for (let i = 0; i < numSamples; i++) {
-            const point = dataset[i];
-            let clusterIndex;
-            for (let k = 0; k < numClusters; k++) {
-                if (clusters[k].points.includes(point)) {
-                    clusterIndex = k;
-                    break;
-                }
+* Calculates the Silhouette coefficient for all points in a given clustering result.
+*
+* The Silhouette coefficient is a widely used metric for evaluating the quality of clustering.
+* It measures how well data points are assigned to their clusters by considering both the intra-cluster
+* distance (distance between points within the same cluster) and the inter-cluster distance
+* (distance between points in different clusters).
+*
+* @param {Array<Array<number>>} dataset - The dataset used for clustering.
+* @param {Array<object>} clusters - Array of cluster labels for each data point.
+*
+* @returns {Array} The Silhouette coefficient  for each cluster.
+*/
+silhouetteCoefficient(dataset, clusters) {
+    const numSamples = dataset.length;
+    const numClusters = clusters.length;
+    const silhouetteScores = new Array(numSamples).fill(0);
+
+    for (let i = 0; i < numSamples; i++) {
+        const point = dataset[i];
+        let clusterIndex;
+        for (let k = 0; k < numClusters; k++) {
+            if (clusters[k].points.includes(point)) {
+                clusterIndex = k;
+                break;
             }
-    
-            const clusterPoints = clusters[clusterIndex].points;
-            const withinClusterDist = this._avgDistanceToPoints(point, clusterPoints);
-    
-            let nearestClusterDist = Infinity;
-            for (let k = 0; k < numClusters; k++) {
-                if (k !== clusterIndex) {
-                    const otherClusterPoints = clusters[k].points;
-                    const distToCluster = this._avgDistanceToPoints(point, otherClusterPoints);
-                    nearestClusterDist = Math.min(nearestClusterDist, distToCluster);
-                }
-            }
-    
-            const silhouetteScore = (nearestClusterDist - withinClusterDist) / Math.max(withinClusterDist, nearestClusterDist);
-            silhouetteScores[i] = silhouetteScore;
         }
-        return silhouetteScores;
+
+        const clusterPoints = clusters[clusterIndex].points;
+        const withinClusterDist = this._avgDistanceToPoints(point, clusterPoints);
+
+        let nearestClusterDist = Infinity;
+        for (let k = 0; k < numClusters; k++) {
+            if (k !== clusterIndex) {
+                const otherClusterPoints = clusters[k].points;
+                const distToCluster = this._avgDistanceToPoints(point, otherClusterPoints);
+                nearestClusterDist = Math.min(nearestClusterDist, distToCluster);
+            }
+        }
+
+        const silhouetteScore = (nearestClusterDist - withinClusterDist) / Math.max(withinClusterDist, nearestClusterDist);
+        silhouetteScores[i] = silhouetteScore;
+    }
+    return silhouetteScores;
+}
+
+_avgDistanceToPoints(point, points) {
+    const options = options || {},
+        numPoints = points.length;
+    let totalDist = 0;
+
+    for (let i = 0; i < numPoints; i++) {
+        const otherPoint = points[i];
+        const dist = this.distanceMetric(point, otherPoint);
+        totalDist += dist;
     }
 
-    _avgDistanceToPoints(point, points) {
-        const options = options || {},
-            numPoints = points.length;
-        let totalDist = 0;
-    
-        for (let i = 0; i < numPoints; i++) {
-            const otherPoint = points[i];
-            const dist = this.distanceMetric(point, otherPoint);
-            totalDist += dist;
-        }
-    
-        return totalDist / numPoints;
-    }{% endhighlight %}
+    return totalDist / numPoints;
+}{% endhighlight %}
 
 {% include components/heading.html heading='Davies-Bouldin Index' level=5 %}
 
@@ -926,52 +925,51 @@ A lower Davies-Bouldin Index indicates better clustering, as it suggests that th
 
 By comparing the Davies-Bouldin Index across different clustering algorithms or parameter settings, you can determine which approach yields the most compact and well-separated clusters. The Davies-Bouldin Index is particularly useful when the true number of clusters is unknown, as it can help in selecting the optimal number of clusters that minimizes the index value. Interpreting the Davies-Bouldin Index provides insights into the quality of the clustering solution and aids in comparing and selecting the best clustering approach for a given dataset.
 
-{% highlight javascript linenos %}
-    /**
-     * The Davies-Bouldin Index (DBI) is a cluster validity measure used to assess the quality of clustering results.
-     * It considers both the within-cluster scatter (compactness) and the between-cluster separation of clusters.
-     * Lower DBI values indicate better clustering, with a theoretical minimum of 0 representing perfectly separated clusters.
-     * 
-     * Lower scores indicate better clustering.
-     * A score of 0 indicates perfectly separated clusters.
-     * Higher scores indicate more overlap between clusters.
-     * 
-     * Limitations:
-     * DBI can be sensitive to the size and shape of clusters.
-     * It may not be suitable for high-dimensional data.
-     * 
-     * @param {*} dataset 
-     * @param {*} labels 
-     * @param {*} centroids 
-     * @returns {Array} The Davies-Bouldin Index scores for each cluster (a floating-point number).
-     */
-    daviesBouldinIndex(results) {
-        const numClusters = results.clusters.length;
-        const dbiScores = new Array(numClusters).fill(0);
-    
-        for (let i = 0; i < numClusters; i++) {
-            const clusterPoints = results.clusters[i].points;
-            const withinClusterDist = this._avgDistanceToPoints(results.centroids[i], clusterPoints);
-    
-            let maxScore = -Infinity;
-            for (let j = 0; j < numClusters; j++) {
-                if (i !== j) {
-                    const otherClusterPoints = results.clusters[j].points;
-                    // Calculate the distance between the centroids of the current cluster and the other cluster
-                    const betweenClusterDist = this.distanceMetric(results.centroids[i], results.centroids[j]);
-                    // Calculate the average distance from the centroid of the other cluster to the points within that cluster
-                    const otherWithinClusterDist = this._avgDistanceToPoints(results.centroids[j], otherClusterPoints);
-                    // Calculate the score using the formula: (withinClusterDist + otherWithinClusterDist) / betweenClusterDist
-                    const score = (withinClusterDist + otherWithinClusterDist) / betweenClusterDist;
-                    // Update the maximum score if the current score is higher
-                    maxScore = Math.max(maxScore, score);
-                }
+{% highlight javascript linenos %}/**
+* The Davies-Bouldin Index (DBI) is a cluster validity measure used to assess the quality of clustering results.
+* It considers both the within-cluster scatter (compactness) and the between-cluster separation of clusters.
+* Lower DBI values indicate better clustering, with a theoretical minimum of 0 representing perfectly separated clusters.
+* 
+* Lower scores indicate better clustering.
+* A score of 0 indicates perfectly separated clusters.
+* Higher scores indicate more overlap between clusters.
+* 
+* Limitations:
+* DBI can be sensitive to the size and shape of clusters.
+* It may not be suitable for high-dimensional data.
+* 
+* @param {*} dataset 
+* @param {*} labels 
+* @param {*} centroids 
+* @returns {Array} The Davies-Bouldin Index scores for each cluster (a floating-point number).
+*/
+daviesBouldinIndex(results) {
+    const numClusters = results.clusters.length;
+    const dbiScores = new Array(numClusters).fill(0);
+
+    for (let i = 0; i < numClusters; i++) {
+        const clusterPoints = results.clusters[i].points;
+        const withinClusterDist = this._avgDistanceToPoints(results.centroids[i], clusterPoints);
+
+        let maxScore = -Infinity;
+        for (let j = 0; j < numClusters; j++) {
+            if (i !== j) {
+                const otherClusterPoints = results.clusters[j].points;
+                // Calculate the distance between the centroids of the current cluster and the other cluster
+                const betweenClusterDist = this.distanceMetric(results.centroids[i], results.centroids[j]);
+                // Calculate the average distance from the centroid of the other cluster to the points within that cluster
+                const otherWithinClusterDist = this._avgDistanceToPoints(results.centroids[j], otherClusterPoints);
+                // Calculate the score using the formula: (withinClusterDist + otherWithinClusterDist) / betweenClusterDist
+                const score = (withinClusterDist + otherWithinClusterDist) / betweenClusterDist;
+                // Update the maximum score if the current score is higher
+                maxScore = Math.max(maxScore, score);
             }
-    
-            dbiScores[i] = maxScore;
         }
-        return dbiScores;
+
+        dbiScores[i] = maxScore;
     }
+    return dbiScores;
+}
 {% endhighlight %}
 
 {% include components/heading.html heading='The Calinski Harabasz Index' level=5 %}
@@ -982,85 +980,84 @@ A higher Calinski-Harabasz Index indicates better clustering, as it suggests tha
 
 By comparing the Calinski-Harabasz Index across different clustering algorithms or parameter settings, you can determine which approach yields the most well-defined and separated clusters. The Calinski-Harabasz Index is particularly useful when the true number of clusters is unknown, as it can help in selecting the optimal number of clusters that maximizes the index value. Interpreting the Calinski-Harabasz Index provides insights into the quality of the clustering solution and aids in comparing and selecting the best clustering approach for a given dataset.
 
-{% highlight javascript linenos %}
-    /**
-     * The Calinski Harabasz Index (CH Index), also known as the variance ratio criterion,
-     * is an internal cluster validity index used to assess the quality of clustering results.
-     * It measures the ratio of between-cluster dispersion to within-cluster dispersion. In simpler terms,
-     * it checks how well-separated the clusters are and how compact they are within themselves.
-     * 
-     * Interpretation:
-     * Higher CH Index scores indicate better clustering results.
-     * There's no fixed upper bound, but generally, higher scores suggest better separation and compactness of clusters.
-     * Scores closer to 0 indicate poorly separated or scattered clusters.
-     * 
-     * Advantages:
-     * Simple to calculate and interpret.
-     * Suitable for comparing clustering results for different numbers of clusters (k).
-     * Sensitive to both cluster separation and within-cluster compactness.
-     * 
-     * Disadvantages:
-     * Can be sensitive to the choice of distance metric.
-     * May not be reliable for high-dimensional data or complex cluster shapes.
-     * 
-     * Calinski, T., & Harabasz, J. (1974). A dendrite method for cluster analysis. Communications in Statistics-theory and Methods, 3(1), 1-27.
-     * 
-     * @param {Array} dataset 
-     * @param {object} results
-     * @returns {Number}
-     */
-    calinskiHarabaszIndex(dataset, results) {
-        // Get the number of clusters and data points
-        const numClusters = results.clusters.length;
-        const numSamples = dataset.length;
-    
-        // Calculate the overall centroid of the dataset
-        const overallCentroid = this._calculateCentroid(dataset);
-    
-        // Calculate the between-cluster sum of squares (SSB)
-        let ssb = 0;
-        for (let i = 0; i < numClusters; i++) {
-            const clusterSize = results.clusters[i].points.length;
-            const clusterCentroid = results.centroids[i];
-            const distance = this.distanceMetric(clusterCentroid, overallCentroid);
-            ssb += clusterSize * distance;
-        }
-    
-        // Calculate the within-cluster sum of squares (SSW)
-        let ssw = 0;
-        for (let i = 0; i < numClusters; i++) {
-            const clusterPoints = results.clusters[i].points;
-            const clusterCentroid = results.centroids[i];
-            for (let j = 0; j < clusterPoints.length; j++) {
-                const point = clusterPoints[j];
-                const distance = this.distanceMetric(point, clusterCentroid);
-                ssw += distance;
-            }
-        }
-    
-        // Calculate the Calinski-Harabasz Index
-        const chIndex = (ssb / (numClusters - 1)) / (ssw / (numSamples - numClusters));
-    
-        return chIndex;
+{% highlight javascript linenos %}/**
+* The Calinski Harabasz Index (CH Index), also known as the variance ratio criterion,
+* is an internal cluster validity index used to assess the quality of clustering results.
+* It measures the ratio of between-cluster dispersion to within-cluster dispersion. In simpler terms,
+* it checks how well-separated the clusters are and how compact they are within themselves.
+* 
+* Interpretation:
+* Higher CH Index scores indicate better clustering results.
+* There's no fixed upper bound, but generally, higher scores suggest better separation and compactness of clusters.
+* Scores closer to 0 indicate poorly separated or scattered clusters.
+* 
+* Advantages:
+* Simple to calculate and interpret.
+* Suitable for comparing clustering results for different numbers of clusters (k).
+* Sensitive to both cluster separation and within-cluster compactness.
+* 
+* Disadvantages:
+* Can be sensitive to the choice of distance metric.
+* May not be reliable for high-dimensional data or complex cluster shapes.
+* 
+* Calinski, T., & Harabasz, J. (1974). A dendrite method for cluster analysis. Communications in Statistics-theory and Methods, 3(1), 1-27.
+* 
+* @param {Array} dataset 
+* @param {object} results
+* @returns {Number}
+*/
+calinskiHarabaszIndex(dataset, results) {
+    // Get the number of clusters and data points
+    const numClusters = results.clusters.length;
+    const numSamples = dataset.length;
+
+    // Calculate the overall centroid of the dataset
+    const overallCentroid = this._calculateCentroid(dataset);
+
+    // Calculate the between-cluster sum of squares (SSB)
+    let ssb = 0;
+    for (let i = 0; i < numClusters; i++) {
+        const clusterSize = results.clusters[i].points.length;
+        const clusterCentroid = results.centroids[i];
+        const distance = this.distanceMetric(clusterCentroid, overallCentroid);
+        ssb += clusterSize * distance;
     }
 
-    _calculateCentroid(points) {
-        const numSamples = points.length;
-        const numFeatures = points[0].length;
-        const centroid = new Array(numFeatures).fill(0);
-    
-        for (let i = 0; i < numSamples; i++) {
-            for (let j = 0; j < numFeatures; j++) {
-                centroid[j] += points[i][j];
-            }
+    // Calculate the within-cluster sum of squares (SSW)
+    let ssw = 0;
+    for (let i = 0; i < numClusters; i++) {
+        const clusterPoints = results.clusters[i].points;
+        const clusterCentroid = results.centroids[i];
+        for (let j = 0; j < clusterPoints.length; j++) {
+            const point = clusterPoints[j];
+            const distance = this.distanceMetric(point, clusterCentroid);
+            ssw += distance;
         }
-    
-        for (let j = 0; j < numFeatures; j++) {
-            centroid[j] /= numSamples;
-        }
-    
-        return centroid;
     }
+
+    // Calculate the Calinski-Harabasz Index
+    const chIndex = (ssb / (numClusters - 1)) / (ssw / (numSamples - numClusters));
+
+    return chIndex;
+}
+
+_calculateCentroid(points) {
+    const numSamples = points.length;
+    const numFeatures = points[0].length;
+    const centroid = new Array(numFeatures).fill(0);
+
+    for (let i = 0; i < numSamples; i++) {
+        for (let j = 0; j < numFeatures; j++) {
+            centroid[j] += points[i][j];
+        }
+    }
+
+    for (let j = 0; j < numFeatures; j++) {
+        centroid[j] /= numSamples;
+    }
+
+    return centroid;
+}
 {% endhighlight %}
 
 {% include components/heading.html heading='Color Evaluation' level=4 %}
