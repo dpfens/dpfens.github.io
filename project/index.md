@@ -9,8 +9,9 @@ layout: default
     </div>
     <div class="hero-right hero-bottom hero-content d-flex align-items-center min-vh-50">
         <div class="mt-5 mb-3">
-            <h1 class="headline text-center">Scarred & Polished Portfolio</h1>
-            <p class="tagline mt-4">From personal passions to professional projects, these are the creations that got me tinkering, learning, and (hopefully) making a dent in the world.</p>
+            <h1 class="headline text-center">Projects</h1>
+            <p>These are things I've built that landed with the people who used them, or that meant something to me, or both. The stopwatch is here because a small number of track coaches actually found it useful, which mattered more to me than anything technically clever about it. A few reached farther than that, serving large institutions or running at a scale I didn't fully appreciate until later, and those worth listing will turn up here over time.</p>
+            <p>Some were personal, some were professional. The reason for building was the same in both cases: the thing needed to exist, and I was in a position to build it.</p>
         </div>
     </div>
 </div>
