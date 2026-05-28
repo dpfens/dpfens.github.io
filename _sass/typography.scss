@@ -150,7 +150,7 @@ Font-sizing
 .headline,
 .headline span {
     font-size: clamp(3rem, calc(1vw + 1rem), 5rem);
-    line-height: 1;
+    line-height: 1.2;
     margin: 0;
 
     @media (min-width: 769px) {

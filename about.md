@@ -101,7 +101,7 @@ I design systems that scale without ego. Docker, orchestration, microservices, g
     <div class="hero-left hero-content hero-top d-flex flex-column justify-content-center border-lg-3 border-end-lg border-lg-black py-4 px-5 min-vh-50">
         <h2 class="headline">The Long Run Home</h2>
         <p class="tagline">I run the same routes I trained on in high school, back when I was competitive enough to run Division I in college. There's a particular clarity in covering familiar ground with a decade of distance from it.</p>
-        <p>Long-distance running and system architecture ask for the same thing: patience. Both reward thinking in longer cycles than most people find comfortable. The work that matters rarely looks impressive in the moment.</p>
+        <p class="tagline">Long-distance running and system architecture ask for the same thing: patience. Both reward thinking in longer cycles than most people find comfortable. The work that matters rarely looks impressive in the moment.</p>
     </div>
     <div class="hero-right hero-content hero-bottom px-0 pt-0 min-vh-50 h-lg-100">
         <img class="w-100 h-100 object-fit-cover" src="/assets/img/e75eeaea-6eb8-4869-81c3-4444517da83d.jpeg">
