@@ -7,7 +7,7 @@ layout: default
     <div class="hero-left hero-content hero-top d-flex flex-column justify-content-center border-lg-3 border-end-lg border-lg-black py-4 min-vh-50">
         <h1 class="headline">Small-town developer building tomorrow's tech</h1>
         <p class="tagline">I'm Doug Fenstermacher, and I build software from a place where the internet still goes out when it storms.  Growing up in rural Gloucester, Virginia where I downloaded MS-DOS games on dial-up as a child, taught me that great technology works everywhere</p>
-        <p class="tagline">I spent high school working at a funeral home, which sounds like a non sequitur until you realize that both jobs are about solving problems for people during complicated moments. After a decade inresearch and higher education, I've learned to build things that are technically rigorous and actually useful to the people who need them.</p>
+        <p class="tagline">I spent high school working at a funeral home, which sounds like a non sequitur until you realize that both jobs are about solving problems for people during complicated moments. After a decade in research and higher education, I've learned to build things that are technically rigorous and actually useful to the people who need them.</p>
     </div>
     <div class="hero-right hero-content hero-bottom px-0 pt-0 min-vh-50 h-lg-100">
         <img class="w-100 h-100 object-fit-cover" src="/assets/img/1cdaab4b-605f-4c49-92fb-338f65ddf1b6.jpeg">
