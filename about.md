@@ -6,8 +6,8 @@ layout: default
 <div class="hero bg-orange-3 border-3 border-bottom border-black">
     <div class="hero-left hero-content hero-top d-flex flex-column justify-content-center border-lg-3 border-end-lg border-lg-black py-4 min-vh-50">
         <h1 class="headline">Small-town developer building tomorrow's tech</h1>
-        <p class="tagline">I'm Doug Fenstermacher, and I build software from a place where the internet still goes out when it storms.  Growing up in rural Gloucester, Virginia where I downloaded MS-DOS games on dial-up as a child, taught me that great technology works everywhere</p>
-        <p class="tagline">I spent high school working at a funeral home, which sounds like a non sequitur until you realize that both jobs are about solving problems for people during complicated moments. After a decade in research and higher education, I've learned to build things that are technically rigorous and actually useful to the people who need them.</p>
+        <p class="tagline">I'm Doug Fenstermacher, and I build software from a place where the internet still goes out when it storms.  Growing up in rural Gloucester, Virginia, where I downloaded MS-DOS games on dial-up as a child, I learned that great technology works everywhere.</p>
+        <p class="tagline">I spent high school working at a funeral home, which sounds like a non sequitur next to a career in software, but both jobs are about solving problems for people during complicated moments.  The work has to be invisible, reliable, and exactly right. A decade working in research and higher education only sharpened that instinct to build things that are technically rigorous and genuinely useful to the people who need them.</p>
     </div>
     <div class="hero-right hero-content hero-bottom px-0 pt-0 min-vh-50 h-lg-100">
         <img class="w-100 h-100 object-fit-cover" src="/assets/img/1cdaab4b-605f-4c49-92fb-338f65ddf1b6.jpeg">
@@ -19,17 +19,17 @@ layout: default
         <img class="w-100 h-100 object-fit-cover" src="/assets/img/53c23ce7-7706-405d-a366-2a5e85e46749.jpg">
     </div>
     <div class="hero-right hero-top hero-content d-flex flex-column justify-content-center pt-3 min-vh-50">
-        <h2 class="headline">Engineering for the other 70%</h2>
-        <p class="tagline">The Tidewater region, like most of rural America, exists in a different technological reality than Silicon Valley assumes. Broadband and cell phone service are not ubiquitous and technical literacy varies dramatically. Rather than disrupting lives to fit technology, effective solutions meet people where they are, adapting to existing rhythms and realities. These aren't just obstacles, they're design constraints that forge better engineering.</p>
-        <p class="tagline">These resource constraints require the same technical rigor I applied to distributed systems and NLP models, but demand software-defined solutions that can be remotely upgraded rather than expecting users on a budget to purchase new hardware. This discipline transforms how we think about impact. When rural students can access MIT courseware on limited connections, when elderly neighbors consult specialists via telehealth, when local businesses reach customers beyond county lines, technology becomes a bridge rather than a barrier. Thoughtful engineering doesn't just solve technical problems; it dismantles the structural disadvantages that separate communities from opportunity.</p>
+        <h2 class="headline">Engineering for the other 20%</h2>
+        <p class="tagline">The Tidewater region, like most of rural America, exists in a different technological reality than Silicon Valley assumes. Broadband and cell phone service are not ubiquitous and technical literacy varies dramatically. Rather than disrupting lives to fit technology, effective solutions meet people where they are, adapting to existing rhythms and realities.</p>
+        <p class="tagline">These resource constraints require the same technical rigor I applied to distributed systems and NLP models, but demand software-defined solutions that can be remotely upgraded rather than expecting users on a budget to purchase new hardware. This discipline transforms how we think about impact. When rural students can access MIT courseware on limited connections, elderly neighbors consult specialists via telehealth, and local businesses reach customers beyond county lines, technology becomes a bridge rather than a barrier. Thoughtful engineering dismantles the structural disadvantages that separate communities from opportunity.</p>
     </div>
 </div>
 
 <div class="row pt-5">
     <div class="col-12 offset-md-2 col-md-8">
         <h2 class="headline text-center">Where Research Meets Resource Reality</h2>
-        <p class="tagline">I've spent ten years in higher education and research. The skills below aren't exhautive, but they are ones where I can walk into a project and deliver value immediately.</p>
-        <p class="tagline">The common thread is that I think in systems. Whether I'm tinkering and when I'm working, I'm asking the same questions: What happens when this breaks? Who has to maintain it? What does this actually cost to run?</p>
+        <p class="tagline">I've spent ten years in higher education and research. The skills below aren't exhaustive, but they are ones where I can walk into a project and deliver value immediately.</p>
+        <p class="tagline">The common thread is that I think in systems. Whether I'm tinkering or working, I'm asking the same questions: What happens when this breaks? Who has to maintain it? What does this actually cost to run?</p>
     </div>
 </div>
 
@@ -65,7 +65,7 @@ Resource allocation problems are puzzles I enjoy. Linear optimization, combinato
 {% include components/panel.html title="Operations Research" content=panelContent extraClassName="bg-purple-2" %}
 
 {% capture panelContent %}
-I've manage Linux web servers across dozens of domains. SSL certificates, partition management, security patches, Docker deployments, load balancing. Disaster recovery plans that actually get tested. Dependable infrastructure without drama.
+I've managed Linux web servers across dozens of domains. SSL certificates, partition management, security patches, Docker deployments, load balancing. Disaster recovery plans that actually get tested. Dependable infrastructure without drama.
 {% endcapture %}
 {% assign panelContent = panelContent | markdownify %}
 {% include components/panel.html title="Server/Cloud Administration" content=panelContent extraClassName="bg-orange-2" %}
@@ -91,7 +91,7 @@ I design systems that scale without ego. Docker, orchestration, microservices, g
     <div class="hero-right hero-content hero-bottom d-flex flex-column justify-content-center pt-3 min-vh-50">
         <h2 class="headline">Through the Looking Glass of Literature</h2>
         <p class="tagline">I read a lot. Speculative fiction, mostly, alongside the technical papers and textbooks that interest me. Growing up in Tidewater, books were how I learned that other ways of organizing the world existed.</p>
-        <p class="tagline">Le Guin taught me that every system embeds values, whether it admits them or not. Butler showed me how power structures replicate themselves, even in new technologies. Gibson's reminder that "the future is already here, it's just not evenly distributed" feels different when you live in the unevenly-distributed part.</p>
+        <p class="tagline">Le Guin taught me that every system embeds values, whether it admits them or not. Butler showed me how power structures replicate themselves, even in new technologies. Gibson's reminder that <q>the future is already here, it's just not very evenly distributed</q> feels different when you live in the unevenly-distributed part.</p>
         <p class="tagline">This matters for engineering. When you've spent years thinking about how societies might work differently, questioning a system's assumptions becomes second nature. The same instinct that spots a flawed premise in a novel helps me find the unstated assumptions buried in a codebase.</p>
     </div>
 </div>
@@ -100,8 +100,9 @@ I design systems that scale without ego. Docker, orchestration, microservices, g
 <div class="hero bg-red-2 border-3 border-bottom border-black">
     <div class="hero-left hero-content hero-top d-flex flex-column justify-content-center border-lg-3 border-end-lg border-lg-black py-4 px-5 min-vh-50">
         <h2 class="headline">The Long Run Home</h2>
-        <p class="tagline">I run the same routes I trained on in high school, back when I was competitive enough to run Division I in college. There's a particular clarity in covering familiar ground with a decade of distance from it.</p>
-        <p class="tagline">Long-distance running and system architecture ask for the same thing: patience. Both reward thinking in longer cycles than most people find comfortable. The work that matters rarely looks impressive in the moment.</p>
+        <p class="tagline">I run the same routes I trained on in high school, back when I was competitive enough to run Division I in college. There's a particular clarity in covering familiar ground with a decade of distance from it. Long-distance running and system architecture are not so different as they look. Each is built slowly, in long seasons, on foundations laid before the work is seen.</p>
+        <p class="tagline">The night before a race I would feel pretty calm...serene even. The race was the culmination of the workouts and the recoveries of the weeks and months before. The same was true of everyone on the line. I (like everyone else) wanted to win, but the outcome had largely been decided already, in the choices we'd made. So there was nothing left to do but run my race.</p>
+        <p class="tagline">Software is similar. Whether a thing turns out simple or complicated is usually the sum of small decisions made long ago. When a feature that seems hard goes in quickly, it's rarely momentary cleverness; it's mostly because the foundation was carefully laid long before in the pieces this new feature rests on. When it fights you, you're paying down a foundation laid carelessly. So the work is never only the work in front of you. It is laying the foundation for the features that, a few months from now, should be simple.</p>
     </div>
     <div class="hero-right hero-content hero-bottom px-0 pt-0 min-vh-50 h-lg-100">
         <img class="w-100 h-100 object-fit-cover" src="/assets/img/e75eeaea-6eb8-4869-81c3-4444517da83d.jpeg">
