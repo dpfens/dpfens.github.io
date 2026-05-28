@@ -88,7 +88,8 @@ Docker orchestration, microservices, REST APIs, GitLab CI/CD, etc. I build the i
         </div>
     </div>
     <div class="grid gx-3 gy-3 px-3 pb-5">
-    {% for post in site.posts limit: 6 %}
+    {% assign filtered = site.posts | where_exp: "post", "post.hide != true" %}
+    {% for post in filtered limit: 6 %}
         {% capture colorClassName %}{% cycle "bg-purple-2", "bg-red-2", "bg-orange-2", "bg-pink-3", "bg-blue-4", "bg-green-2" %}{% endcapture %}
         {% include components/post-panel.html post=post extraClassName=colorClassName postcategory=true %}
     {% endfor %}

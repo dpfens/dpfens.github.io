@@ -6,8 +6,12 @@
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-5FHSBP');</script>
     <!-- End Google Tag Manager -->
-{% else %}
-<meta name="robots" content="noindex">
+{% endif %}
+{% if page.noindex || site.environment != 'production' %}
+    <meta name="robots" content="noindex"/>
+{% endif %}
+{% if page.redirect %}
+    <meta http-equiv="refresh" content="1;url={{ page.redirect }}"/>
 {% endif %}
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">

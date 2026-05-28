@@ -19,7 +19,7 @@ layout: default
 </div>
 
 {% if site.categories.experiment != nil %}
-    {% assign sortedPosts = site.categories.experiment | sort: 'last_updated' | reverse %}
+    {% assign sortedPosts = site.categories.experiment | where_exp: "post", "post.hide != true" | sort: 'last_updated' | reverse %}
 <div class="grid bg-red-2 gx-3 gy-3 p-3 py-5 border-3 border-top border-black">
     {% for post in sortedPosts %}
         {% capture colorClassName %}{% cycle "bg-purple-2", "bg-orange-2", "bg-green-2", "bg-blue-4", "bg-pink-3" %}{% endcapture %}
