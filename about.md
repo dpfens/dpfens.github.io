@@ -19,9 +19,9 @@ layout: default
         <img class="w-100 h-100 object-fit-cover" src="/assets/img/53c23ce7-7706-405d-a366-2a5e85e46749.jpg">
     </div>
     <div class="hero-right hero-top hero-content d-flex flex-column justify-content-center pt-3 min-vh-50">
-        <h2 class="headline">Engineering for the other 20%</h2>
+        <h2 class="headline">Engineering for both corporate and customer budgets</h2>
         <p class="tagline">The Tidewater region, like most of rural America, exists in a different technological reality than Silicon Valley assumes. Broadband and cell phone service are not ubiquitous and technical literacy varies dramatically. Rather than disrupting lives to fit technology, effective solutions meet people where they are, adapting to existing rhythms and realities.</p>
-        <p class="tagline">These resource constraints require the same technical rigor I applied to distributed systems and NLP models, but demand software-defined solutions that can be remotely upgraded rather than expecting users on a budget to purchase new hardware. This discipline transforms how we think about impact. When rural students can access MIT courseware on limited connections, elderly neighbors consult specialists via telehealth, and local businesses reach customers beyond county lines, technology becomes a bridge rather than a barrier. Thoughtful engineering dismantles the structural disadvantages that separate communities from opportunity.</p>
+        <p class="tagline">These resource constraints require the same technical rigor I applied to distributed systems and NLP models, but demand software-defined solutions that can be remotely upgraded rather than expecting users on a budget to purchase new hardware. This discipline transforms how we think about impact. When rural students can access MIT courseware on limited connections, elderly neighbors on a fixed income consult specialists via telehealth, and local businesses reach customers beyond county lines, technology becomes a bridge rather than a barrier. Thoughtful engineering dismantles the structural disadvantages that separate resource & budget constrained communities from opportunity.</p>
     </div>
 </div>
 
@@ -47,13 +47,13 @@ I automate the tedious stuff so teams can focus on building. GitLab CI/CD pipeli
 {% include components/panel.html title="DevOps" content=panelContent extraClassName="bg-green-2" %}
 
 {% capture panelContent %}
-Ten years with frameworks as they've come and gone: BackboneJS, EmberJS, ReactJS, AngularJS. I build interfaces that work when the connection is solid and degrade gracefully when it isn't.
+Ten years with frameworks as they've come and gone: Previously BackboneJS & EmberJS, and now ReactJS & AngularJS. I build interfaces that work when the connection is solid and degrade gracefully when it isn't.
 {% endcapture %}
 {% assign panelContent = panelContent | markdownify %}
 {% include components/panel.html title="Front-end Web Development" content=panelContent extraClassName="bg-purple-2" %}
 
 {% capture panelContent %}
-I've trained and deployed PyTorch text classifiers via REST APIs, built hierarchical loss functions for nuanced classification, experimented with topic modeling (multi-grain, hierarchical pachinko allocation), and written information extractors from dependency tree rules. I like the puzzle of teaching machines to find meaning in messy human language.
+I've trained and deployed PyTorch text classifiers via REST APIs trained on hierarchical loss functions, bulk evaluated corpuses with topic models, written information extractors from dependency tree rules, and used semantic embeddings for retrieval and classification. I like the puzzle of teaching machines to find meaning in messy human language.
 {% endcapture %}
 {% assign panelContent = panelContent | markdownify %}
 {% include components/panel.html title="Natural Language Processing" content=panelContent extraClassName="bg-blue-4" %}
@@ -65,19 +65,19 @@ Resource allocation problems are puzzles I enjoy. Linear optimization, combinato
 {% include components/panel.html title="Operations Research" content=panelContent extraClassName="bg-purple-2" %}
 
 {% capture panelContent %}
-I've managed Linux web servers across dozens of domains. SSL certificates, partition management, security patches, Docker deployments, load balancing. Disaster recovery plans that actually get tested. Dependable infrastructure without drama.
+I've managed Linux web servers across dozens of domains including SSL certificates, partition management, security patches, Docker deployments, load balancing, etc.
 {% endcapture %}
 {% assign panelContent = panelContent | markdownify %}
 {% include components/panel.html title="Server/Cloud Administration" content=panelContent extraClassName="bg-orange-2" %}
 
 {% capture panelContent %}
-Ten years building backends in Django, Adobe Experience Manager, Laravel, and more. APIs, WebSockets, database integrations—the invisible plumbing that makes front-ends feel seamless.
+Ten years building backends in Django, Adobe Experience Manager, Laravel, and more. APIs, WebSockets, database integrations.
 {% endcapture %}
 {% assign panelContent = panelContent | markdownify %}
 {% include components/panel.html title="Server-Side Web Development" content=panelContent extraClassName="bg-purple-2" %}
 
 {% capture panelContent %}
-I design systems that scale without ego. Docker, orchestration, microservices, gRPC and REST APIs—components that communicate reliably and fail gracefully. Architecture shaped by experience, not trend-chasing.
+I design systems that can grow using Docker, orchestration, microservices, gRPC and REST APIs; components that communicate reliably and fail gracefully.
 {% endcapture %}
 {% assign panelContent = panelContent | markdownify %}
 {% include components/panel.html title="System Architecture" content=panelContent extraClassName="bg-pink-3" %}
@@ -89,10 +89,11 @@ I design systems that scale without ego. Docker, orchestration, microservices, g
         <img class="w-100 h-100 object-fit-cover" src="/assets/img/3e7a9410-3454-4fbc-a75d-266be5048481.jpeg">
     </div>
     <div class="hero-right hero-content hero-bottom d-flex flex-column justify-content-center pt-3 min-vh-50">
-        <h2 class="headline">Through the Looking Glass of Literature</h2>
-        <p class="tagline">I read a lot. Speculative fiction, mostly, alongside the technical papers and textbooks that interest me. Growing up in Tidewater, books were how I learned that other ways of organizing the world existed.</p>
-        <p class="tagline">Le Guin taught me that every system embeds values, whether it admits them or not. Butler showed me how power structures replicate themselves, even in new technologies. Gibson's reminder that <q>the future is already here, it's just not very evenly distributed</q> feels different when you live in the unevenly-distributed part.</p>
-        <p class="tagline">This matters for engineering. When you've spent years thinking about how societies might work differently, questioning a system's assumptions becomes second nature. The same instinct that spots a flawed premise in a novel helps me find the unstated assumptions buried in a codebase.</p>
+        <h2 class="headline">Compounding Interest of Reading</h2>
+        <p class="tagline">I read a lot. Speculative fiction, mostly, alongside the papers, essays, and textbooks that interest me.
+        In fact, I credit reading about topics I didn't understand, or that made me uncomfortable for most of my successes. That curiosity has compounded over decades of grappling with hard questions and built fluency with pluralistic reality. Growing up somewhere small means the available answers come from a narrow set of sources and perspectives, and reading revealed there were others. Once I accepted the world isn't organized the only way it could be, there's nothing left to stop me from holding multiple truths at once.</p>
+        <p class="tagline">Le Guin taught me that every system embeds values, whether it admits them or not. Butler showed me how power structures replicate themselves, even in new technologies. Gibson's reminder that <q class="tagline">the future is already here, it's just not very evenly distributed</q> feels different when you live in the unevenly-distributed part.</p>
+        <p class="tagline">This matters for engineering. When you've spent years thinking about how societies might work differently, questioning assumptions becomes second nature and so does asking how things might be made better.</p>
     </div>
 </div>
 
@@ -101,7 +102,7 @@ I design systems that scale without ego. Docker, orchestration, microservices, g
     <div class="hero-left hero-content hero-top d-flex flex-column justify-content-center border-lg-3 border-end-lg border-lg-black py-4 px-5 min-vh-50">
         <h2 class="headline">The Long Run Home</h2>
         <p class="tagline">I run the same routes I trained on in high school, back when I was competitive enough to run Division I in college. There's a particular clarity in covering familiar ground with a decade of distance from it. Long-distance running and system architecture are not so different as they look. Each is built slowly, in long seasons, on foundations laid before the work is seen.</p>
-        <p class="tagline">The night before a race I would feel pretty calm...serene even. The race was the culmination of the workouts and the recoveries of the weeks and months before. The same was true of everyone on the line. I (like everyone else) wanted to win, but the outcome had largely been decided already, in the choices we'd made. So there was nothing left to do but run my race.</p>
+        <p class="tagline">The night before a race I would feel pretty calm. The race was the culmination of the workouts and the recoveries of the weeks and months before. The same was true of everyone on the line. I (like everyone else) wanted to win, but the outcome had largely been decided already, in the choices we'd made. So there was nothing left to do but run my race.</p>
         <p class="tagline">Software is similar. Whether a thing turns out simple or complicated is usually the sum of small decisions made long ago. When a feature that seems hard goes in quickly, it's rarely momentary cleverness; it's mostly because the foundation was carefully laid long before in the pieces this new feature rests on. When it fights you, you're paying down a foundation laid carelessly. So the work is never only the work in front of you. It is laying the foundation for the features that, a few months from now, should be simple.</p>
     </div>
     <div class="hero-right hero-content hero-bottom px-0 pt-0 min-vh-50 h-lg-100">
