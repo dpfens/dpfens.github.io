@@ -9,7 +9,7 @@ layout: default
         <div>
             <p>My name is</p>
             <h1 class="headline"><span>Doug</span><br/><span>Fenstermacher</span></h1>
-            <p class="sub-headline" style="margin-left: 0.25em;">I build software for audacious projects, and for the people who use them.</p>
+            <p class="sub-headline" style="margin-left: 0.25em;">I build software for novel projects, and for the people who use them.</p>
             <a class="btn bg-blue-3" href="/project">My Projects</a>
         </div>
     </div>
@@ -49,31 +49,31 @@ I build web applications from the backend up using Python, PHP, Java for the fou
     {% include components/panel.html title="Web/App Development" content=panelContent extraClassName="bg-red-3" %}
 
 {% capture panelContent %}
-I turn messy datasets into something useful. Python for wrangling, anomaly detection, recommendation systems. ReactJS for making the results legible to humans.
+I turn messy datasets into something useful. I prefer Python for wrangling, anomaly detection, recommendation systems. AngularJS for making the results legible to humans.
 {% endcapture %}
     {% assign panelContent = panelContent | markdownify %}
     {% include components/panel.html title="Data Analysis" content=panelContent extraClassName="bg-green-2" %}
 
 {% capture panelContent %}
-I build and deploy NLP and computer vision models that run in production, not just notebooks. Custom loss functions like hierarchical cross-entropy when the problem needs nuance.
+I build and deploy NLP and computer vision models that run in production, not just Jupyter Notebooks. I create custom loss functions like hierarchical cross-entropy when the problem needs nuance.
 {% endcapture %}
     {% assign panelContent = panelContent | markdownify %}
     {% include components/panel.html title="Machine Learning" content=panelContent extraClassName="bg-blue-4" %}
 
 {% capture panelContent %}
-I design systems where individual incentives align with collective goals, like markets, resource allocation, governance structures. Puzzles with purpose: guiding behavior without coercion.
+I design systems where individual incentives align with collective goals, like markets, resource allocation, governance structures. I look at them as puzzles to guide behavior without coercion.
 {% endcapture %}
     {% assign panelContent = panelContent | markdownify %}
     {% include components/panel.html title="Mechanism Design" content=panelContent extraClassName="bg-purple-2" %}
 
 {% capture panelContent %}
-When resource allocation gets tangled, I untangle it. Linear optimization, combinatorial methods, cost-minimization. Finding efficient paths through complicated constraints.
+When resource allocation gets tangled, I untangle it using linear optimization, combinatorial methods, cost-minimization.
 {% endcapture %}
     {% assign panelContent = panelContent | markdownify %}
     {% include components/panel.html title="Operations Research" content=panelContent extraClassName="bg-orange-2" %}
     
 {% capture panelContent %}
-Docker orchestration, microservices, REST APIs, GitLab CI/CD, etc. I build the infrastructure that lets applications scale without collapsing. Foundations for smooth, high-traffic experiences.
+Docker orchestration, microservices, REST APIs, GitLab CI/CD, etc. I build the infrastructure that lets applications scale without collapsing.
 {% endcapture %}
     {% assign panelContent = panelContent | markdownify %}
     {% include components/panel.html title="System Architecture/Design" content=panelContent extraClassName="bg-pink-3" %}
