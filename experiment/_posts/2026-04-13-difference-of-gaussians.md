@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "XDoG: Computation of Aesthetically Pleasing Lines"
+title: "XDoG: Computating Aesthetically Pleasing Lines"
 description: A deeper dive into modern approaches for generating aesthetically pleasing lines based on difference-of-Gaussians (DoG) edge detections.
 keywords: computational drawing, structure tensor, non-photorealistic rendering, image stylization, generative art, computer-vision
 tags: data math webgpu webgl drawing
@@ -317,7 +317,7 @@ If you want to read about the algorithm itself, you can read the original
         <!-- Right Panel - Controls -->
         <div class="col-12 col-md-4">
             <div class="card">
-                <div class="card-body" style="max-height: calc(100vh - 140px); overflow-y: auto;">
+                <div class="card-body">
                     
                     <!-- Mode Selection -->
                     <div class="section-title">Processing Mode</div>
