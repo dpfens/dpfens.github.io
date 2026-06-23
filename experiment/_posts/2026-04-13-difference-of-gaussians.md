@@ -95,6 +95,7 @@ If you want to read about the algorithm itself, you can read the original
             display: flex;
             align-items: center;
             justify-content: center;
+            min-height: 500px;
         }
         
         .image-container img,
@@ -275,20 +276,39 @@ If you want to read about the algorithm itself, you can read the original
                         <small class="text-secondary">Supports JPG, PNG, WebP</small>
                         <input type="file" id="fileInput" accept="image/*" hidden>
                     </div>
-                    
-                    <!-- Image Comparison -->
-                    <div class="row g-3">
-                        <div class="col-12 col-md-6">
-                            <div class="image-container">
+
+                    <!-- Image Tabs -->
+                    <ul class="nav nav-tabs" id="imageTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="original-tab" data-bs-toggle="tab"
+                                    data-bs-target="#original-pane" type="button" role="tab"
+                                    aria-controls="original-pane" aria-selected="true">
+                                Original
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="result-tab" data-bs-toggle="tab"
+                                    data-bs-target="#result-pane" type="button" role="tab"
+                                    aria-controls="result-pane" aria-selected="false">
+                                Result
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="imageTabsContent">
+                        <div class="tab-pane fade show active" id="original-pane" role="tabpanel"
+                            aria-labelledby="original-tab" tabindex="0">
+                            <div class="image-container image-container-lg">
                                 <img id="originalImage" src="" alt="Original" class="d-none">
                                 <div class="text-secondary" id="originalPlaceholder">
                                     <i class="bi bi-image fs-1 opacity-25"></i>
                                 </div>
-                                <div class="image-label">Original</div>
                             </div>
                         </div>
-                        <div class="col-12 col-md-6">
-                            <div class="image-container">
+
+                        <div class="tab-pane fade" id="result-pane" role="tabpanel"
+                            aria-labelledby="result-tab" tabindex="0">
+                            <div class="image-container image-container-lg">
                                 <canvas id="resultCanvas"></canvas>
                                 <div class="processing-overlay d-none" id="processingOverlay">
                                     <div class="spinner-border text-light" role="status">
@@ -296,7 +316,6 @@ If you want to read about the algorithm itself, you can read the original
                                     </div>
                                     <span class="text-light">Processing...</span>
                                 </div>
-                                <div class="image-label">Result</div>
                             </div>
                         </div>
                     </div>
@@ -583,6 +602,7 @@ If you want to read about the algorithm itself, you can read the original
         ctx.putImageData(data, 0, 0);
         processBtn.disabled = false;
         processingOverlay.classList.add('d-none');
+        resultTab.show();
     }
 
     worker.onerror = function(e) {
@@ -629,6 +649,9 @@ If you want to read about the algorithm itself, you can read the original
     // Initialize Bootstrap tooltips
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     const tooltipList = [...tooltipTriggerList].map(el => new bootstrap.Tooltip(el));
+
+    const originalTab = bootstrap.Tab.getOrCreateInstance(document.getElementById('original-tab'));
+    const resultTab   = bootstrap.Tab.getOrCreateInstance(document.getElementById('result-tab'));
 
     // Helper to wait for image load
     function waitForImage(img) {
@@ -798,6 +821,7 @@ If you want to read about the algorithm itself, you can read the original
     fileInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) handleFile(file);
+        originalTab.show();
     });
 
     // Mode toggle
