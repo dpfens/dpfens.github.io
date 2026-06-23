@@ -24,13 +24,22 @@ let quadVAO = null;
 /**
  * Initialize or get WebGL context
  */
-function getGL() {
+function getGL(imageData) {
+    console.log('getGL initialization:', imageData.width, imageData.height);
     if (gl)
         return gl;
     try {
-        canvas = document.createElement('canvas');
-        canvas.width = 1;
-        canvas.height = 1;
+        if (typeof document !== 'undefined') {
+            canvas = document.createElement('canvas');
+            canvas.width = 1;
+            canvas.height = 1;
+        } 
+        else if (typeof OffscreenCanvas !== 'undefined') {
+            canvas = new OffscreenCanvas(imageData.width, imageData.height); 
+        } 
+        else {
+            throw new Error("WebGL preprocessing failed: Neither HTMLCanvasElement nor OffscreenCanvas is supported in this environment.");
+        }
         gl = canvas.getContext('webgl2', {
             alpha: false,
             antialias: false,
@@ -285,7 +294,7 @@ void main() {
 }
 `;
 export function bilateralFilterWebGL(input, config) {
-    const gl = getGL();
+    const gl = getGL(input);
     if (!gl) {
         console.warn('WebGL not available, using CPU fallback');
         return bilateralFilterCPU(input, config);
@@ -386,7 +395,7 @@ export function gaussianBlurWebGL(input, sigma = 1.0) {
     if (sigma < 0.1) {
         return { data: new Float32Array(input.data), width: input.width, height: input.height };
     }
-    const gl = getGL();
+    const gl = getGL(input);
     if (!gl) {
         console.warn('WebGL not available, using CPU fallback');
         return gaussianBlurCPU(input, sigma);
@@ -538,7 +547,7 @@ void main() {
 }
 `;
 export function medianFilterWebGL(input, config) {
-    const gl = getGL();
+    const gl = getGl(input);
     if (!gl) {
         console.warn('WebGL not available, using CPU fallback');
         return medianFilterCPU(input, config);
@@ -630,7 +639,7 @@ void main() {
 }
 `;
 export function kuwaharaFilterWebGL(input, config) {
-    const gl = getGL();
+    const gl = getGl(input);
     if (!gl) {
         console.warn('WebGL not available, using CPU fallback');
         return kuwaharaFilterCPU(input, config);
@@ -688,7 +697,7 @@ void main() {
 }
 `;
 export function enhanceContrastWebGL(input, blackPoint = 0.01, whitePoint = 0.99) {
-    const gl = getGL();
+    const gl = getGl(input);
     const { width, height, data } = input;
     // Calculate percentiles on CPU (fast enough, O(n log n))
     const sorted = new Float32Array(data).sort((a, b) => a - b);
@@ -766,7 +775,7 @@ void main() {
 }
 `;
 export function quantizeWebGL(input, levels = 8) {
-    const gl = getGL();
+    const gl = getGl(input);
     if (!gl) {
         // CPU fallback
         const { width, height, data } = input;

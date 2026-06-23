@@ -16,6 +16,8 @@ Below is an interactive demo of X-DoG/F-DoG (without extensions) for you to use.
 If you want to read about the algorithm itself, you can read the original
 [XDoG: An eXtended difference-of-Gaussians compendium including advanced image stylization](https://users.cs.northwestern.edu/~sco590/winnemoeller-cag2012.pdf) paper.
 
+**UPDATE**: I have converted this to use a Web Worker (run on a separate thread), after realizing FDoG can be a bit slower for larger images.
+
 <head>
     <!-- Bootstrap 5.3 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -567,6 +569,28 @@ If you want to read about the algorithm itself, you can read the original
         PreprocessingPresetsWebGL,
         tauToP
     } from '/assets/js/libs/homemade/xdog/index.js';
+    const worker = new Worker(
+        new URL('/assets/js/workers/xdog-base.js', import.meta.url), 
+        { type: 'module' }
+    );
+
+    worker.onmessage = function(e) {
+        const {data} = e.data;
+        // Display result
+        resultCanvas.width = data.width;
+        resultCanvas.height = data.height;
+        const ctx = resultCanvas.getContext('2d');
+        ctx.putImageData(data, 0, 0);
+        processBtn.disabled = false;
+        processingOverlay.classList.add('d-none');
+    }
+
+    worker.onerror = function(e) {
+        console.error(e);
+        console.error("Error message:", event.message);
+        console.error("File name:", event.filename);
+        console.error("Line number:", event.lineno);
+    }
 
     // State
     let currentMode = 'xdog';
@@ -682,18 +706,6 @@ If you want to read about the algorithm itself, you can read the original
         return params;
     }
 
-    // Apply preprocessing
-    function applyPreprocessing(grayscale) {
-        const mode = preprocessMode.value;
-        if (mode === 'none') return grayscale;
-        
-        const preprocessFn = PreprocessingPresetsWebGL[mode];
-        if (preprocessFn) {
-            return preprocessFn(grayscale);
-        }
-        return grayscale;
-    }
-
     // Process image
     async function processImage() {
         if (!loadedImage) return;
@@ -715,35 +727,17 @@ If you want to read about the algorithm itself, you can read the original
             tempCtx.drawImage(loadedImage, 0, 0);
             
             const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
-            let grayscale = imageDataToGrayscale(imageData);
-            
-            // Apply preprocessing
-            grayscale = applyPreprocessing(grayscale);
-
-            let result;
-            if (currentMode === 'xdog') {
-                const xdog = new XDoG(params);
-                result = await xdog.process(grayscale);
-            } else {
-                const fdog = new FDoG(params);
-                result = await fdog.process(grayscale);
-            }
-
-            const outputImageData = grayscaleToImageData(result);
-
-            // Display result
-            resultCanvas.width = outputImageData.width;
-            resultCanvas.height = outputImageData.height;
-            const ctx = resultCanvas.getContext('2d');
-            ctx.putImageData(outputImageData, 0, 0);
+            worker.postMessage({
+                preprocess: preprocessMode.value,
+                mode: currentMode,
+                params: params,
+                data: imageData
+            });
 
             downloadBtn.disabled = false;
         } catch (error) {
             console.error('Processing error:', error);
             alert('Error processing image: ' + error.message);
-        } finally {
-            processBtn.disabled = false;
-            processingOverlay.classList.add('d-none');
         }
     }
 
