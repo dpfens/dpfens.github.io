@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "XDoG: Computating Aesthetically Pleasing Lines"
+title: "XDoG: Computing Aesthetically Pleasing Lines"
 description: A deeper dive into modern approaches for generating aesthetically pleasing lines based on difference-of-Gaussians (DoG) edge detections.
 keywords: computational drawing, structure tensor, non-photorealistic rendering, image stylization, generative art, computer-vision
 tags: data math webgpu webgl drawing
