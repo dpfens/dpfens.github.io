@@ -980,6 +980,6 @@ The research below made me want to write up this blog post, and I can attribute 
 
  *  [H-degree as a Basic Measure in Directed Networks](https://www.researchgate.net/publication/220066058_H-Degree_as_a_basic_measure_in_weighted_networks)
  *  [Exploring the directed h-degree in directed weighted networks](https://www.sciencedirect.com/science/article/abs/pii/S1751157712000508)
- *  [**Centrality and Network Flow**](https://www.sciencedirect.com/science/article/pii/S0378873304000693)  (I got a lot out of this one, as it as helped me to think much more critically about when a centrality is applicable and when it is not).
+ *  [**Centrality and Network Flow**](https://www.sciencedirect.com/science/article/abs/pii/S0378873304000693)  (I got a lot out of this one, as it as helped me to think much more critically about when a centrality is applicable and when it is not).
  *  [A centrality measure for communication ability in weighted network](https://www.sciencedirect.com/science/article/abs/pii/S0378437113006870)
  *  [The h-index](https://arxiv.org/abs/2112.02175)
