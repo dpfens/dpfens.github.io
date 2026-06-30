@@ -91,7 +91,6 @@ If you want to read about the algorithm itself, you can read the original
             position: relative;
             border-radius: 0.75rem;
             overflow: hidden;
-            aspect-ratio: 4/3;
             display: flex;
             align-items: center;
             justify-content: center;

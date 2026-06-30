@@ -25,7 +25,6 @@ let quadVAO = null;
  * Initialize or get WebGL context
  */
 function getGL(imageData) {
-    console.log('getGL initialization:', imageData.width, imageData.height);
     if (gl)
         return gl;
     try {
