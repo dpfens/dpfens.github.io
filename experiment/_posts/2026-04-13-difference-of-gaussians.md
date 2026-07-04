@@ -578,14 +578,8 @@ If you want to read about the algorithm itself, you can read the original
     
 <script type="module">
     import { 
-        XDoG,
-        FDoG,
         STYLE_PRESETS,
-        FDOG_STYLE_PRESETS,
-        imageDataToGrayscale, 
-        grayscaleToImageData,
-        PreprocessingPresetsWebGL,
-        tauToP
+        FDOG_STYLE_PRESETS
     } from '/assets/js/libs/homemade/xdog/index.js';
     const worker = new Worker(
         new URL('/assets/js/workers/xdog-base.js', import.meta.url), 
