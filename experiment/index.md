@@ -9,7 +9,7 @@ layout: default
     <div class="hero-right hero-bottom hero-content d-flex align-items-center min-vh-50">
         <div class="mt-5 mb-3">
             <h1 class="headline text-center">Experiments</h1>
-            <p class="sub-headline" style="margin-left: 0.25em;">These experiments are my messy playground, not polished products.</p>
+            <p class="sub-headline" style="margin-left: 0.25em;">These experiments are my messy playground.</p>
             <p>The blog is where I write things up once I think I understand them. This is where things go before that. Some experiments became posts, some didn't, and some are still going.</p>
             <p>These tend to be written in roughly the order I worked through them, which isn't always the order that would make sense in retrospect. There usually isn't a linear path through these topics. The canonical starting point of of these topics connects to everything else in too many directions to lay out as a sequence, and reaching the interesting part often means following a related piece of math for a while before doubling back. I group things logically after the fact when I can.</p>
             <p>Most are interactive in some form, because there are ideas you can't develop a feel for without moving the parameters yourself. That's the line between an experiment and a post: when prose alone won't transmit the thing, it goes here.</p>
