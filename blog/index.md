@@ -4,7 +4,7 @@ layout: default
 ---
 
 <div class="hero">
-    <div class="hero-left hero-top hero-content border-lg-3 border-end-lg border-lg-black min-vh-50" style="background: url('/assets/img/411dc997-6da9-4e1f-9cad-e7804b5495da.jpeg') center center no-repeat; background-size: cover;">
+    <div class="hero-left hero-top hero-content border-lg-3 border-end-lg border-lg-black min-vh-50" style="background: url('/assets/img/8366c17a-d202-408d-a7f3-983daadf399c.png') center center no-repeat; background-size: cover;">
     </div>
     <div class="hero-right hero-bottom hero-content d-flex align-items-center min-vh-50">
         <div class="mt-5 mb-3">
