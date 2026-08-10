@@ -31,6 +31,9 @@ header.main-header {
     @media (orientation: portrait) {
         justify-content: space-between; 
         border-bottom: 3px solid black;
+        nav a {
+            font-size: clamp(1rem, calc(2.5vmin), 1.5rem);
+        }
     }
 
     @media (orientation: landscape) {
@@ -38,7 +41,7 @@ header.main-header {
         border-right: 3px solid black;
 
         nav a {
-            font-size: clamp(1rem, calc(2.75vmin), 1.5rem);
+            font-size: clamp(1rem, calc(2.5vmin), 1.5rem);
         }
     }
 
