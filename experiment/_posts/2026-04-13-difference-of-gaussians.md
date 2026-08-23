@@ -16,7 +16,13 @@ Below is an interactive demo of X-DoG/F-DoG (without extensions) for you to use.
 If you want to read about the algorithm itself, you can read the original
 [XDoG: An eXtended difference-of-Gaussians compendium including advanced image stylization](https://users.cs.northwestern.edu/~sco590/winnemoeller-cag2012.pdf) paper.
 
-**UPDATE**: I have converted this to use a Web Worker (run on a separate thread), after realizing FDoG can be a bit slower for larger images.
+**UPDATE 2026-06-22**: I have converted this to use a Web Worker (run on a separate thread), after realizing FDoG can be a bit slower for larger images.
+
+**UPDATE 2026-08-18**: I turned this into a [library](https://github.com/dpfens/dogpack) for better speed, stability, etc, and [an app](https://dougfenstermacher.com/dogpack/) since it runs entirely in the browser.  I wrote a little about it [in the projects section]({% post_url project/2026-07-27-dog-studio %}).
+
+
+
+
 
 <head>
     <!-- Bootstrap 5.3 -->
