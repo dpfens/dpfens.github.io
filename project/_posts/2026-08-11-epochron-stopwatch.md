@@ -66,7 +66,7 @@ By only storing timestamps, we can
 
 In the original version of the stopwatch web app, users could only select multiple stopwatches temporarily to either start/stop them all at once or to add a split/lap.  That functionality is preserved but also extends it to allow users to assign stopwatches to groups.  This lets users only view/use specific stopwatches at a given time.  More importantly, it allows users to  designate the relationship between specific stopwatches, which I break into `GroupTimingBehavior` and `GroupEvaluationBehavior`:
 
-```
+```typescript
 export type GroupTimingBehavior = 
     | 'parallel'        // Stopwatches run simultaneously (e.g., team members working on the same task)
     | 'sequential'      // Stopwatches run in a defined order (e.g., relay race or assembly line)
