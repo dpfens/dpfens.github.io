@@ -10,7 +10,7 @@ layout: default
         <div class="mt-5 mb-3">
             <h1 class="headline text-center">Blog</h1>
             <p>Everything here is something I found interesting enough to want to write down. Sometimes it turned out to be useful for work; that was never the reason it got posted. The bar is whether I think someone else might find it interesting too.</p>
-            <p>The topics range widely because where I live they have to, and because the underlying math tends to be the same across them anyway. A lot of what I end up working on are things the industry overlooks, namely problems that are real but not profitable enough for someone else to build the tools for. I'd rather those tools exist than not, and I like building for the people who actually use them.</p>
+            <p>The topics range widely because where I live they have to, and because the underlying math tends to be the same across them anyway. I work on stuff the industry overlooks, namely real, but unprofitable enough problems to not build the tools for. I'd rather those tools exist than not, and I like building for the people who actually use the tools.</p>
             <p>Most of these posts sit somewhere between a research paper and production code. Papers tend to stop once the result is established; production code tends to start once the choice has already been made. I'm usually more interested in the space between, like what a technique actually implies once you take it seriously, where else it might apply, which assumptions matter and which ones were incidental. That's the part I find worth writing down, partly because it's the part that's hardest to find written down anywhere else.</p>
         </div>
     </div>
