@@ -82,7 +82,7 @@ Rather than a single fixed "denoise" step, DoG Studio exposes preprocessing as a
 * Median (salt-and-pepper noise): knocks out isolated bright or dark pixels, the kind of speckling you get from high-ISO/low-light shots, without blurring anything around them.
 * Kuwahara (painterly smoothing): flattens an image into smooth regions with clean boundaries between them, giving a brushed, painterly look rather than a blurred one. Good for pushing an image toward an illustrative or stylized feel before the DoG stage even runs.
 * Gaussian blur: a standard uniform blur, useful for softening fine detail evenly across the whole image.
-* Contrast stretching**: pushes the darkest and lightest tones in the image further apart, so faint edges in flat or washed-out photos become strong enough for the DoG pass to detect.
+* Contrast stretching: pushes the darkest and lightest tones in the image further apart, so faint edges in flat or washed-out photos become strong enough for the DoG pass to detect.
 * Quantization: reduces the image to a limited number of tone levels, which simplifies subtle gradients into flatter bands and tends to produce cleaner, more graphic-looking edges.
 
 A busy outdoor photo might need two rounds of noise removal at different strengths before it even gets to the DoG stage; a clean studio shot might need almost none.

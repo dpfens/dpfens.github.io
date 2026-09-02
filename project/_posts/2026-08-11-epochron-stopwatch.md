@@ -59,12 +59,12 @@ export interface StopwatchState {
 
 By only storing timestamps, we can
 * Dynamically derive our stopwatch view at runtime
-* Simple adding/removing splits and modifying splits/laps (if necessary), as the corresponding changes to the stopwatch are automatically derived.
+* Simplify adding/removing splits and modifying splits/laps (if necessary), as the corresponding changes to the stopwatch are automatically derived.
 * Add more stopwatch event types as needed, which is a core aspect of adding more features
 
 {% include components/heading.html heading='Groups' level=3 %}
 
-In the original version of the stopwatch web app, users could only select multiple stopwatches temporarily to either start/stop them all at once or to add a split/lap.  That functionality is preserved but also extends it to allow users to assign stopwatches to groups.  This lets users only view/use specific stopwatches at a given time.  More importantly, it allows users to  designate the relationship between specific stopwatches, which I break into `GroupTimingBehavior` and `GroupEvaluationBehavior`:
+In the original version of the stopwatch web app, users could only select multiple stopwatches temporarily to either start/stop them all at once or to add a split/lap.  That functionality is preserved but also extends it to allow users to assign stopwatches to persisting groups.  This lets users only view/use specific stopwatches at a given time.  More importantly, it allows users to  designate the relationship between specific stopwatches, which I break into `GroupTimingBehavior` and `GroupEvaluationBehavior`:
 
 ```typescript
 export type GroupTimingBehavior = 
@@ -93,14 +93,14 @@ By default, a group is assigned `independent` timing behavior, and `independent`
 {% include components/heading.html heading='Timing Behavior' level=4 %}
 These represent how the user intends on using the stopwatches in a group.  For example, if they are tracking concurrent race between individuals (`individual` or `parallel`), or are they tracking the members of a relay (`sequential`).
 
-* Sequential:  Useful for when stopwatch need to run in a defined order, like in a relay race or in an assembly line.  This add a single start/stop button to the group, where when the start button starts the first stopwatch, and when the stop button is clicked, the next stopwatch is automatically started.
+* Sequential:  Useful for when stopwatch need to run in a defined order, like in a relay race or in an assembly line.  This add a single start/stop button to the group, where when the start button initially starts the first stopwatch, and when the stop button is clicked, the next stopwatch is automatically started, ensuring no time is lost.
 * Parallel:  Useful for when the stopwatch are for the same concurrent task.
 * Synchronized:  Useful for when stopwatches must start and/or stop together. This adds a button to the UI to allow easy start/stop of all stopwatches in the group.
 
 It is worth noting that timing behavior can be changed at any point, so a user can change them based on their given momentary task.
 
 {% include components/heading.html heading='Evaluation Behavior' level=3 %}
-These represent how the user intends on evaluating the stopwatches in a given group.  In order for these evaluation behaviors to be useful, the user must be setting laps, and/or adding distances to the splits they record.
+These represent how the user intends on evaluating the stopwatches in a given group.  Stopwatches can be evaluated based on multiple behaviors concurrently, so a group of stopwatch can have multiple evaluation behaviors at the same time.  For these evaluation behaviors to be useful, the user must be setting laps, and/or adding distances to the splits they record.  
 
 * Comparative: Stopwatches in the group are to be compared against one another.  This results in rankings being shown at the group-level, with relative times between them
 * Cumululative: The aggregated elapsed stopwatch time of all the stopwatches is meaningful.  The group view will show the aggregated stopwatch time.
@@ -121,7 +121,7 @@ Rather than coming up with a unified formula for predicting each, I implemented 
 
 {% include components/heading.html heading='Time prediction' level=4 %}
 
-All five approaches share the same shape.  They work on segments rather than cumulative splits, since the fifth 400 tells you more about the sixth than the total time through 2000m does.  Each fits some model of pace to those segments, projects it forward a segment at a time until it reaches the target distance, and accumulates the variance of each projected segment as it goes.  The output is never a bare number: it's a point estimate paired with a confidence interval, which is what makes the first question answerable at all.  The same machinery runs in reverse, so each can also answer where a runner will be at a given time rather than when they'll reach a given distance.
+All five approaches share the same shape.  They work on segments rather than cumulative splits, since the fifth 400m tells you more about the sixth 400m than the total time through 2000m does.  Each approach fits some model of pace to those segments, projects it forward a segment at a time until it reaches the target distance, and accumulates the variance of each projected segment as it goes.  The output is never a bare number: it's a point estimate paired with a confidence interval, which is what makes the first question answerable at all.  The same machinery runs in reverse, so each can also answer where a runner will be at a given time rather than when they'll reach a given distance.
 
 What separates them is the assumption each makes about how pace changes over a race, and how much data that assumption costs.
 
@@ -152,6 +152,11 @@ Those minimums are the practical answer to whether we can predict confidently: r
 
 Since no single approach is right for every race, the predictions can also be combined.  An ensemble runs all of them and blends the results, weighting each by the tightness of its confidence interval, by its recent accuracy, or equally.  An adaptive selector instead scores the candidates against the last few segments and hands the race to whichever is currently performing best.
 
+Lastly, you may notice that many of these approaches are domain-agnotic mathematical approaches rather than running-specific.  I chose that approach because
+
+* The first version had users who were tracking things outside of running, so I want it to be able to offer timing predictions for anyone timing anything
+* The mathematical approach seemed to be more robust since I can quantify error/assumptions more reliably.
+
 {% include components/heading.html heading='Split prediction' level=4 %}
 
 For split prediction, we account for the split distances that have already been recorded, since the application does not currently know what the target distance (if any) of the stopwatch is.
@@ -172,11 +177,13 @@ These only look at the recorded splits and the lap, and make no assumptions abou
 
 These assume people stop the watch at round numbers, so the question becomes which set of round numbers applies.  Each sport gets a definition covering its base unit, conventional milestones, applicable distance range, expected pace range, and the lap distances that imply it.  Every match is scored rather than accepted or rejected, so a near miss lowers confidence instead of eliminating a system.
 
-* Lap-Based:  Lap distance implies the sport (ex. 25m is swimming, 400m is track, 2000m is rowing).
+* Lap-Based:  Lap distance implies the sport (ex. 25m is swimming, 200m/400m is indoor/outdoor track, 1000m is road racing, 2000m is rowing).
 * Round Number Affinity:  Splits are scored against each system's milestones, base unit, and distance range (ex. 1000/2000/3000 scores nearly perfectly for metric kilometers).
 * Pace-Based:  Median pace narrows the field on its own (ex. 0.9 sec/m is swimming and cannot be cycling), and the median is used specifically so a single bad split doesn't move it.
 * Composite:  Weights the three inferences above, with lap highest and round number affinity lowest, and rewards agreement between them.
 * Target Distance:  Generates milestones up to a known or inferred finish, and appends the finish itself as the final split.
+
+As with timing predictions, these implementations are domain-agnostic and are aimed at finding good prediction milestones regardless of the domain.
 
 {% include components/heading.html heading='Try It' level=3 %}
 
