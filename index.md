@@ -43,37 +43,31 @@ layout: default
     <div class="grid gx-3 gy-3 px-3 pb-5">
 
 {% capture panelContent %}
-I build web applications from the backend up using Python, PHP, Java for the foundation, ReactJS and AngularJS for interfaces that work even when the wifi doesn't.
+I led the redesign of a large research organization's interactive public software catalog and several of its internal sites and applications. For its analytics, I built an institution-wide zero-configuration way to segment internal staff from the public, with no authentication and no exposure of internal information. I also have experience building creative consumer-facing sites that drive engagement, registrations, and philanthropic giving, instrumented with Google Analytics enhanced e-commerce tracking and HTML email campaigns integrated with Salesforce Marketing Cloud.
 {% endcapture %}
     {% assign panelContent = panelContent | markdownify %}
     {% include components/panel.html title="Web/App Development" content=panelContent extraClassName="bg-red-3" %}
 
 {% capture panelContent %}
-I turn messy datasets into something useful. I prefer Python for wrangling, anomaly detection, recommendation systems. AngularJS for making the results legible to humans.
+I turn messy data into something people can act on, from ETL pipelines on Oracle databases to Python for wrangling, anomaly detection, recommendation systems, and information extraction. I've worked with topic models on large corpuses, trained [NVDM models](/experiment/nlp-neural-variational-document-model) in PyTorch with a custom loss for keeping topics distinct, and worked with semantic embeddings for search and trajectory similarity. Upstream, I contribute to open source projects such as `gensim`, where I improved Wikipedia segmentation to include articles' categories as ready-made training labels.
 {% endcapture %}
     {% assign panelContent = panelContent | markdownify %}
     {% include components/panel.html title="Data Analysis" content=panelContent extraClassName="bg-green-2" %}
 
 {% capture panelContent %}
-I build and deploy NLP and computer vision models that run in production, not just Jupyter Notebooks. I create custom loss functions like hierarchical cross-entropy when the problem needs nuance.
+I build retrieval-augmented generation systems and use semantic embeddings for text classification, clustering, trajectory similarity, and concept representations. I have trained and deployed PyTorch text classifiers using custom hierarchical loss functions and class taxonomies with prediction thresholds. Upstream, I've contributed to mainstream libraries, updating Hugging Face's `tokenizers.js` to work with modern client-side bundlers and fixing the `tomotopy` topic-modeling library's build to be compatible with older GCC compilers.
 {% endcapture %}
     {% assign panelContent = panelContent | markdownify %}
     {% include components/panel.html title="Machine Learning" content=panelContent extraClassName="bg-blue-4" %}
 
 {% capture panelContent %}
-I design systems where individual incentives align with collective goals, like markets, resource allocation, governance structures. I look at them as puzzles to guide behavior without coercion.
-{% endcapture %}
-    {% assign panelContent = panelContent | markdownify %}
-    {% include components/panel.html title="Mechanism Design" content=panelContent extraClassName="bg-purple-2" %}
-
-{% capture panelContent %}
-When resource allocation gets tangled, I untangle it using linear optimization, combinatorial methods, cost-minimization.
+WebAssembly now allows native compute speeds in the browser. Capitalizing on this, I ported a lightweight Rust graph library (`petgraph`) to JS/WASM and implemented custom optimization algorithms. This dropped execution times by *3x to 400x* over native JS alternatives, enabling offline use, offloading compute from servers, and allowing zero-cost experimentation by hobbyists that eventually diffuses back into commercial software. I also contribute upstream, including implementing the [summarization module](https://networkx.org/documentation/stable/reference/algorithms/summarization.html) in NetworkX.
 {% endcapture %}
     {% assign panelContent = panelContent | markdownify %}
     {% include components/panel.html title="Operations Research" content=panelContent extraClassName="bg-orange-2" %}
     
 {% capture panelContent %}
-Docker orchestration, microservices, REST APIs, GitLab CI/CD, etc. I build the infrastructure that lets applications scale without collapsing.
+I work on the infrastructure constraints that stall distributed web deployments. I designed and merged the `WasmEntryPoint` directive into Apache's `mod_wasm`, letting developers specify custom module entry points, and built the testing framework for its C API. [DoG Studio](/project/dog-studio), my tool for sketch-ifying images and video, falls back from WebGPU to WebGL to CPU and tiles large images through small GPUs off the main thread. I have also built isolated code-execution sandboxes for LLM chatbots, along with Docker, GitLab CI/CD, and REST API experience.
 {% endcapture %}
     {% assign panelContent = panelContent | markdownify %}
     {% include components/panel.html title="System Architecture/Design" content=panelContent extraClassName="bg-pink-3" %}

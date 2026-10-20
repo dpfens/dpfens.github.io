@@ -21,7 +21,7 @@ layout: default
     <div class="hero-right hero-top hero-content d-flex flex-column justify-content-center pt-3 min-vh-50">
         <h2 class="headline">Engineering for both corporate and customer budgets</h2>
         <p class="tagline">The Tidewater region, like most of rural America, exists in a different technological reality than Silicon Valley assumes. Broadband and cell phone service are not ubiquitous and technical literacy varies dramatically. Rather than disrupting lives to fit technology, effective solutions meet people where they are, adapting to existing rhythms and realities.</p>
-        <p class="tagline">These resource constraints require the same technical rigor I applied to distributed systems and NLP models, but demand software-defined solutions that can be remotely upgraded rather than expecting users on a budget to purchase new hardware. This discipline transforms how we think about impact. When rural students can access MIT courseware on limited connections, elderly neighbors on a fixed income consult specialists via telehealth, and local businesses reach customers beyond county lines, technology becomes a bridge rather than a barrier. Thoughtful engineering dismantles the structural disadvantages that separate resource & budget constrained communities from opportunity.</p>
+        <p class="tagline">These resource constraints require the same technical rigor I applied to distributed systems and NLP models, but demand software-defined solutions that can be remotely upgraded rather than expecting users on a budget to purchase new hardware. It's why I ported a Rust graph library to WebAssembly, so optimization runs 3x to 400x faster on the device people already own, even offline, and why <a href="/project/dog-studio">DoG Studio</a> falls back from WebGPU to WebGL to plain CPU instead of requiring a better graphics card. This discipline transforms how we think about impact. When rural students can access MIT courseware on limited connections, elderly neighbors on a fixed income consult specialists via telehealth, and local businesses reach customers beyond county lines, technology becomes a bridge rather than a barrier. Thoughtful engineering dismantles the structural disadvantages that separate resource & budget constrained communities from opportunity.</p>
     </div>
 </div>
 
@@ -47,7 +47,7 @@ I automate the tedious stuff so teams can focus on building. GitLab CI/CD pipeli
 {% include components/panel.html title="DevOps" content=panelContent extraClassName="bg-green-2" %}
 
 {% capture panelContent %}
-Ten years with frameworks as they've come and gone: Previously BackboneJS & EmberJS, and now ReactJS & AngularJS. I build interfaces that work when the connection is solid and degrade gracefully when it isn't.
+Ten years with frameworks as they've come and gone: Previously BackboneJS & EmberJS, and now ReactJS & Angular. I build interfaces that work when the connection is solid and degrade gracefully when it isn't.
 {% endcapture %}
 {% assign panelContent = panelContent | markdownify %}
 {% include components/panel.html title="Front-end Web Development" content=panelContent extraClassName="bg-purple-2" %}

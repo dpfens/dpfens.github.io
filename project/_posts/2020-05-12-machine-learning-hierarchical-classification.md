@@ -3,7 +3,7 @@ layout: post
 title: "Hierarchical Machine Learning Classification Tasks"
 description: A simple method for improving the quality of actionable machine learning classifications are made using a class taxonomy with thresholds
 keywords: ai,hierarchy,threshold,machine learning,taxonomy,classification,classify
-tags: data running forecasting math
+tags: python math ai
 
 introduction: Machine learning models have varying levels of accuracy which needs to be accounted for in production environments.  By using a threshold-constrained hierarchy, we can make predictions based on membership probability to subsets of classes.
 ---
