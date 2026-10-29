@@ -142,6 +142,23 @@ export interface DoGConfig {
 
 This allows users to select an optional toggle for the app to estimate pixel-specific values for each of pixel in the image, from the image itself.  For example, if an image has a dimmer stairwell behind a bright figure, the estimator will adjust the `epsilon` values for the stairwell pixels to use a lower `epsilon`, and higher for the bright figure to have all the features of each shown equally in the output image. 
 
+#### Why ADoG needed its own epsilon range
+
+When I first added ADoG, I had it use the same default $$ \epsilon $$ value as the other DoG implementations. But I quickly learned the default $$ \epsilon $$ always produced a completely black image. After playing with the slider, I found ADoG only produced decent images with really low values, $$ \epsilon \in [0.001, 0.005] $$, which is much lower than the $$ \epsilon \in [0.03, 0.5] $$ range for XDoG and FDoG. That made me go back to the [Gaussian Image Binarization](https://www.worldscientific.com/doi/abs/10.1142/S0219467821500479) paper and work out why.
+
+The reason is in how ADoG defines its sensitivity. Instead of a fixed $$ \rho $$, it makes $$ \rho $$ a function of how bright each pixel is:
+
+$$ \rho(\mathbf{x}) = \tau + (1-\tau)\bigl(1 - \tanh(s \cdot I(\mathbf{x}))\bigr) $$
+
+Dark pixels get a $$ \rho $$ close to 1, and bright pixels get one close to $$ \tau $$. The output is the center Gaussian minus $$ \rho $$ times the surround Gaussian. In a flat region both blurs are roughly the pixel's brightness $$ I $$, so the response is about $$ I \cdot (1 - \rho) $$. Plugging in $$ \rho $$ and simplifying gives
+
+$$ I(\mathbf{x}) \, (1-\tau) \, \tanh(s \cdot I(\mathbf{x})) $$
+
+Since $$ I $$ and the $$ \tanh $$ are both at most 1, this response can never go above $$ 1-\tau $$. That means ADoG's valid range is $$ \epsilon \in [0,\, 1-\tau] $$, and it shrinks as $$ \tau $$ grows. With the paper's default of $$ \tau = 0.99 $$, that's only $$ \epsilon \in [0,\, 0.01] $$. Any $$ \epsilon $$ above that puts every pixel below the threshold, and the produced image is entirely black. That's why the usual values, roughly $$ \epsilon \in [0.2,\, 0.7] $$, were useless for ADoG, and why only tiny ones worked.
+
+I decided to add a function for this to my underlying `dogpack` library.  So the ADoG `epsilon` slider's maximum now follows $$ \tau $$ (`ADoG.getEpsilonCeiling(tau)`) instead of a fixed number, and the pixel-specific estimator pre-scales the image by the formula above before it computes the local baseline. That way the estimated `epsilon` is relative to the response ADoG actually produces, not to the raw brightness.
+
+This is only an approximation. It assumes flat regions, and edges and the added noise can push individual pixels past it. But it's close enough to make it so users can play with the whole length of the slider and still get decent results.
 
 ## Try it
 
