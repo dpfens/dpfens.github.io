@@ -9,13 +9,13 @@ layout: default
         <p class="tagline">I'm Doug Fenstermacher, and I build software from a place where the internet still goes out when it storms.  Growing up in rural Gloucester, Virginia, where I downloaded MS-DOS games on dial-up as a child, I learned that great technology works everywhere.</p>
         <p class="tagline">I spent high school working at a funeral home, which sounds like a non sequitur next to a career in software, but both jobs are about solving problems for people during complicated moments.  The work has to be invisible, reliable, and exactly right. A decade working in research and higher education only sharpened that instinct to build things that are technically rigorous and genuinely useful to the people who need them.</p>
     </div>
-    <div class="hero-right hero-content hero-bottom px-0 pt-0 min-vh-50 h-lg-100">
+    <div class="hero-right hero-content hero-bottom px-0 pt-0 min-vh-50 h-lg-100 paper-texture">
         <img class="w-100 h-100 object-fit-cover" src="/assets/img/1cdaab4b-605f-4c49-92fb-338f65ddf1b6.jpeg">
     </div>
 </div>
 
 <div class="hero bg-orange-3 border-3 border-bottom border-black">
-    <div class="hero-left hero-bottom hero-content border-lg-3 border-end-lg border-lg-black px-0 pt-0 min-vh-50 h-lg-100">
+    <div class="hero-left hero-bottom hero-content border-lg-3 border-end-lg border-lg-black px-0 pt-0 min-vh-50 h-lg-100 paper-texture">
         <img class="w-100 h-100 object-fit-cover" src="/assets/img/53c23ce7-7706-405d-a366-2a5e85e46749.jpg">
     </div>
     <div class="hero-right hero-top hero-content d-flex flex-column justify-content-center pt-3 min-vh-50">
@@ -85,7 +85,7 @@ I design systems that can grow using Docker, orchestration, microservices, gRPC 
 </div>
 
 <div class="hero bg-blue-2 border-3 border-bottom border-black">
-    <div class="hero-left hero-content hero-top border-lg-3 border-end-lg border-lg-black px-0 pt-0 min-vh-50 h-lg-100">
+    <div class="hero-left hero-content hero-top border-lg-3 border-end-lg border-lg-black px-0 pt-0 min-vh-50 h-lg-100 paper-texture">
         <img class="w-100 h-100 object-fit-cover" src="/assets/img/3e7a9410-3454-4fbc-a75d-266be5048481.jpeg">
     </div>
     <div class="hero-right hero-content hero-bottom d-flex flex-column justify-content-center pt-3 min-vh-50">
@@ -105,7 +105,7 @@ I design systems that can grow using Docker, orchestration, microservices, gRPC 
         <p class="tagline">The night before a race I would feel pretty calm. The race was the culmination of the workouts and the recoveries of the weeks and months before. The same was true of everyone on the line. I (like everyone else) wanted to win, but the outcome had largely been decided already, in the choices we'd made. So there was nothing left to do but run my race.</p>
         <p class="tagline">Software is similar. Whether a thing turns out simple or complicated is usually the sum of small decisions made long ago. When a feature that seems hard goes in quickly, it's rarely momentary cleverness; it's mostly because the foundation was carefully laid long before in the pieces this new feature rests on. When it fights you, you're paying down a foundation laid carelessly. So the work is never only the work in front of you. It is laying the foundation for the features that, a few months from now, should be simple.</p>
     </div>
-    <div class="hero-right hero-content hero-bottom px-0 pt-0 min-vh-50 h-lg-100">
+    <div class="hero-right hero-content hero-bottom px-0 pt-0 min-vh-50 h-lg-100 paper-texture">
         <img class="w-100 h-100 object-fit-cover" src="/assets/img/e75eeaea-6eb8-4869-81c3-4444517da83d.jpeg">
     </div>
 </div>

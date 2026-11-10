@@ -1,3 +1,18 @@
 .maxw-30em {
     max-width: min(100%, 30em);
 }
+
+.paper-texture {
+    position: relative;
+}
+
+.paper-texture::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+    opacity: 1.0;
+    background-size: 650px 500px; /* tile size; matches the SVG's width/height */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='650' height='500'%3E%3Cfilter id='p' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.04' numOctaves='5' stitchTiles='stitch'/%3E%3CfeDiffuseLighting lighting-color='white' surfaceScale='2'%3E%3CfeDistantLight azimuth='45' elevation='60'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+}
