@@ -7,6 +7,8 @@ tags: python nlp data math
 
 ---
 
+**Update**: Since writing this, I’ve switched to [BERTopic](https://maartengr.github.io/BERTopic/index.html), which I’ve found far easier to use and much stronger in practice for topic modeling. If your goal is to get useful topics out of a corpus, I’d start there. This post remains for anyone interested in how NVDMs work.
+
 Neural Variational Document Models (NVDMs) are a class of unsupervised learning models that leverage the power of deep learning and variational inference to uncover latent topics and semantic structures within a collection of documents. These models combine the expressiveness of neural networks with the probabilistic framework of latent variable models, enabling them to capture complex relationships and generate meaningful representations of text data.
 
 At their core, NVDMs are auto-encoders, consisting of an encoder-decoder architecture where the encoder maps the input documents to a continuous latent space, and the decoder reconstructs the original documents from the latent representations. The encoder is typically a neural network, such as a Convolutional Neural Network (CNN) or a Recurrent Neural Network (RNN), which learns to compress the input documents into a lower-dimensional latent space. The decoder, on the other hand, is responsible for generating the words in the documents based on the latent representations.
@@ -104,7 +106,8 @@ import torch.nn.functional as F
 
 
 class NVDM(nn.Module):
-    def __init__(self, tokenizer, embed_dim, hidden_dim, latent_dim, dropout=0.5, num_layers=2, uniqueness_weight=0.0):
+    def __init__(self, tokenizer, embed_dim, hidden_dim, latent_dim, dropout=0.5, num_layers=2,
+                 uniqueness_weight=0.0, kl_weight=1.0, reconstruction_weight=1.0, use_gsm=False):
         super(NVDM, self).__init__()
         self.tokenizer = tokenizer
         self.vocab_size = len(tokenizer.vocabulary())
@@ -113,6 +116,12 @@ class NVDM(nn.Module):
         self.latent_dim = latent_dim
 
         self.uniqueness_weight = uniqueness_weight
+        self.kl_weight = kl_weight
+        self.reconstruction_weight = reconstruction_weight
+        # If True, theta = softmax(z) is fed to the decoder (GSM variant, Miao et al. 2017),
+        # so each latent dimension is a genuine topic proportion.
+        self.use_gsm = use_gsm
+
         # Encoder MLP
         encoder_layers = [
             nn.Linear(self.vocab_size, embed_dim),
@@ -122,49 +131,29 @@ class NVDM(nn.Module):
             nn.Linear(embed_dim, hidden_dim),
             nn.BatchNorm1d(hidden_dim),
             nn.LeakyReLU(),
-            nn.Dropout(p=dropout)
-            ]
-        
+            nn.Dropout(p=dropout),
+        ]
         for _ in range(num_layers):
             encoder_layers.append(nn.Linear(hidden_dim, hidden_dim))
             encoder_layers.append(nn.BatchNorm1d(hidden_dim))
             encoder_layers.append(nn.LeakyReLU())
+        self.encoder = nn.Sequential(*encoder_layers)
 
-        self.encoder = nn.Sequential(
-            *encoder_layers
-        )
-
-        # intermediate representation
+        # Variational parameters
         self.mu = nn.Linear(hidden_dim, latent_dim)
         self.log_var = nn.Linear(hidden_dim, latent_dim)
 
-        # Decoder MLP
-        decoder_layers = [
-            nn.Linear(latent_dim, hidden_dim),
-            nn.BatchNorm1d(hidden_dim),
-            nn.LeakyReLU()
-        ]
-        for _ in range(num_layers):
-            decoder_layers.append(nn.Linear(hidden_dim, hidden_dim))
-            decoder_layers.append(nn.BatchNorm1d(hidden_dim))
-            decoder_layers.append(nn.LeakyReLU())
-            decoder_layers.append(nn.Dropout(p=dropout))
-
-        decoder_layers.append(nn.Linear(hidden_dim, latent_dim))
-        self.decoder = nn.Sequential(*decoder_layers)
-
-        self.dropout_layer = nn.Dropout(p=dropout)
+        # Linear decoder: latent -> embedding -> vocabulary logits.
+        # Kept linear on purpose so topic_word_distribution() is a faithful readout of the decoder.
         self.decoder_output = nn.Linear(latent_dim, embed_dim)
-        
+        self.dropout_layer = nn.Dropout(p=dropout)
         self.output = nn.Linear(embed_dim, self.vocab_size)
         self.output.weight.data.normal_(0, 0.01)
         self.output.bias.data.fill_(0)
 
     def encode(self, x):
         h = self.encoder(x)
-        mu = self.mu(h)
-        log_var = self.log_var(h)
-        return mu, log_var
+        return self.mu(h), self.log_var(h)
 
     def reparameterize(self, mu, log_var):
         std = torch.exp(0.5 * log_var)
@@ -172,84 +161,57 @@ class NVDM(nn.Module):
         return mu + eps * std
 
     def decode(self, z):
+        if self.use_gsm:
+            z = F.softmax(z, dim=1)
         h = self.dropout_layer(self.decoder_output(z))
-        logits = self.output(h)
-        return logits
-    
+        return self.output(h)
+
     def topic_word_distribution(self):
-        word_embeddings = self.output.weight
+        # (latent_dim, embed_dim) @ (embed_dim, vocab_size) -> (latent_dim, vocab_size)
+        topic_word_scores = torch.matmul(self.decoder_output.weight.t(), self.output.weight.t())
+        return torch.softmax(topic_word_scores, dim=1)
 
-        # Compute the topic-word scores
-        topic_word_scores = torch.matmul(self.decoder_output.weight.t(), word_embeddings.t())
-        topic_word_probabilities = torch.softmax(topic_word_scores, dim=1)
-
-        return topic_word_probabilities
-        
+    @torch.no_grad()
     def topic_words(self, top_k=10):
-        topic_word_distributions = self.topic_word_distribution()
-
-        # Get the top k words for each topic
+        topic_word_distributions = self.topic_word_distribution().cpu()
         top_probs, top_indices = torch.topk(topic_word_distributions, k=top_k, dim=1)
-
         topic_words = [self.tokenizer.decode(indices.tolist()) for indices in top_indices]
         topic_probabilities = [probs.tolist() for probs in top_probs]
         return topic_words, topic_probabilities
-    
-    
-    def topic_uniqueness_loss(self, batch_word_probabilities):
-        # Normalize word probabilities to get document distributions
-        document_distributions = F.normalize(batch_word_probabilities, p=1, dim=1)
-
-        # Calculate the topic-word distribution matrix
-        topic_word_dist = self.topic_word_distribution().t()
-
-        # Calculate the document-topic distribution matrix
-        document_topic_dist = torch.matmul(document_distributions, topic_word_dist)
-
-        # Calculate the topic co-occurrence matrix
-        topic_cooccurrence_matrix = torch.matmul(document_topic_dist.t(), document_topic_dist)
-
-        # Normalize the topic co-occurrence matrix
-        topic_cooccurrence_matrix = F.normalize(topic_cooccurrence_matrix, p=1, dim=1)
-
-        # Calculate the average pairwise similarity between topics
-        num_topics = topic_cooccurrence_matrix.shape[0]
-        topic_similarity = torch.sum(topic_cooccurrence_matrix) - num_topics
-        avg_topic_similarity = topic_similarity / (num_topics * (num_topics - 1))
-
-        return avg_topic_similarity
-
-    def kullback_liebler_loss(self, x, logits):
-        # Normalize the document representations to get probability distributions
-        original_dist = F.softmax(x, dim=1)
-        reconstructed_dist = F.softmax(logits, dim=1)
-        
-        # Calculate KL divergence loss
-        return F.kl_div(torch.log(reconstructed_dist), original_dist, reduction='batchmean')
-    
 
     def reconstruction_loss(self, x, logits):
-        # Calculate reconstruction/log-likehihood loss
-        probs = F.log_softmax(logits, dim=1)
-        batch_size = x.shape[0]
-        return -torch.sum(x * probs) / batch_size
+        # Multinomial negative log-likelihood of the word counts, averaged over the batch
+        log_probs = F.log_softmax(logits, dim=1)
+        return -torch.sum(x * log_probs) / x.shape[0]
+
+    def kl_divergence(self, mu, log_var):
+        # KL( N(mu, sigma^2) || N(0, I) ), summed over latent dims, averaged over the batch
+        return -0.5 * torch.sum(1 + log_var - mu.pow(2) - log_var.exp(), dim=1).mean()
+
+    def topic_uniqueness_loss(self):
+        # Mean pairwise cosine similarity between topic-word distributions (off-diagonal only)
+        beta = F.normalize(self.topic_word_distribution(), p=2, dim=1)  # (K, V)
+        sim = beta @ beta.t()                                           # (K, K)
+        K = sim.shape[0]
+        off_diag = sim - torch.diag(torch.diag(sim))
+        return off_diag.sum() / (K * (K - 1))
 
     def forward(self, documents):
-        x = torch.stack([self.tokenizer.encode(document) for document in documents])
-        mu, log_var = self.encode(x)
+        device = self.output.weight.device
+        x = torch.stack([self.tokenizer.encode(d) for d in documents]).to(device)
+
+        # log1p keeps long documents from dominating the encoder; reconstruction uses raw counts
+        mu, log_var = self.encode(torch.log1p(x))
         z = self.reparameterize(mu, log_var)
         logits = self.decode(z)
-        recon_loss = self.reconstruction_loss(x, logits)
-        kl_loss = self.kullback_liebler_loss(x, logits)
 
-        topic_uniqueness_loss = 0.0
+        recon_loss = self.reconstruction_loss(x, logits)
+        kl_loss = self.kl_divergence(mu, log_var)
+        loss = self.reconstruction_weight * recon_loss + self.kl_weight * kl_loss
+
         if self.uniqueness_weight:
-            batch_word_probabilities = F.softmax(logits, dim=1)
-            uniqueness_loss = self.topic_uniqueness_loss(batch_word_probabilities)
-            #print('uniqueness_loss: ', self.uniqueness_weight, ' * ', uniqueness_loss, flush=True)
-            topic_uniqueness_loss = self.uniqueness_weight * uniqueness_loss
-        
-        return recon_loss + kl_loss + topic_uniqueness_loss{% endhighlight %}
+            loss = loss + self.uniqueness_weight * self.topic_uniqueness_loss()
+        return loss{% endhighlight %}
 
 The constructor takes various parameters such as the tokenizer, embedding dimension, hidden dimension, latent dimension, dropout rate, and number of layers. Both the encoder and decoder are implemented as multi-layer perceptrons (MLPs) using PyTorch's nn.Sequential module.  The encoder MLP maps the input document representation to a hidden representation and then to the parameters (mean and log-variance) of the variational posterior distribution.  The decoder MLP takes a sample from the variational posterior and reconstructs the original document representation.
 
@@ -275,75 +237,81 @@ However, it's important to note that the BoW representation has some limitations
 
 {% highlight python linenos %}import torch
 from torch.utils.data import Dataset
-from collections import defaultdict, Counter
+from collections import Counter
 import re
 import csv
-
-
+ 
+ 
+def simple_tokenize(text):
+    # Single tokenization rule shared by the dataset filters and the BoW tokenizer
+    return re.findall(r'\b\w+\b', text.lower())
+ 
+ 
 class CSVDataset(Dataset):
-    def __init__(self, path, text_field, label_field, load=False, min_df=0, max_df=float('inf'), min_tf=0, max_tf=float('inf')):
+    def __init__(self, path, text_field, label_field, load=False, min_df=0, max_df=float('inf'),
+                 min_tf=0, max_tf=float('inf')):
         self.path = path
         self.text_field = text_field
         self.label_field = label_field
         self.data = []
-
+ 
         self.min_tf = min_tf
         self.max_tf = max_tf
         if load:
             with open(self.path, 'r') as input_file:
-                    self.data = list(csv.DictReader(input_file))
-        
-        self.term_frequencies, self.total_tokens, self.document_frequencies, self.total_documents = self.process_corpus(path, text_field)
-
+                self.data = list(csv.DictReader(input_file))
+ 
+        (self.term_frequencies, self.total_tokens,
+         self.document_frequencies, self.total_documents) = self.process_corpus(path, text_field)
+ 
+        # Fractions in [0, 1) are interpreted as a share of the corpus
         self.min_df = min_df
         if isinstance(min_df, float) and 0.0 <= min_df < 1.0:
             self.min_df = min_df * self.total_documents
-
+ 
         self.max_df = max_df
         if isinstance(max_df, float) and 0.0 <= max_df < 1.0:
             self.max_df = max_df * self.total_documents
-
+ 
     def process_corpus(self, path, field):
         term_frequencies = Counter()
         document_frequencies = Counter()
         total_documents = 0
         total_tokens = 0
         with open(path, 'r') as input_file:
-            total_tokens = 0
             for row in csv.DictReader(input_file):
-                doc = row[field]
-                tokens = doc.split()
+                tokens = simple_tokenize(row[field])
                 term_frequencies.update(tokens)
                 document_frequencies.update(set(tokens))
                 total_tokens += len(tokens)
                 total_documents += 1
         return term_frequencies, total_tokens, document_frequencies, total_documents
-    
+ 
     def is_valid(self, token):
-        return self.document_frequencies[token] >= self.min_df and self.document_frequencies[token] <= self.max_df and self.term_frequencies[token] >= self.min_tf and self.term_frequencies[token] <= self.max_tf
-
+        df = self.document_frequencies[token]
+        tf = self.term_frequencies[token]
+        return self.min_df <= df <= self.max_df and self.min_tf <= tf <= self.max_tf
+ 
+    def valid_term_frequencies(self):
+        # Term counts restricted to tokens that pass the df/tf filters
+        return Counter({t: c for t, c in self.term_frequencies.items() if self.is_valid(t)})
+ 
     def __len__(self):
         if self.data:
             return len(self.data)
-
-        with open(self.path, 'r') as input_file:
-            for index, row in enumerate(csv.reader(input_file)):
-                pass
-        return index + 1
-
+        return self.total_documents
+ 
     def __getitem__(self, idx):
         if self.data:
-            text = self.data[idx][self.text_field]
-            label = self.data[idx][self.label_field]
-        else:
-            text = None
-            with open(self.path, 'r') as input_file:
-                for file_idx, row in enumerate(csv.DictReader(input_file)):
-                    if file_idx == idx:
-                        text = row[self.text_field]
-                        label = row[self.label_field]
-                        break
-        return text, label{% endhighlight %}
+            row = self.data[idx]
+            return row[self.text_field], row[self.label_field]
+ 
+        # Streaming mode: rescans the file per item (O(N) each). Fine for small corpora only.
+        with open(self.path, 'r') as input_file:
+            for file_idx, row in enumerate(csv.DictReader(input_file)):
+                if file_idx == idx:
+                    return row[self.text_field], row[self.label_field]
+        raise IndexError(f'Index {idx} out of range for dataset of size {len(self)}'){% endhighlight %}
 
 Advantages of the `CSVDataset` implementation:
 
@@ -358,69 +326,53 @@ Advantages of the `min_df`, `max_df`, `min_tf`, and `max_tf` parameters:
 *  Vocabulary control: By applying these filtering parameters, you can control the size and quality of the vocabulary used for the BoW representation. This helps in reducing the dimensionality of the feature space and focusing on the most informative words for the given task.
 
 {% highlight python linenos %}class TokenizedDataset(CSVDataset):
-
+ 
     def __getitem__(self, idx):
         text, label = super().__getitem__(idx)
-        text = [token for token in text.split() if self.is_valid(token)]
-        return ' '.join(text), label
-
-
+        tokens = [token for token in simple_tokenize(text) if self.is_valid(token)]
+        return ' '.join(tokens), label
+ 
+ 
 class BowTokenizer:
     UNKNOWN_TOKEN = '<UNK>'
-
+ 
     def __init__(self, vocab_size=None, stopwords=None):
         self.vocab_size = vocab_size
         self.word2idx = None
         self.idx2word = None
         self.vocab = None
-        self.stopwords = stopwords
-        
+        self.stopwords = set(stopwords) if stopwords else set()
+ 
     def fit(self, texts):
-        # Tokenize the texts and build the vocabulary
         word_counts = Counter()
         for text in texts:
-            words = self.tokenize(text)
-            word_counts.update(words)
-
-        # Sort the words by frequency and select the top vocab_size words
-        vocab_size = self.vocab_size
-        if not vocab_size:
-            vocab_size = len(word_counts)
-        
+            word_counts.update(self.tokenize(text))
+        self.fit_counts(word_counts)
+ 
+    def fit_counts(self, word_counts):
+        # Build the vocabulary from precomputed counts (e.g. dataset.valid_term_frequencies())
+        word_counts = Counter({w: c for w, c in word_counts.items() if w not in self.stopwords})
+        vocab_size = self.vocab_size or len(word_counts)
         self.vocab = [word for word, _ in word_counts.most_common(vocab_size)]
-        
-        # Create word-to-index and index-to-word mappings
-        word2idx = {word: idx for idx, word in enumerate(self.vocab)}
-
-        self.word2idx = word2idx
-        self.idx2word = dict(zip(word2idx.values(), word2idx.keys()))
-    
+        self.word2idx = {word: idx for idx, word in enumerate(self.vocab)}
+        self.idx2word = {idx: word for word, idx in self.word2idx.items()}
+ 
     def vocabulary(self):
         return list(self.vocab)
-        
+ 
     def tokenize(self, text):
-        # Tokenize the text into words
-        words = re.findall(r'\b\w+\b', text.lower())
-        return words
-    
+        return simple_tokenize(text)
+ 
     def encode(self, text):
-        # Tokenize the text and convert words to indices
-        words = self.tokenize(text)
-        word_counts = Counter(words)
-
-        vocab_size = len(self.vocab)
-        data = torch.zeros(vocab_size, dtype=torch.float)
-        for word, count in word_counts.items():
-            if word not in self.word2idx:
-                continue
-            word_index = self.word2idx[word]
-            data[word_index] = count
+        data = torch.zeros(len(self.vocab), dtype=torch.float)
+        for word, count in Counter(self.tokenize(text)).items():
+            idx = self.word2idx.get(word)
+            if idx is not None:
+                data[idx] = count
         return data
-    
+ 
     def decode(self, input_ids):
-        # Convert token indices to
-        words = [self.idx2word.get(idx, self.UNKNOWN_TOKEN) for idx in input_ids]
-        return ' '.join(words){% endhighlight %}
+        return ' '.join(self.idx2word.get(idx, self.UNKNOWN_TOKEN) for idx in input_ids){% endhighlight %}
 
 Advantages of the `BowTokenizer` implementation:
 
@@ -435,15 +387,11 @@ from torch.utils.data import DataLoader
 import utils
 from nvdm import NVDM
 
-import csv
 
-
-def train(model, dataloader, optimizer, device):
+def train(model, dataloader, optimizer):
     model.train()
     total_loss = 0
-    batch_index = -1
-    for documents, labels in dataloader:
-        batch_index += 1
+    for batch_index, (documents, labels) in enumerate(dataloader):
         optimizer.zero_grad()
         loss = model(documents)
         loss.backward()
@@ -464,69 +412,64 @@ if __name__ == '__main__':
 
     # NVDM configuration parameters
     nvdm_config = parser.add_argument_group('NVDM Configuration')
-    nvdm_config.add_argument('--vocab_size', type=int, default=10000, help='Number of topics')
-    nvdm_config.add_argument('--topics', type=int, default=30, help='Number of topics')
-    nvdm_config.add_argument('--alpha', type=float, default=1.0, help='Alpha parameter')
+    nvdm_config.add_argument('--vocab_size', type=int, default=10000, help='Maximum vocabulary size')
+    nvdm_config.add_argument('--topics', type=int, default=30, help='Number of topics (latent dimensions)')
     nvdm_config.add_argument('--hidden_size', type=int, default=256, help='Hidden size')
     nvdm_config.add_argument('--embedding_size', type=int, default=100, help='Embedding size')
     nvdm_config.add_argument('--dropout', type=float, default=0.5, help='Dropout rate')
-    nvdm_config.add_argument('--num_layers', type=int, default=4, help='Number of layers')
-    nvdm_config.add_argument('--num_encoder_heads', type=int, default=12, help='Number of attention heads in the encoding step')
-    nvdm_config.add_argument('--num_decoder_heads', type=int, default=3, help='Number of attention heads in the decoding step')
-    nvdm_config.add_argument('--temperature', type=float, default=1.0, help='Temperature for topic mixture')
+    nvdm_config.add_argument('--num_layers', type=int, default=4, help='Number of extra hidden layers in the encoder')
+    nvdm_config.add_argument('--gsm', action='store_true', help='Use softmax(z) as topic proportions (GSM variant)')
 
-    # data parametersargs.path
-    data_config = parser.add_argument_group('Preprocess Function Parameters')
+    # Data parameters
+    data_config = parser.add_argument_group('Data Parameters')
     data_config.add_argument('--path', type=str, default='/samples/corpus.csv', help='CSV path to load data from')
     data_config.add_argument('--text', type=str, default='content', help='CSV field containing the text')
     data_config.add_argument('--label', type=str, default='content', help='CSV field containing text label')
-    data_config.add_argument('--stream', action='store_true', help='Stream data directly from the file instead of loading it into memory')
+    data_config.add_argument('--stream', action='store_true', help='Stream data from the file instead of loading it into memory (slow)')
 
-    # preprocess parameters
+    # Preprocess parameters
     preprocess_config = parser.add_argument_group('Preprocess Function Parameters')
-    preprocess_config.add_argument('--mindf', type=float, default=50, help='Minimum document frequency')
-    preprocess_config.add_argument('--maxdf', type=float, default=float('inf'), help='Maximum document frequency')
+    preprocess_config.add_argument('--mindf', type=float, default=50, help='Minimum document frequency (count, or fraction if < 1)')
+    preprocess_config.add_argument('--maxdf', type=float, default=float('inf'), help='Maximum document frequency (count, or fraction if < 1)')
     preprocess_config.add_argument('--mintf', type=float, default=0, help='Minimum term frequency')
-    preprocess_config.add_argument('--maxtf', type=float, default=float('inf'), help='Maximum document frequency')
+    preprocess_config.add_argument('--maxtf', type=float, default=float('inf'), help='Maximum term frequency')
 
     # Loss function parameters
     loss_config = parser.add_argument_group('Loss Function Parameters')
-    loss_config.add_argument('--reconstruction_weight', type=float, default=1, help='Reconstruction loss weight')
-    loss_config.add_argument('--kl_weight', type=float, default=0.1, help='KL divergence loss weight')
-    loss_config.add_argument('--sparsity_weight', type=float, default=1.0, help='Sparsity loss weight')
-    loss_config.add_argument('--uniqueness_weight', type=float, default=1.0, help='Uniqueness loss weight')
+    loss_config.add_argument('--reconstruction_weight', type=float, default=1.0, help='Reconstruction loss weight')
+    loss_config.add_argument('--kl_weight', type=float, default=1.0, help='KL divergence loss weight (1.0 = true ELBO)')
+    loss_config.add_argument('--uniqueness_weight', type=float, default=0.0, help='Topic uniqueness loss weight')
 
     # Training parameters
     training_config = parser.add_argument_group('Training Parameters')
     training_config.add_argument('--epochs', type=int, default=3, help='Number of epochs')
     training_config.add_argument('--batch_size', type=int, default=256, help='Batch size')
     training_config.add_argument('--learning_rate', type=float, default=0.01, help='Learning rate')
-    training_config.add_argument('--debug', action='store_true', help='Enable debug mode')
 
     args = parser.parse_args()
-    
+
     # Device setup
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    # Define the dataset and data loader
-    load = True
-    if args.stream:
-        load=False
-
-    dataset = utils.TokenizedDataset(path=args.path, text_field=args.text, label_field=args.label, load=load, min_df=args.mindf, max_df=args.maxdf, min_tf=args.mintf, max_tf=args.maxtf)
+    # Dataset and data loader
+    print('preprocessing data', flush=True)
+    dataset = utils.TokenizedDataset(path=args.path, text_field=args.text, label_field=args.label,
+                                     load=not args.stream, min_df=args.mindf, max_df=args.maxdf,
+                                     min_tf=args.mintf, max_tf=args.maxtf)
     dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True, drop_last=True)
 
+    # Vocabulary built only from tokens that survive the dataset's df/tf filters
     tokenizer = utils.BowTokenizer(vocab_size=args.vocab_size)
-     # Load and preprocess the dataset
-    with open(args.path, 'r') as input_file:
-        documents = [row[args.text] for row in csv.DictReader(input_file)]
-        tokenizer.fit(documents)
-
-    # Assume we have a list 'documents' containing the input text documents
-    print('preprocessing data', flush=True)
+    tokenizer.fit_counts(dataset.valid_term_frequencies())
+    print(f'vocabulary size: {len(tokenizer.vocabulary())}', flush=True)
 
     # Create the NVDM model
-    model = NVDM(tokenizer, args.embedding_size, args.hidden_size, args.topics, args.dropout, uniqueness_weight=args.uniqueness_weight).to(device)
+    model = NVDM(tokenizer, args.embedding_size, args.hidden_size, args.topics, args.dropout,
+                 num_layers=args.num_layers,
+                 uniqueness_weight=args.uniqueness_weight,
+                 kl_weight=args.kl_weight,
+                 reconstruction_weight=args.reconstruction_weight,
+                 use_gsm=args.gsm).to(device)
 
     # Optimizer
     optimizer = optim.Adam(model.parameters(), lr=args.learning_rate)
@@ -534,8 +477,8 @@ if __name__ == '__main__':
     # Training loop
     print('training model', flush=True)
     for epoch in range(args.epochs):
-        train_loss = train(model, dataloader, optimizer, device)
-        print(f'Epoch [{epoch+1}/{args.epochs}], Loss: {train_loss:.4f}')
+        train_loss = train(model, dataloader, optimizer)
+        print(f'Epoch [{epoch+1}/{args.epochs}], Loss: {train_loss:.4f}', flush=True)
 
         topic_words, topic_probabilities = model.topic_words()
         for index, (words, probabilities) in enumerate(zip(topic_words, topic_probabilities)):
