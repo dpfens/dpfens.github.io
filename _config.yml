@@ -1,32 +1,71 @@
+# ---------- Site identity ----------
 name: "Doug Fenstermacher"
-author: "Doug Fenstermacher <douglas.fenstermacher@gmail.com>"
 title: Doug Fenstermacher
-description: "Doug Fenstermacher's personal website"
+description: "Personal site of Doug Fenstermacher, software engineer at Lawrence Livermore National Laboratory. Projects, writing, and things I care about."
+lang: en
+locale: en_US
+timezone: America/New_York   # change if you prefer another timezone
 
 url: "https://dougfenstermacher.com"
 baseurl: ""
-environment: production
 CONTACT: mailto:douglas.fenstermacher@gmail.com
 
+# ---------- SEO / identity (jekyll-seo-tag) ----------
+author:
+  name: Doug Fenstermacher
+  twitter: DougFenstermach
+
+twitter:
+  username: DougFenstermach
+  card: summary_large_image   # use "summary" if your share image is square
+
+# Default share image and logo. Create these files, or comment the lines out.
+image: /assets/img/share.png   # ~1200x630 for summary_large_image
+logo: /assets/img/icon.svg
+
+webmaster_verifications:
+  google: 4WVl8qjPxKM5vs8Y2AmcN-4Nh8zc8zqHo7QlC_mSJYw
+
+# Outputs Person JSON-LD with sameAs on the home page
+social:
+  type: Person
+  name: Doug Fenstermacher
+  links:
+    - https://github.com/dpfens
+    - https://people.llnl.gov/fenstermache1
+    - https://www.linkedin.com/in/douglas-fenstermacher-499b5357/
+    - https://stackoverflow.com/users/2829487/dfenstermacher
+
+# ---------- Build ----------
 source: .
+future: false
+show_drafts: false
 
 exclude:
   - CNAME
   - Gemfile
   - Gemfile.lock
   - README.md
+  - LICENSE
   - docker-compose.yml
   - vendor
+  - node_modules
+  - "*.sh"
   - .gitignore
 
 sass:
-    sass_dir: _sass
+  sass_dir: _sass
+  style: compressed
 
 plugins:
   - jekyll-github-metadata
   - jekyll-seo-tag
   - jekyll-feed
   - jekyll-sitemap
+  - jekyll-redirect-from
+
+feed:
+  posts_limit: 20
 
 permalink: /:categories/:title
 
@@ -42,14 +81,14 @@ kramdown:
 defaults:
   -
     scope:
-      path: "" # an empty string here means all files in the project
-      type: "posts" # previously `post` in Jekyll 2.2.
+      path: ""
+      type: "posts"
     values:
       layout: "default"
       author: "Doug Fenstermacher"
   -
     scope:
       path: "projects"
-      type: "pages" # previously `page` in Jekyll 2.2.
+      type: "pages"
     values:
-      layout: "project" # overrides previous default layout
+      layout: "project"
