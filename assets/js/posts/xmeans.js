@@ -665,6 +665,423 @@ class XMeans extends KMeans {
     }
 }
 
+class EMeans extends KMeans {
+    /**
+     * e-means: mini-batch k-means with exponential-moving-average (EMA) centroid
+     * updates (Bessa et al., "e-means: outperforming k-means (in one-tenth the epochs)").
+     *
+     * Compared to Lloyd's algorithm, e-means typically reaches the same (or a lower)
+     * squared error in 1.5-3 passes over the data instead of 25.  The batch size and
+     * the EMA step are set automatically from (n, k, epochs) with the paper's fitted
+     * scaling laws (Table 2), so no hyper-parameter sweep is needed.
+     *
+     * Ingredients (Algorithm 1):
+     *  - random initialisation from k distinct data points
+     *  - EMA update of per-cluster counts N_j and sums S_j with decay gamma
+     *  - cosine-annealed step alpha = 1 - gamma, from alpha0 down to 0.1 * alpha0
+     *  - dead-cluster revival every 5 batches by splitting a count-weighted donor
+     *  - finalisation: centroids = mean of the points assigned during the last epoch
+     *
+     * Implementation note: S_j is never stored, only N_j and c_j = S_j / N_j, since
+     * S_j = N_j * c_j.  A cluster that receives no point in a batch only has N_j decayed
+     * (its centroid is mathematically unchanged), which keeps an update O(B*k*d + k).
+     *
+     * The EMA is a mean, so this algorithm is defined for squared Euclidean distance.
+     * Assignment always uses squared Euclidean distance; `distanceMetric` is only used
+     * by the inherited evaluation helpers (silhouetteCoefficient, daviesBouldinIndex...).
+     *
+     * @param {int} k number of clusters
+     * @param {Function} distanceMetric optional, defaults to squared Euclidean
+     * @param {object} options
+     *   - epochs (number, default 5): passes over the data; may be fractional
+     *   - batchSize (int): override the batch-size law
+     *   - alpha0 (number in (0,1]): override the peak-step law
+     *   - revivalThreshold (number, default 0.1): revive clusters whose count < tau * mean count; 0 disables
+     *   - revivalPeriod (int, default 5): batches between revival checks
+     *   - finalize ('lastEpochMean' | 'none', default 'lastEpochMean')
+     *   - reassign (bool, default false): after training, relabel every point with its nearest
+     *     final centroid (costs one extra full assignment pass)
+     *   - seed (int): seed for reproducible runs (default: Math.random)
+     */
+    constructor(k, distanceMetric, options) {
+        options = options || {};
+        super(k, distanceMetric || EMeans.squaredEuclidean, options);
+        if (!Number.isInteger(k) || k < 1) {
+            throw Error('k must be a positive integer');
+        }
+        this.k = k;
+        this.epochs = options.epochs !== undefined ? options.epochs : 5;
+        this.batchSize = options.batchSize || null;
+        this.alpha0 = options.alpha0 || null;
+        this.revivalThreshold = options.revivalThreshold !== undefined ? options.revivalThreshold : 0.1;
+        this.revivalPeriod = options.revivalPeriod || 5;
+        this.finalize = options.finalize || 'lastEpochMean';
+        this.reassign = options.reassign || false;
+        this.seed = options.seed;
+    }
+
+    static squaredEuclidean(a, b) {
+        let s = 0;
+        for (let i = 0; i < a.length; i++) {
+            const diff = a[i] - b[i];
+            s += diff * diff;
+        }
+        return s;
+    }
+
+    /**
+     * Batch-size law (paper Eq. 7, Table 2): B = c * k^0.13 * n^0.88 * T^0.81,
+     * rounded to the nearest power of two and capped at n.  The constant c is
+     * divided by 8 for n > 2M, as in the paper.
+     */
+    static batchSizeLaw(n, k, epochs) {
+        const c = n > 2e6 ? 0.035 / 8 : 0.035;
+        const raw = c * Math.pow(k, 0.13) * Math.pow(n, 0.88) * Math.pow(epochs, 0.81);
+        const pow2 = Math.pow(2, Math.round(Math.log2(raw)));
+        return Math.max(1, Math.min(n, pow2));
+    }
+
+    /**
+     * Peak-step law (paper Eq. 6, Table 2):
+     * alpha0 = min(0.824 * k^-0.46 * B^0.90 * n^-0.45 * T^-0.11, 1)
+     */
+    static peakStepLaw(n, k, batchSize, epochs) {
+        const a = 0.824 * Math.pow(k, -0.46) * Math.pow(batchSize, 0.90) *
+            Math.pow(n, -0.45) * Math.pow(epochs, -0.11);
+        return Math.min(a, 1);
+    }
+
+    static _mulberry32(seed) {
+        let a = seed >>> 0;
+        return function() {
+            a = (a + 0x6D2B79F5) >>> 0;
+            let t = a;
+            t = Math.imul(t ^ (t >>> 15), t | 1);
+            t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+    }
+
+    transform(dataset, options) {
+        /**
+         * Runs e-means on the dataset.  Returns the same shape as KMeans.transform:
+         * { clusters: [{points, centroid}], centroids, iterations, converged }
+         * plus { labels, mse, epochs, batchSize, alpha0 }.
+         *
+         * `iterations` is the number of mini-batch updates.  The run uses a fixed
+         * budget, so `converged` is always true.  `mse` is the training MSE of the
+         * returned labels against the returned centroids.
+         *
+         * Per-call options override constructor options: epochs, batchSize, alpha0, seed.
+         */
+        options = options || {};
+        this.validateDataset(dataset);
+
+        const n = dataset.length;
+        const d = dataset[0].length;
+        const k = this.k;
+        const T = options.epochs !== undefined ? options.epochs : this.epochs;
+        if (!(T > 0)) {
+            throw Error('epochs must be positive');
+        }
+
+        // Flatten the dataset into a typed array for speed.
+        const X = new Float64Array(n * d);
+        for (let i = 0; i < n; i++) {
+            const row = dataset[i];
+            if (row.length !== d) {
+                throw Error('all dataset points must have the same dimension');
+            }
+            for (let l = 0; l < d; l++) {
+                X[i * d + l] = row[l];
+            }
+        }
+
+        // Hyper-parameters from the scaling laws unless overridden.
+        let B = options.batchSize || this.batchSize || EMeans.batchSizeLaw(n, k, T);
+        B = Math.max(1, Math.min(n, Math.floor(B)));
+        const alpha0 = options.alpha0 || this.alpha0 || EMeans.peakStepLaw(n, k, B, T);
+        const EPS = 0.1; // cosine floor, Eq. 5
+        const batchesPerEpoch = Math.floor(n / B);
+        const M = Math.max(1, Math.round(T * batchesPerEpoch)); // number of updates
+
+        const seed = options.seed !== undefined ? options.seed : this.seed;
+        const rand = seed !== undefined ? EMeans._mulberry32(seed) : Math.random;
+
+        // Random initialisation from k distinct points (partial Fisher-Yates).
+        const perm = new Int32Array(n);
+        for (let i = 0; i < n; i++) perm[i] = i;
+        for (let i = 0; i < k; i++) {
+            const j = i + Math.floor(rand() * (n - i));
+            const tmp = perm[i]; perm[i] = perm[j]; perm[j] = tmp;
+        }
+        const C = new Float64Array(k * d);   // centroids c_j = S_j / N_j
+        const N = new Float64Array(k).fill(1e-10); // EMA counts N_j
+        const cNorm = new Float64Array(k);   // ||c_j||^2
+        for (let j = 0; j < k; j++) {
+            let s = 0;
+            for (let l = 0; l < d; l++) {
+                const v = X[perm[j] * d + l];
+                C[j * d + l] = v;
+                s += v * v;
+            }
+            cNorm[j] = s;
+        }
+
+        const bn = new Float64Array(k);      // batch counts n_j
+        const bs = new Float64Array(k * d);  // batch sums s_j
+        const lastAssign = new Int32Array(n);
+        const stamp = new Int32Array(n).fill(-1); // pass in which a point was last assigned
+        let pass = -1;
+        let pos = n; // forces a shuffle before the first batch
+
+        for (let t = 0; t < M; t++) {
+            if (pos + B > n) { // start of a new epoch: fresh shuffle
+                this._shuffle(perm, rand);
+                pos = 0;
+                pass++;
+            }
+            const alpha = alpha0 * (EPS + (1 - EPS) * 0.5 * (1 + Math.cos(Math.PI * t / M)));
+            const gamma = 1 - alpha;
+
+            // Assign the batch to its nearest centroids and accumulate n_j, s_j.
+            for (let b = 0; b < B; b++) {
+                const i = perm[pos + b];
+                const off = i * d;
+                const j = this._nearestCentroid(X, off, d, C, cNorm, k);
+                lastAssign[i] = j;
+                stamp[i] = pass;
+                bn[j] += 1;
+                const so = j * d;
+                for (let l = 0; l < d; l++) {
+                    bs[so + l] += X[off + l];
+                }
+            }
+            pos += B;
+
+            // EMA update (Eq. 2) and centroid read-off (Eq. 4).
+            for (let j = 0; j < k; j++) {
+                const nj = bn[j];
+                if (nj > 0) {
+                    const oldN = N[j];
+                    const newN = gamma * oldN + alpha * nj;
+                    const o = j * d;
+                    let s = 0;
+                    for (let l = 0; l < d; l++) {
+                        const v = (gamma * oldN * C[o + l] + alpha * bs[o + l]) / newN;
+                        C[o + l] = v;
+                        s += v * v;
+                        bs[o + l] = 0;
+                    }
+                    cNorm[j] = s;
+                    N[j] = newN;
+                    bn[j] = 0;
+                } else {
+                    N[j] *= gamma; // centroid unchanged: S_j and N_j decay together
+                }
+            }
+
+            if (this.revivalThreshold > 0 && (t + 1) % this.revivalPeriod === 0) {
+                this._reviveDeadClusters(C, cNorm, N, k, d, this.revivalThreshold, rand);
+            }
+        }
+
+        // Finalisation.
+        let labels;
+        if (this.finalize === 'lastEpochMean') {
+            // Points not assigned during the last pass (remainder of the shuffle, or a
+            // fractional epoch budget) get a nearest-centroid label with the current centroids.
+            for (let i = 0; i < n; i++) {
+                if (stamp[i] !== pass) {
+                    lastAssign[i] = this._nearestCentroid(X, i * d, d, C, cNorm, k);
+                }
+            }
+            const sums = new Float64Array(k * d);
+            const counts = new Float64Array(k);
+            for (let i = 0; i < n; i++) {
+                const j = lastAssign[i];
+                counts[j] += 1;
+                for (let l = 0; l < d; l++) {
+                    sums[j * d + l] += X[i * d + l];
+                }
+            }
+            for (let j = 0; j < k; j++) {
+                if (counts[j] > 0) { // empty clusters keep their EMA centroid
+                    for (let l = 0; l < d; l++) {
+                        C[j * d + l] = sums[j * d + l] / counts[j];
+                    }
+                }
+            }
+            labels = lastAssign;
+        } else if (this.finalize === 'none') {
+            labels = null;
+        } else {
+            throw Error("finalize must be 'lastEpochMean' or 'none'");
+        }
+
+        if (labels === null || this.reassign) {
+            for (let j = 0; j < k; j++) {
+                let s = 0;
+                for (let l = 0; l < d; l++) s += C[j * d + l] * C[j * d + l];
+                cNorm[j] = s;
+            }
+            labels = new Int32Array(n);
+            for (let i = 0; i < n; i++) {
+                labels[i] = this._nearestCentroid(X, i * d, d, C, cNorm, k);
+            }
+        }
+
+        // Build the result in the same shape as KMeans/XMeans.
+        const centroids = [];
+        const clusters = [];
+        for (let j = 0; j < k; j++) {
+            const centroid = Array.from(C.subarray(j * d, (j + 1) * d));
+            centroids.push(centroid);
+            clusters.push({ points: [], centroid: centroid });
+        }
+        let sse = 0;
+        for (let i = 0; i < n; i++) {
+            const j = labels[i];
+            clusters[j].points.push(dataset[i]);
+            for (let l = 0; l < d; l++) {
+                const diff = X[i * d + l] - C[j * d + l];
+                sse += diff * diff;
+            }
+        }
+
+        return {
+            clusters: clusters,
+            centroids: centroids,
+            iterations: M,
+            converged: true,
+            labels: labels,
+            mse: sse / n,
+            epochs: T,
+            batchSize: B,
+            alpha0: alpha0,
+        };
+    }
+
+    /**
+     * Index of the centroid minimising ||x - c||^2, computed as ||c||^2 - 2 x.c
+     * (||x||^2 is constant across centroids).
+     */
+    _nearestCentroid(X, off, d, C, cNorm, k) {
+        let best = Infinity;
+        let bestJ = 0;
+        for (let j = 0, co = 0; j < k; j++, co += d) {
+            let dot = 0;
+            for (let l = 0; l < d; l++) {
+                dot += X[off + l] * C[co + l];
+            }
+            const v = cNorm[j] - 2 * dot;
+            if (v < best) {
+                best = v;
+                bestJ = j;
+            }
+        }
+        return bestJ;
+    }
+
+    _shuffle(arr, rand) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(rand() * (i + 1));
+            const tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+        }
+    }
+
+    /**
+     * Dead-cluster revival (paper Section 3.1 / Appendix H).  Clusters whose EMA count
+     * fell below tau * mean(N) are re-seeded by splitting donor clusters drawn without
+     * replacement with probability proportional to their count.  The donor centroid is
+     * perturbed multiplicatively by [1+d, 1-d, 1+d, ...] and [1-d, 1+d, 1-d, ...] to
+     * make the two children, and the donor's count is halved between them.
+     * d is the BF16 machine epsilon (2^-7), as in the paper.
+     */
+    _reviveDeadClusters(C, cNorm, N, k, d, tau, rand) {
+        let total = 0;
+        for (let j = 0; j < k; j++) total += N[j];
+        const threshold = tau * total / k;
+
+        const dead = [];
+        const donors = [];
+        for (let j = 0; j < k; j++) {
+            if (N[j] < threshold) {
+                dead.push(j);
+            } else {
+                donors.push({ j: j, key: Math.log(rand() || 1e-300) / N[j] });
+            }
+        }
+        if (dead.length === 0 || donors.length === 0) {
+            return 0;
+        }
+        // Efraimidis-Spirakis weighted sampling without replacement: keep the largest keys.
+        donors.sort(function(a, b) { return b.key - a.key; });
+
+        const delta = Math.pow(2, -7);
+        const m = Math.min(dead.length, donors.length);
+        for (let r = 0; r < m; r++) {
+            const donor = donors[r].j;
+            const target = dead[r];
+            let sDonor = 0;
+            let sTarget = 0;
+            for (let l = 0; l < d; l++) {
+                const v = C[donor * d + l];
+                const sign = (l % 2 === 0) ? 1 : -1;
+                const child = v * (1 + sign * delta);
+                const parent = v * (1 - sign * delta);
+                C[target * d + l] = child;
+                C[donor * d + l] = parent;
+                sTarget += child * child;
+                sDonor += parent * parent;
+            }
+            cNorm[target] = sTarget;
+            cNorm[donor] = sDonor;
+            N[donor] /= 2;
+            N[target] = N[donor];
+        }
+        return m;
+    }
+
+    /**
+     * Nearest-centroid labels for arbitrary points (e.g. a held-out set).
+     * @returns {Int32Array}
+     */
+    predict(dataset, centroids) {
+        const k = centroids.length;
+        const d = centroids[0].length;
+        const C = new Float64Array(k * d);
+        const cNorm = new Float64Array(k);
+        for (let j = 0; j < k; j++) {
+            let s = 0;
+            for (let l = 0; l < d; l++) {
+                C[j * d + l] = centroids[j][l];
+                s += centroids[j][l] * centroids[j][l];
+            }
+            cNorm[j] = s;
+        }
+        const x = new Float64Array(d);
+        const labels = new Int32Array(dataset.length);
+        for (let i = 0; i < dataset.length; i++) {
+            for (let l = 0; l < d; l++) x[l] = dataset[i][l];
+            labels[i] = this._nearestCentroid(x, 0, d, C, cNorm, k);
+        }
+        return labels;
+    }
+
+    /**
+     * Mean squared distance from each point to its nearest centroid (the k-means loss).
+     */
+    mse(dataset, centroids) {
+        const labels = this.predict(dataset, centroids);
+        let sse = 0;
+        for (let i = 0; i < dataset.length; i++) {
+            sse += EMeans.squaredEuclidean(dataset[i], centroids[labels[i]]);
+        }
+        return sse / dataset.length;
+    }
+}
+
 class KDTree {
     constructor(points, ids, dimensions, distanceFn) {
         this.points = points;
