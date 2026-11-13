@@ -6,9 +6,9 @@ lang: en
 locale: en_US
 timezone: America/New_York   # change if you prefer another timezone
 
+repository: dpfens/dpfens.github.io
 url: "https://dougfenstermacher.com"
 baseurl: ""
-CONTACT: mailto:douglas.fenstermacher@gmail.com
 
 # ---------- SEO / identity (jekyll-seo-tag) ----------
 author:
@@ -20,7 +20,7 @@ twitter:
   card: summary_large_image   # use "summary" if your share image is square
 
 # Default share image and logo. Create these files, or comment the lines out.
-image: /assets/img/share.png   # ~1200x630 for summary_large_image
+image: /assets/img/share/image.png   # ~1200x630 for summary_large_image
 logo: /assets/img/icon.svg
 
 webmaster_verifications:
@@ -35,6 +35,9 @@ social:
     - https://people.llnl.gov/fenstermache1
     - https://www.linkedin.com/in/douglas-fenstermacher-499b5357/
     - https://stackoverflow.com/users/2829487/dfenstermacher
+    - https://va.milesplit.com/athletes/44843-douglas-fenstermacher
+    - https://hokiesports.com/sports/track-field/roster/player/doug-fenstermacher-2
+    - https://hokiesports.com/sports/cross-country/roster/player/doug-fenstermacher
 
 # ---------- Build ----------
 source: .
@@ -66,8 +69,15 @@ plugins:
 
 feed:
   posts_limit: 20
+  categories:
+    - project
 
 permalink: /:categories/:title
+
+strict_front_matter: true
+liquid:
+  error_mode: strict
+  strict_filters: true
 
 markdown: kramdown
 highlighter: rouge
@@ -79,16 +89,14 @@ kramdown:
     css_class: 'highlight'
 
 defaults:
-  -
-    scope:
+  - scope:
       path: ""
       type: "posts"
     values:
       layout: "default"
       author: "Doug Fenstermacher"
-  -
-    scope:
-      path: "projects"
-      type: "pages"
+  - scope:
+      path: "project"
+      type: "posts"
     values:
       layout: "project"
