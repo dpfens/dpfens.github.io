@@ -581,16 +581,11 @@ If you want to read about the algorithm itself, you can read the original
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    
-<script type="module">
-    import { 
-        STYLE_PRESETS,
-        FDOG_STYLE_PRESETS
-    } from '/assets/js/libs/homemade/xdog/index.js';
-    const worker = new Worker(
-        new URL('/assets/js/workers/xdog-base.js', import.meta.url), 
-        { type: 'module' }
-    );
+<script src="/assets/js/libs/homemade/dogpack/index.umd.min.js"></script>
+<script>
+    const STYLE_PRESETS = DogPack.dog.STYLE_PRESETS;
+    const FDOG_STYLE_PRESETS = DogPack.dog.FDOG_STYLE_PRESETS;
+    const worker = new Worker('/assets/js/workers/xdog-base.js');
 
     worker.onmessage = function(e) {
         const {data} = e.data;
