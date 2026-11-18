@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "DoG Studio: Computing and Compositing Aesthetically Pleasing Lines"
-description: A deeper dive into modern approaches for generating aesthetically pleasing lines based on difference-of-Gaussians (DoG) edge detections.
+title: "DoG Studio: Computing & Compositing Aesthetically Pleasing Line Art"
+description: An on-device tool using modern approaches for generating aesthetically pleasing line art based on difference-of-Gaussians (DoG) edge detection.
 keywords: computational drawing, structure tensor, non-photorealistic rendering, image stylization, generative art, computer-vision, line-art, screentone
 tags: data math webgpu webgl drawing
 introduction: A free, browser-based tool for turning photos into line art and screentone
@@ -166,6 +166,6 @@ This is only an approximation. It assumes flat regions, and edges and the added 
 
 If you're curious about the math underneath or want to use it for something yourself, the DoG implementations themselves can be found in [`dogpack`](https://github.com/dpfens/dogpack). The app itself lives in the `gh-pages` branch, if you want to see how it's wired together.  Maybe you will have a use for it I haven't conceived of yet.
 
-I still can't draw the scenes and ideas in my head half as well as I'd like by hand. This tool was never going to teach me that. But it was a nice detour, and I am glad I did it.
+I still can't draw the scenes and ideas in my head half as well as I'd like by hand. But this tool was a nice detour, and I am glad I did it.
 
 *See also: [streamline hatching](https://dougfenstermacher.com/experiment/streamline-hatching), [the original difference-of-Gaussians experiment](https://dougfenstermacher.com/experiment/difference-of-gaussians)*
